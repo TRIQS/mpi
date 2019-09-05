@@ -55,17 +55,11 @@ endif()
 add_custom_target(${PROJECT_NAME}_docs_sphinx ALL)
 add_custom_command(
   TARGET ${PROJECT_NAME}_docs_sphinx
-  COMMAND PYTHONPATH=${PROJECT_BINARY_DIR}/python:${h5_BINARY_DIR}/python:$ENV{PYTHONPATH} ${SPHINXBUILD_EXECUTABLE} -c . -j auto -b html ${CMAKE_CURRENT_SOURCE_DIR} html
+  COMMAND ${SPHINXBUILD_EXECUTABLE} -c . -j auto -b html ${CMAKE_CURRENT_SOURCE_DIR} html
 )
 
 option(Sphinx_Only "When building the documentation, skip the Python Modules and the generation of C++ Api and example outputs" OFF)
 if(NOT Sphinx_Only)
-  # Autodoc usage requires the python modules to be built first
-  get_property(CPP2PY_MODULES_LIST GLOBAL PROPERTY CPP2PY_MODULES_LIST)
-  if(CPP2PY_MODULES_LIST)
-    add_dependencies(${PROJECT_NAME}_docs_sphinx ${CPP2PY_MODULES_LIST})
-  endif()
-
   # Generation of C++ Api and Example Outputs
   add_dependencies(${PROJECT_NAME}_docs_sphinx ${PROJECT_NAME}_docs_cpp2rst ${PROJECT_NAME}_docs_example_output)
 endif()

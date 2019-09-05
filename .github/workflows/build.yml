@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ notriqs ]
+    branches: [ cpp_only_notriqs ]
   pull_request:
-    branches: [ notriqs ]
+    branches: [ cpp_only_notriqs ]
 
 jobs:
   build:
