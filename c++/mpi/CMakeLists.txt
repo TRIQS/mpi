@@ -9,7 +9,7 @@ target_include_directories(mpi_interface
 target_compile_options(mpi_interface INTERFACE -std=c++17 $<$<CXX_COMPILER_ID:GNU>:-fconcepts>)
 
 # Install library and headers
-install(TARGETS mpi_interface EXPORT nda-targets)
+install(TARGETS mpi_interface EXPORT mpi-targets)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
 
 
@@ -28,7 +28,7 @@ target_compile_options(mpi INTERFACE ${MPI_C_COMPILE_FLAGS})
 
 # Export Interface target
 target_link_libraries(mpi_interface INTERFACE mpi)
-install(TARGETS mpi EXPORT nda-targets)
+install(TARGETS mpi EXPORT mpi-targets)
 
 # Backward compatibility for older FindMPI.cmake
 if(NOT MPIEXEC_EXECUTABLE)

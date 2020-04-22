@@ -2,7 +2,7 @@
 
 .. _install:
 
-Compiling nda from source
+Compiling mpi from source
 ===============================
 
 
@@ -15,13 +15,13 @@ Prerequisites
 Installation steps
 ------------------
 
-#. Download the source code of the latest stable version by cloning the ``TRIQS/nda`` repository from GitHub::
+#. Download the source code of the latest stable version by cloning the ``TRIQS/mpi`` repository from GitHub::
 
-     $ git clone https://github.com/TRIQS/nda nda.src
+     $ git clone https://github.com/TRIQS/mpi mpi.src
 
 #. Create and move to a new directory where you will compile the code::
 
-     $ mkdir nda.build && cd nda.build
+     $ mkdir mpi.build && cd mpi.build
 
 #. Ensure that your shell contains the TRIQS environment variables by sourcing the ``triqsvars.sh`` file from your TRIQS installation::
 
@@ -29,7 +29,7 @@ Installation steps
 
 #. In the build directory call cmake, including any additional custom CMake options, see below::
 
-     $ cmake ../nda.src
+     $ cmake ../mpi.src
 
 #. Compile the code, run the tests and install the application::
 
@@ -40,12 +40,12 @@ Installation steps
 Version compatibility
 ---------------------
 
-Keep in mind that the version of ``nda`` must be compatible with your TRIQS library version,
+Keep in mind that the version of ``mpi`` must be compatible with your TRIQS library version,
 see :ref:`TRIQS website <triqslibs:versions>`.
 In particular the Major and Minor Version numbers have to be the same.
 To use a particular version, go into the directory with the sources, and look at all available versions::
 
-     $ cd nda.src && git tag
+     $ cd mpi.src && git tag
 
 Checkout the version of the code that you want::
 
@@ -56,14 +56,14 @@ and follow steps 2 to 4 above to compile the code.
 Custom CMake options
 --------------------
 
-The compilation of ``nda`` can be configured using CMake-options::
+The compilation of ``mpi`` can be configured using CMake-options::
 
-    cmake ../nda.src -DOPTION1=value1 -DOPTION2=value2 ... ../nda.src
+    cmake ../mpi.src -DOPTION1=value1 -DOPTION2=value2 ... ../mpi.src
 
 +-----------------------------------------------------------------+-----------------------------------------------+
 | Options                                                         | Syntax                                        |
 +=================================================================+===============================================+
-| Specify an installation path other than path_to_triqs           | -DCMAKE_INSTALL_PREFIX=path_to_nda      |
+| Specify an installation path other than path_to_triqs           | -DCMAKE_INSTALL_PREFIX=path_to_mpi      |
 +-----------------------------------------------------------------+-----------------------------------------------+
 | Build in Debugging Mode                                         | -DCMAKE_BUILD_TYPE=Debug                      |
 +-----------------------------------------------------------------+-----------------------------------------------+

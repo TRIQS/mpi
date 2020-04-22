@@ -1,3 +1,3 @@
-# nda
+# mpi
 
-cmake ~/src/nda -DANALYZE_SOURCE=ON -DUBSAN=ON -DASAN=ON
+cmake ~/src/mpi -DANALYZE_SOURCE=ON -DUBSAN=ON -DASAN=ON

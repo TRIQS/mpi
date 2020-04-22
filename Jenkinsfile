@@ -1,4 +1,4 @@
-def projectName = "nda" /* set to app/repo name */
+def projectName = "mpi" /* set to app/repo name */
 
 def dockerName = projectName.toLowerCase();
 /* which platform to build documentation on */

@@ -1,6 +1,6 @@
 .. _about:
 
-About nda
+About mpi
 ===============
 
 An example application using ``cpp2py`` and TRIQS.
