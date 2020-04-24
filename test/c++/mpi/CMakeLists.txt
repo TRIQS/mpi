@@ -1,4 +1,4 @@
-link_libraries(gtest mpi_interface)
+link_libraries(gtest mpi_c)
 add_definitions(-std=c++17 -fopenmp)
 
 macro(add_mpi_test TestName NumProc)
