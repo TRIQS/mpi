@@ -28,15 +28,15 @@ TEST(Comm, split) {
   communicator world;
   int rank = world.rank();
 
-  ASSERT_EQ(4, world.size());
+  ASSERT_TRUE(2 == world.size() or 4 == world.size());
 
-  int colors[] = {0, 1, 1, 2};
-  int keys[]   = {5, 13, 18, 7};
+  int colors[] = {0, 2, 1, 1};
+  int keys[]   = {5, 7, 13, 18};
 
   auto comm = world.split(colors[rank], keys[rank]);
 
-  int comm_sizes[] = {1, 2, 2, 1};
-  int comm_ranks[] = {0, 0, 1, 0};
+  int comm_sizes[] = {1, 1, 2, 2};
+  int comm_ranks[] = {0, 0, 0, 1};
 
   EXPECT_EQ(comm_sizes[rank], comm.size());
   EXPECT_EQ(comm_ranks[rank], comm.rank());

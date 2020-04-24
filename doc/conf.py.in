@@ -14,8 +14,8 @@ extensions = ['sphinx.ext.autodoc',
 
 source_suffix = '.rst'
 
-project = u'MPI - An example triqs application'
-copyright = u'2017-2018 N. Wentzell, O. Parcollet 2018-2019 The Simons Foundation, authors: N. Wentzell, D. Simons, H. Strand, O. Parcollet'
+project = 'MPI - A high-level C++ Interface'
+copyright = '2017-2018 O. Parcollet 2019-2020 The Simons Foundation, authors: N. Wentzell, O. Parcollet'
 version = '@PROJECT_VERSION@'
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5"
