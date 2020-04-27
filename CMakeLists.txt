@@ -85,7 +85,6 @@ if(NOT TARGET project_warnings)
       $<$<CXX_COMPILER_ID:AppleClang>:-Wno-gcc-compat>
   )
 endif()
-target_compile_options(project_warnings INTERFACE $<$<CXX_COMPILER_ID:GNU>:-Wno-unused-but-set-parameter>)
 install(TARGETS project_warnings EXPORT app4triqs-targets)
 
 # ---------------------------------

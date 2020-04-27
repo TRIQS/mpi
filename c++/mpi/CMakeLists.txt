@@ -1,6 +1,6 @@
 # MPI C++ Interface is header-only
 # Create an Interface Target
-file(GLOB_RECURSE headers *.cpp)
+file(GLOB_RECURSE headers *.hpp)
 add_library(mpi_c INTERFACE)
 
 # Configure target and compilation
