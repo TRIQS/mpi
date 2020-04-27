@@ -37,3 +37,9 @@ external_dependency(GTest
   TAG release-1.10.0
   EXCLUDE_FROM_ALL
 )
+
+# -- ITERTOOLS --
+external_dependency(ITERTOOLS
+  GIT_REPO github:TRIQS/itertools
+  TAG unstable
+)
