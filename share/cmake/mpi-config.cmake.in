@@ -13,6 +13,10 @@ set(MPI_GIT_HASH @PROJECT_GIT_HASH@)
 # Root of the installation
 set(MPI_ROOT  @CMAKE_INSTALL_PREFIX@)
 
+# Find any runtime dependencies
+include(CMakeFindDependencyMacro)
+find_dependency(itertools)
+
 # Include the exported targets of this project
 include(@CMAKE_INSTALL_PREFIX@/lib/cmake/mpi/mpi-targets.cmake)
 

@@ -19,6 +19,11 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING
 
 # ========= Additional Depdencies ==========
 
+# Link against Itertools
+target_link_libraries(mpi_c INTERFACE itertools_c)
+install(TARGETS itertools_c EXPORT mpi-targets)
+
+
 message(STATUS "-------- MPI detection -------------")
 
 find_package(MPI REQUIRED)

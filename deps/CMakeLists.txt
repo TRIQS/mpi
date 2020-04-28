@@ -51,8 +51,8 @@ external_dependency(GTest
   EXCLUDE_FROM_ALL
 )
 
-# -- ITERTOOLS --
-external_dependency(ITERTOOLS
+# -- itertools --
+external_dependency(itertools
   GIT_REPO https://github.com/TRIQS/itertools
   GIT_TAG unstable
 )
