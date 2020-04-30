@@ -13,7 +13,7 @@ set(MPI_GIT_HASH @PROJECT_GIT_HASH@)
 # Root of the installation
 set(MPI_ROOT  @CMAKE_INSTALL_PREFIX@)
 
-# Find any runtime dependencies
+# Find the target dependencies
 include(CMakeFindDependencyMacro)
 find_dependency(itertools)
 
