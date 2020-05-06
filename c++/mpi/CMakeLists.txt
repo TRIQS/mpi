@@ -26,6 +26,7 @@ target_link_libraries(mpi_c INTERFACE itertools::itertools_c)
 
 message(STATUS "-------- MPI detection -------------")
 
+set(MPI_CXX_SKIP_MPICXX TRUE BOOL)
 find_package(MPI REQUIRED)
 
 # Create an interface target
@@ -44,13 +45,18 @@ if(NOT MPIEXEC_EXECUTABLE)
   set(MPIEXEC_EXECUTABLE ${MPIEXEC} CACHE FILENAME "MPI Executable")
 endif()
 
+# Backward compatibility for older FindMPI.cmake (without MPI_CXX_SKIP_MPICXX) 
+if(${CMAKE_VERSION} VERSION_LESS "3.10.3") 
+    # Stop OpenMPI from including cxx binding headers, if installed
+    target_compile_definition(mpi_c PUBLIC MPICH_SKIP_MPICXX OMPI_SKIP_MPICXX _MPICC_H)
+endif() 
+
 # Compatibility to Open-MPI 3.0.0: check whether MPI executable has option --oversubscribe and add it 
 execute_process(COMMAND ${MPIEXEC_EXECUTABLE} --oversubscribe ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ls ${MPIEXEC_POSTFLAGS} RESULT_VARIABLE HAS_NO_OVERSUBSCRIBE OUTPUT_QUIET ERROR_QUIET)
 if(NOT HAS_NO_OVERSUBSCRIBE)
   list(APPEND MPIEXEC_PREFLAGS --oversubscribe)
   set(MPIEXEC_PREFLAGS ${MPIEXEC_PREFLAGS} CACHE STRING "These flags will be directly before the executable that is being run by mpiexec." FORCE)
 endif()
-
 
 # ========= Static Analyzer Checks ==========
 
