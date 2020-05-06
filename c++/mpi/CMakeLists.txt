@@ -2,6 +2,7 @@
 # Create an Interface Target
 file(GLOB_RECURSE headers *.hpp)
 add_library(mpi_c INTERFACE)
+add_library(mpi::mpi_c ALIAS mpi_c)
 
 # Configure target and compilation
 target_compile_options(mpi_c INTERFACE -fPIC -std=c++17)
@@ -20,7 +21,7 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING
 # ========= Additional Depdencies ==========
 
 # Link against Itertools
-target_link_libraries(mpi_c INTERFACE itertools_c)
+target_link_libraries(mpi_c INTERFACE itertools::itertools_c)
 
 
 message(STATUS "-------- MPI detection -------------")
