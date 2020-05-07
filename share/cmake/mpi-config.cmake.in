@@ -4,7 +4,8 @@
 
 # Multiple inclusion guard
 if(NOT MPI_FOUND)
-set(MPI_FOUND True)
+set(MPI_FOUND TRUE)
+set_property(GLOBAL PROPERTY MPI_FOUND TRUE)
 
 # version
 set(MPI_VERSION @PROJECT_VERSION@)
