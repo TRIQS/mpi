@@ -59,3 +59,13 @@ external_dependency(itertools
   GIT_REPO https://github.com/TRIQS/itertools
   GIT_TAG unstable
 )
+
+if(Build_Documentation)
+  # -- Cpp2Py --
+  external_dependency(Cpp2Py
+    GIT_REPO https://github.com/TRIQS/cpp2py
+    VERSION 2.0
+    GIT_TAG master
+    EXCLUDE_FROM_ALL
+  )
+endif()
