@@ -46,9 +46,9 @@ if(NOT MPIEXEC_EXECUTABLE)
 endif()
 
 # Backward compatibility for older FindMPI.cmake (without MPI_CXX_SKIP_MPICXX) 
-if(CMAKE_VERSION VERSION_LESS 3.10.3) 
+if(CMAKE_VERSION VERSION_LESS 3.10.0)
     # Stop OpenMPI from including cxx binding headers, if installed
-    target_compile_definition(mpi_c PUBLIC MPICH_SKIP_MPICXX OMPI_SKIP_MPICXX _MPICC_H)
+    target_compile_definitions(mpi_c PUBLIC MPICH_SKIP_MPICXX OMPI_SKIP_MPICXX _MPICC_H)
 endif() 
 
 # Compatibility to Open-MPI 3.0.0: check whether MPI executable has option --oversubscribe and add it 
