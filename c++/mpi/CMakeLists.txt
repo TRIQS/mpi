@@ -31,10 +31,11 @@ find_package(MPI REQUIRED)
 
 # Create an interface target
 add_library(mpi INTERFACE)
-target_include_directories(mpi SYSTEM INTERFACE ${MPI_C_INCLUDE_PATH})
 target_link_libraries(mpi INTERFACE ${MPI_C_LIBRARIES})
-separate_arguments(MPI_C_COMPILE_FLAGS) # Convert to list
-target_compile_options(mpi INTERFACE ${MPI_C_COMPILE_FLAGS})
+target_include_directories(mpi SYSTEM INTERFACE ${MPI_C_INCLUDE_DIRS})
+#target_link_options(mpi INTERFACE ${MPI_C_LINK_FLAGS}) cmake 3.13+
+target_compile_options(mpi INTERFACE ${MPI_C_COMPILE_OPTIONS})
+target_compile_definitions(mpi INTERFACE ${MPI_C_COMPILE_DEFINITIONS})
 
 # Export Interface target
 target_link_libraries(mpi_c INTERFACE mpi)
