@@ -26,16 +26,22 @@ target_link_libraries(mpi_c INTERFACE itertools::itertools_c)
 
 message(STATUS "-------- MPI detection -------------")
 
-set(MPI_CXX_SKIP_MPICXX TRUE BOOL)
-find_package(MPI REQUIRED)
+set(MPI_CXX_SKIP_MPICXX TRUE CACHE BOOL "If true, the MPI-2 C++ bindings are disabled using definitions.")
+find_package(MPI REQUIRED COMPONENTS CXX)
 
 # Create an interface target
 add_library(mpi INTERFACE)
-target_link_libraries(mpi INTERFACE ${MPI_C_LIBRARIES})
-target_include_directories(mpi SYSTEM INTERFACE ${MPI_C_INCLUDE_DIRS})
-#target_link_options(mpi INTERFACE ${MPI_C_LINK_FLAGS}) cmake 3.13+
-target_compile_options(mpi INTERFACE ${MPI_C_COMPILE_OPTIONS})
-target_compile_definitions(mpi INTERFACE ${MPI_C_COMPILE_DEFINITIONS})
+target_link_libraries(mpi INTERFACE ${MPI_CXX_LIBRARIES})
+target_include_directories(mpi SYSTEM INTERFACE ${MPI_CXX_INCLUDE_DIRS})
+#target_link_options(mpi INTERFACE ${MPI_CXX_LINK_FLAGS}) cmake 3.13+
+target_compile_options(mpi INTERFACE ${MPI_CXX_COMPILE_OPTIONS})
+target_compile_definitions(mpi INTERFACE ${MPI_CXX_COMPILE_DEFINITIONS})
+
+# Backward compatibility for older FindMPI.cmake (without MPI_CXX_SKIP_MPICXX)
+if(CMAKE_VERSION VERSION_LESS 3.10.0)
+    # Stop OpenMPI from including cxx binding headers, if installed
+    target_compile_definitions(mpi INTERFACE MPICH_SKIP_MPICXX OMPI_SKIP_MPICXX _MPICC_H)
+endif()
 
 # Export Interface target
 target_link_libraries(mpi_c INTERFACE mpi)
@@ -46,13 +52,7 @@ if(NOT MPIEXEC_EXECUTABLE)
   set(MPIEXEC_EXECUTABLE ${MPIEXEC} CACHE FILENAME "MPI Executable")
 endif()
 
-# Backward compatibility for older FindMPI.cmake (without MPI_CXX_SKIP_MPICXX) 
-if(CMAKE_VERSION VERSION_LESS 3.10.0)
-    # Stop OpenMPI from including cxx binding headers, if installed
-    target_compile_definitions(mpi_c INTERFACE MPICH_SKIP_MPICXX OMPI_SKIP_MPICXX _MPICC_H)
-endif() 
-
-# Compatibility to Open-MPI 3.0.0: check whether MPI executable has option --oversubscribe and add it 
+# Compatibility to Open-MPI 3.0.0: check whether MPI executable has option --oversubscribe and add it
 execute_process(COMMAND ${MPIEXEC_EXECUTABLE} --oversubscribe ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ls ${MPIEXEC_POSTFLAGS} RESULT_VARIABLE HAS_NO_OVERSUBSCRIBE OUTPUT_QUIET ERROR_QUIET)
 if(NOT HAS_NO_OVERSUBSCRIBE)
   list(APPEND MPIEXEC_PREFLAGS --oversubscribe)
