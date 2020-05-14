@@ -5,7 +5,7 @@ add_library(mpi_c INTERFACE)
 add_library(mpi::mpi_c ALIAS mpi_c)
 
 # Configure target and compilation
-target_compile_options(mpi_c INTERFACE -fPIC -std=c++17)
+target_compile_options(mpi_c INTERFACE -std=c++17)
 target_include_directories(mpi_c INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
 target_include_directories(mpi_c SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
 target_compile_definitions(mpi_c INTERFACE
