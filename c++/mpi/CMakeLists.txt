@@ -1,27 +1,27 @@
 # MPI C++ Interface is header-only
 # Create an Interface Target
 file(GLOB_RECURSE headers *.hpp)
-add_library(mpi_c INTERFACE)
-add_library(mpi::mpi_c ALIAS mpi_c)
+add_library(${PROJECT_NAME}_c INTERFACE)
+add_library(${PROJECT_NAME}::${PROJECT_NAME}_c ALIAS ${PROJECT_NAME}_c)
 
 # Configure target and compilation
-target_compile_options(mpi_c INTERFACE -std=c++17)
-target_include_directories(mpi_c INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
-target_include_directories(mpi_c SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
-target_compile_definitions(mpi_c INTERFACE
+target_compile_options(${PROJECT_NAME}_c INTERFACE -std=c++17)
+target_include_directories(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
+target_include_directories(${PROJECT_NAME}_c SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
+target_compile_definitions(${PROJECT_NAME}_c INTERFACE
 				MPI_GIT_HASH=${PROJECT_GIT_HASH}
 				$<$<CONFIG:Debug>:MPI_DEBUG>
 			  )
 
 # Install library and headers
-install(TARGETS mpi_c EXPORT mpi-targets DESTINATION lib)
+install(TARGETS ${PROJECT_NAME}_c EXPORT ${PROJECT_NAME}-targets DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
 
 
 # ========= Additional Depdencies ==========
 
 # Link against Itertools
-target_link_libraries(mpi_c INTERFACE itertools::itertools_c)
+target_link_libraries(${PROJECT_NAME}_c INTERFACE itertools::itertools_c)
 
 
 message(STATUS "-------- MPI detection -------------")
@@ -44,8 +44,8 @@ if(CMAKE_VERSION VERSION_LESS 3.10.0)
 endif()
 
 # Export Interface target
-target_link_libraries(mpi_c INTERFACE mpi)
-install(TARGETS mpi EXPORT mpi-targets)
+target_link_libraries(${PROJECT_NAME}_c INTERFACE mpi)
+install(TARGETS mpi EXPORT ${PROJECT_NAME}-targets)
 
 # Backward compatibility for older FindMPI.cmake
 if(NOT MPIEXEC_EXECUTABLE)
@@ -71,7 +71,7 @@ if(ANALYZE_SOURCES)
   # Run clang-tidy if found
   if(CLANG_TIDY_EXECUTABLE)
     message(STATUS "clang-tidy found: ${CLANG_TIDY_EXECUTABLE}")
-    set_target_properties(mpi_c PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
+    set_target_properties(${PROJECT_NAME}_c PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
   else()
     message(STATUS "clang-tidy not found in $PATH. Please consider installing clang-tidy for additional checks!")
   endif()
@@ -80,7 +80,7 @@ if(ANALYZE_SOURCES)
   if(CPPCHECK_EXECUTABLE)
     message(STATUS "cppcheck found: ${CPPCHECK_EXECUTABLE}")
     add_custom_command(
-	TARGET mpi_c
+	TARGET ${PROJECT_NAME}_c
 	COMMAND ${CPPCHECK_EXECUTABLE}
 	  --enable=warning,style,performance,portability
 	  --std=c++17
@@ -108,11 +108,11 @@ if(ASAN)
   if(NOT TARGET asan)
     find_package(sanitizer REQUIRED "asan")
   endif()
-  target_link_libraries(mpi_c INTERFACE $<BUILD_INTERFACE:asan>)
+  target_link_libraries(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:asan>)
 endif()
 if(UBSAN)
   if(NOT TARGET ubsan)
     find_package(sanitizer REQUIRED "ubsan")
   endif()
-  target_link_libraries(mpi_c INTERFACE $<BUILD_INTERFACE:ubsan>)
+  target_link_libraries(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:ubsan>)
 endif()

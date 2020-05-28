@@ -30,7 +30,7 @@ endif()
 
 # ############
 # Define Project
-project(MPI VERSION 2.2.0 LANGUAGES C CXX)
+project(mpi VERSION 2.2.0 LANGUAGES C CXX)
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
 # Get the git hash & print status
@@ -45,7 +45,7 @@ endif()
 if(NOT IS_SUBPROJECT)
   message(STATUS "-------- CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX} --------")
 endif()
-set(MPI_BINARY_DIR ${PROJECT_BINARY_DIR} CACHE STRING "Binary directory of the MPI Project")
+set(${PROJECT_NAME}_BINARY_DIR ${PROJECT_BINARY_DIR} CACHE STRING "Binary directory of the ${PROJECT_NAME} Project")
 
 
 # ############
@@ -82,8 +82,8 @@ add_compile_options(
 )
 
 # Create an Interface target for compiler warnings
-add_library(mpi_warnings INTERFACE)
-target_compile_options(mpi_warnings
+add_library(${PROJECT_NAME}_warnings INTERFACE)
+target_compile_options(${PROJECT_NAME}_warnings
   INTERFACE
     -Wall
     -Wextra
@@ -97,33 +97,14 @@ target_compile_options(mpi_warnings
     $<$<CXX_COMPILER_ID:AppleClang>:-Wno-gcc-compat>
 )
 
-# ---------------------------------
-# Resolve Clang Linktime Problems
-# CMake will adjust any linker flags from '-L path_to/mylib.so' to -lmylib
-# if the proper mylib.so is automatically found by the linker, i.e.
-# the directory comes first in LIBRARY_PATH.
-# The clang linker however ignores LIBRARY_PATH.
-# We thus explicitly add the content of LIBRARY_PATH to the LDFLAGS
-# FIXME For future cmake versions we should populate the
-# INTERFACE_LINK_DIRECTORIES of the triqs target
-# ---------------------------------
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND DEFINED ENV{LIBRARY_PATH})
-  string(REPLACE ":" ";" LINK_DIRS $ENV{LIBRARY_PATH})
-  foreach(dir ${LINK_DIRS})
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -L${dir}")
-    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${dir}")
-    string(APPEND CMAKE_EXE_LINKER_FLAGS " -L${dir}")
-  endforeach()
-endif()
-
 # #############
 # Build Project
 
 # Find / Build dependencies
 add_subdirectory(deps)
 
-# Build and install the mpi library
-add_subdirectory(c++/mpi)
+# Build and install the library
+add_subdirectory(c++/${PROJECT_NAME})
 
 # Tests
 if(Build_Tests)
@@ -146,10 +127,10 @@ if(BUILD_DEBIAN_PACKAGE AND NOT IS_SUBPROJECT)
   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "/usr")
     message(FATAL_ERROR "CMAKE_INSTALL_PREFIX must be /usr for packaging")
   endif()
-  set(CPACK_PACKAGE_NAME mpi)
+  set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
   set(CPACK_GENERATOR "DEB")
   set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-  set(CPACK_PACKAGE_CONTACT "https://github.com/TRIQS/mpi")
+  set(CPACK_PACKAGE_CONTACT "https://github.com/TRIQS/${PROJECT_NAME}")
   execute_process(COMMAND dpkg --print-architecture OUTPUT_VARIABLE CMAKE_DEBIAN_PACKAGE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
   set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)

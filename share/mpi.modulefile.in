@@ -1,14 +1,14 @@
 #%Module1.0
 #
-# To be installed as ${MODULEPATH}/mpi/@PROJECT_VERSION@
+# To be installed as ${MODULEPATH}/@PROJECT_NAME@/@PROJECT_VERSION@
 
-set     name        mpi
+set     name        @PROJECT_NAME@
 set     version     @PROJECT_VERSION@
 set     root        @CMAKE_INSTALL_PREFIX@
 set     git_hash    @PROJECT_GIT_HASH@
 
-set     url         "https://github.com/TRIQS/mpi"
-set     description "An example application using cpp2py and triqs."
+set     url         "https://github.com/TRIQS/@PROJECT_NAME@"
+set     description "A high-level C++ Interface"
 
 module-whatis   "$description"
 
@@ -20,12 +20,12 @@ proc ModulesHelp { } {
     puts stderr "Git hash:    $git_hash"
 }
 
-# Only one version of mpi can be loaded at a time
+# Only one version of @PROJECT_NAME@ can be loaded at a time
 conflict $name
 
-setenv          MPI_ROOT      $root
-setenv          MPI_VERSION   $version
-setenv          MPI_GIT_HASH  $git_hash
+setenv          @PROJECT_NAME@_ROOT      $root
+setenv          @PROJECT_NAME@_VERSION   $version
+setenv          @PROJECT_NAME@_GIT_HASH  $git_hash
 
 prepend-path    PATH                $root/bin
 prepend-path    CPLUS_INCLUDE_PATH  $root/include
