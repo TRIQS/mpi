@@ -5,7 +5,9 @@ add_library(${PROJECT_NAME}_c INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME}_c ALIAS ${PROJECT_NAME}_c)
 
 # Set C++ Standard
-if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++20" HAS_CPP20)
+if(HAS_CPP20)
   target_compile_options(${PROJECT_NAME}_c INTERFACE -std=c++20)
 else()
   target_compile_options(${PROJECT_NAME}_c INTERFACE -std=c++17)
