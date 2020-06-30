@@ -26,4 +26,10 @@ message(STATUS "Found @PROJECT_NAME@-config.cmake with version @PROJECT_VERSION@
 # Was the Project built with Documentation?
 set(@PROJECT_NAME@_WITH_DOCUMENTATION @Build_Documentation@ CACHE BOOL "Was @PROJECT_NAME@ build with documentation?")
 
+# MPIEXEC Variables
+set(MPIEXEC_EXECUTABLE @MPIEXEC_EXECUTABLE@ CACHE STRING "Executable for running MPI programs.")
+set(MPIEXEC_NUMPROC_FLAG @MPIEXEC_NUMPROC_FLAG@ CACHE STRING "Flag to pass to mpiexec before giving it the number of processors to run on.")
+set(MPIEXEC_PREFLAGS @MPIEXEC_PREFLAGS@ CACHE STRING "Flags to pass to mpiexec directly before the executable to run.")
+set(MPIEXEC_POSTFLAGS @MPIEXEC_POSTFLAGS@ CACHE STRING "Flags to pass to mpiexec after other flags.")
+
 endif()
