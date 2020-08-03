@@ -33,7 +33,8 @@ inline auto tie_data(Complex c) { return std::tie(c.real, c.imag); }
 
 // The mpi custom type is implemented using a tie
 namespace mpi {
-  template <> struct mpi_type<Complex> : mpi_type_from_tie<Complex> {};
+  template <>
+  struct mpi_type<Complex> : mpi_type_from_tie<Complex> {};
 } // namespace mpi
 
 // a user defined function
@@ -97,14 +98,13 @@ struct A {
   long long ll;
   double d;
 };
-A add_As(A const &lhs, A const &rhs) {
-  return A{lhs.i + rhs.i, 0ll, lhs.d + rhs.d};
-}
+A add_As(A const &lhs, A const &rhs) { return A{lhs.i + rhs.i, 0ll, lhs.d + rhs.d}; }
 
 // Tie the data to construct the custom MPI type
 inline auto tie_data(A a) { return std::tie(a.i, a.ll, a.d); }
 namespace mpi {
-  template <> struct mpi_type<A> : mpi_type_from_tie<A> {};
+  template <>
+  struct mpi_type<A> : mpi_type_from_tie<A> {};
 } // namespace mpi
 
 TEST(MPI_CUSTOM, struct_custom_add) {
@@ -125,9 +125,7 @@ TEST(MPI_CUSTOM, struct_custom_add) {
   MPI_Reduce(a, answer, 2, mpi_type<A>::get(), mpi::map_C_function<A, add_As>(), root, MPI_COMM_WORLD);
 
   if (rank == root)
-    for (int u = 0; u < 2; ++u) {
-    ASSERT_NEAR(answer[u].i + answer[u].d, 2 * size * (size + 1), 1.e-14);
-    }
+    for (int u = 0; u < 2; ++u) { ASSERT_NEAR(answer[u].i + answer[u].d, 2 * size * (size + 1), 1.e-14); }
 }
 
 MPI_TEST_MAIN;

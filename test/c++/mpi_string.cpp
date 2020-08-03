@@ -20,7 +20,7 @@ TEST(MPI, string_broadcast) {
   mpi::communicator world;
 
   std::string s;
-  if(world.rank() == 0) s = "Hello World"; 
+  if (world.rank() == 0) s = "Hello World";
 
   mpi::broadcast(s);
 

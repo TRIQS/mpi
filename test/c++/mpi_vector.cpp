@@ -46,9 +46,9 @@ TEST(MPI, vector_gather_scatter) {
 
   std::vector<std::complex<double>> A(7), B(7), AA(7);
 
-  for(auto [i, v_i]: enumerate(A)) v_i = i + 1; 
+  for (auto [i, v_i] : enumerate(A)) v_i = i + 1;
 
-  B = mpi::scatter(A, world);
+  B      = mpi::scatter(A, world);
   auto C = mpi::scatter(A, world);
 
   for (auto &x : B) x *= -1;
