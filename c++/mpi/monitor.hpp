@@ -57,32 +57,25 @@ namespace mpi {
 
     ~monitor() { finalize(); }
 
-    // should only called at the end. After calling it, you can not call should_stop or request_emergency_stop
-    // Guarantees the same answer on all nodes
-    [[nodiscard]] bool success() {
-      finalize();
-      return not global_stop;
-    }
-
     /// Request an emergency stop of all nodes in the mpi Communicator.
     /// It send the message to the root.
     /// It the local node is the root, it sends the global bcast to all nodes to order them to stop
     void request_emergency_stop() {
       EXPECTS(!finalized);
-      local_stop  = 1;
-      global_stop = 1;
-      if (com.rank() == 0) // root
+      local_stop = 1;
+      if (com.rank() == 0) { // root
+        global_stop = 1;
         MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast);
-      else // non root
+      } else // non root
         MPI_Isend(&local_stop, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &req_isent);
     }
 
     /// Any node : should I stop my calculation ?
-    bool should_stop() {
+    [[nodiscard]] bool should_stop() {
       EXPECTS(!finalized);
       if (global_stop or local_stop) return true;
       if (com.rank() == 0) { // root test whether other nodes have emergency stop
-        root_listen_and_bcast();
+        root_check_nodes_and_bcast();
       } else { // other nodes just listen to the root bcast to see if an emergency stop has been broadcasted
         MPI_Status status;
         int flag;
@@ -92,33 +85,15 @@ namespace mpi {
       return global_stop;
     }
 
-    private:
-    // ROOT ONLY.
-    // looks at all irecv that have arrived, and if they are a stop request, bcast the global stop.
-    // returns true iff there are still running nodes.
-    bool root_listen_and_bcast() {
-      EXPECTS(!finalized);
-      EXPECTS(com.rank() == 0); // root only
-      bool some_nodes_are_still_running = false;
-      for (auto &f : root_futures) {
-        MPI_Status status;
-        int flag;
-        MPI_Test(&(f.request), &flag, &status);
-        if (flag and (not global_stop) and (f.value > 0)) request_emergency_stop(); // the root requires the stop now. It also stops itself...
-        some_nodes_are_still_running |= (flag == 0);
-      }
-      return some_nodes_are_still_running;
-    }
-
     /// Finalize the monitor.
     /// As the end of this functions, all nodes have completed their work, or had an emergency stop.
-    void finalize() {
-      if (finalized) return;
+    /// The result is guaranteed to be the same on all nodes.
+    bool finalize() {
+      if (finalized) return not global_stop;
       EXPECTS_WITH_MESSAGE(not finalized, "Logic error : mpi::monitor::finalize can only be called once.");
       if (com.rank() == 0) {
         // the root is done computing, it just listens to the other nodes and bcast the global_stop until everyone is done.
-        while (root_listen_and_bcast()) {
-        } //sleep(1); } // 1s is long for tests. To use a value in ms, I would need to include <chrono>, <thread>, cf tests.
+        while (root_check_nodes_and_bcast()) { usleep(100); } // 100 us (micro seconds)
         // all others node have finished
         // if the root has never emitted the ibcast, we do it and wait it, since we can not cancel it FIXME (why ??).
         if (!global_stop) MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast);
@@ -130,6 +105,25 @@ namespace mpi {
       MPI_Status status;
       MPI_Wait(&req_ibcast, &status);
       finalized = true;
+      return not global_stop;
+    }
+
+    private:
+    // ROOT ONLY.
+    // looks at all irecv that have arrived, and if they are a stop request, bcast the global stop.
+    // returns true iff there are still running nodes.
+    bool root_check_nodes_and_bcast() {
+      EXPECTS(!finalized);
+      EXPECTS(com.rank() == 0); // root only
+      bool some_nodes_are_still_running = false;
+      for (auto &f : root_futures) {
+        MPI_Status status;
+        int flag;
+        MPI_Test(&(f.request), &flag, &status);
+        if (flag and (not global_stop) and (f.value > 0)) request_emergency_stop(); // the root requires the stop now. It also stops itself...
+        some_nodes_are_still_running |= (flag == 0);
+      }
+      return some_nodes_are_still_running;
     }
   };
 

@@ -1,11 +1,10 @@
 #include "mpi/mpi.hpp"
 #include "mpi/monitor.hpp"
 #include <vector>
-#include <chrono>
-#include <thread>
 #include <gtest/gtest.h>
+#include <unistd.h>
 
-const int delta_tau_sleep = 30; // in ms
+const int delta_tau_sleep = 3 * 1000; // in micro second : 3 ms
 
 // fastest_node : position of the fastest node
 bool test(mpi::communicator c, int fastest_node, int number_node_failing, int iteration_failure = 3) {
@@ -19,7 +18,7 @@ bool test(mpi::communicator c, int fastest_node, int number_node_failing, int it
 
   for (int i = 0; (!M.should_stop()) and (i < N); ++i) {
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
+    usleep(sleeptime);
 
     std::cerr << "N" << c.rank() << " i = " << i << std::endl;
 
@@ -28,7 +27,7 @@ bool test(mpi::communicator c, int fastest_node, int number_node_failing, int it
       M.request_emergency_stop();
     }
   }
-  bool success = M.success();
+  bool success = M.finalize();
   std::cerr << "Ending on node " << c.rank() << std::endl;
   return success;
 }
