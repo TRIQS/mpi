@@ -1,12 +1,9 @@
 #pragma once
 #include "mpi/mpi.hpp"
+#include "mpi/macros.hpp"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
-
-// FIXME : put macros in mpi
-#define EXPECTS(...)
-#define EXPECTS_WITH_MESSAGE(...)
 
 namespace mpi {
 
@@ -131,7 +128,6 @@ namespace mpi {
       }
       // all nodes wait for the ibcast to be complete.
       MPI_Status status;
-      int flag;
       MPI_Wait(&req_ibcast, &status);
       finalized = true;
     }
