@@ -13,20 +13,6 @@ Installation steps
 
      $ git clone https://github.com/TRIQS/mpi mpi.src
 
-#. Make sure that all additional dependencies are installed on your system and available in your environment.
-   Alternatively build the dependencies from source instead with::
-
-     $ (cd deps && ./download.sh)
-
-   In this case they will be installed together with your application.
-
-#. Make sure that all additional dependencies are installed on your system and available in your environment.
-   Alternatively build the dependencies from source instead with::
-
-     $ (cd deps && ./download.sh)
-
-   In this case they will be installed together with your application.
-
 #. Create and move to a new directory where you will compile the code::
 
      $ mkdir mpi.build && cd mpi.build
@@ -59,7 +45,7 @@ Custom CMake options
 
 The compilation of ``mpi`` can be configured using CMake-options::
 
-    cmake ../mpi.src -DOPTION1=value1 -DOPTION2=value2 ... ../mpi.src
+    cmake ../mpi.src -DOPTION1=value1 -DOPTION2=value2 ...
 
 +-----------------------------------------------------------------+-----------------------------------------------+
 | Options                                                         | Syntax                                        |

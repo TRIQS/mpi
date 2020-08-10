@@ -76,10 +76,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Global compiler options
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
-add_compile_options(
-  $<$<CONFIG:Debug>:-Og>
-  $<$<CONFIG:Debug>:-ggdb3>
-)
+add_compile_options($<$<CONFIG:Debug>:-ggdb3>)
 
 # Create an Interface target for compiler warnings
 add_library(${PROJECT_NAME}_warnings INTERFACE)
@@ -89,6 +86,7 @@ target_compile_options(${PROJECT_NAME}_warnings
     -Wextra
     -Wpedantic
     -Wno-sign-compare
+    -Wno-deprecated-comma-subscript
     $<$<CXX_COMPILER_ID:GNU>:-Wshadow=local>
     $<$<CXX_COMPILER_ID:GNU>:-Wno-attributes>
     $<$<CXX_COMPILER_ID:Clang>:-Wshadow>
@@ -96,6 +94,25 @@ target_compile_options(${PROJECT_NAME}_warnings
     $<$<CXX_COMPILER_ID:AppleClang>:-Wshadow>
     $<$<CXX_COMPILER_ID:AppleClang>:-Wno-gcc-compat>
 )
+
+# ---------------------------------
+# Resolve Clang Linktime Problems
+# CMake will adjust any linker flags from '-L path_to/mylib.so' to -lmylib
+# if the proper mylib.so is automatically found by the linker, i.e.
+# the directory comes first in LIBRARY_PATH.
+# The clang linker however ignores LIBRARY_PATH.
+# We thus explicitly add the content of LIBRARY_PATH to the LDFLAGS
+# FIXME For future cmake versions we should populate the
+# INTERFACE_LINK_DIRECTORIES of the triqs target
+# ---------------------------------
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND DEFINED ENV{LIBRARY_PATH})
+  string(REPLACE ":" ";" LINK_DIRS $ENV{LIBRARY_PATH})
+  foreach(dir ${LINK_DIRS})
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -L${dir}")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${dir}")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -L${dir}")
+  endforeach()
+endif()
 
 # #############
 # Build Project

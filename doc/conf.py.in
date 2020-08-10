@@ -3,7 +3,7 @@
 # documentation build configuration file
 
 import sys
-sys.path.insert(0, "@CMAKE_CURRENT_SOURCE_DIR@/sphinxext/autorun")
+sys.path.insert(0, "@CMAKE_CURRENT_SOURCE_DIR@/sphinxext")
 sys.path.insert(0, "@CMAKE_CURRENT_SOURCE_DIR@/sphinxext/numpydoc")
 
 extensions = ['sphinx.ext.autodoc',
@@ -14,8 +14,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.autosummary',
               'sphinx.ext.githubpages',
+              'sphinx_autorun',
               'matplotlib.sphinxext.plot_directive',
-              'autorun',
               'numpydoc']
 
 source_suffix = '.rst'
@@ -25,7 +25,7 @@ version = '@PROJECT_VERSION@'
 
 copyright = '2017-2018 O. Parcollet 2019-2020 The Simons Foundation, authors: N. Wentzell, O. Parcollet'
 
-mathjax_path = "https://raw.githubusercontent.com/mathjax/MathJax/2.7.8/MathJax.js"
+mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=default"
 templates_path = ['@CMAKE_CURRENT_SOURCE_DIR@/_templates']
 
 html_theme = 'triqs'
@@ -42,4 +42,4 @@ html_sidebars = {'index': ['sideb.html', 'searchbox.html']}
 
 htmlhelp_basename = '@PROJECT_NAME@doc'
 
-intersphinx_mapping = {'python': ('http://docs.python.org/2.7', None)}
+intersphinx_mapping = {'python': ('https://docs.python.org/3.8', None)}

@@ -1,3 +1,5 @@
+[![build](https://github.com/TRIQS/mpi/workflows/build/badge.svg?branch=notriqs)](https://github.com/TRIQS/mpi/actions?query=workflow%3Abuild)
+
 # mpi
 
 mpi is a high-level C++ interface to the [Message Passing Interface](https://en.wikipedia.org/wiki/Message_Passing_Interface).
