@@ -7,11 +7,20 @@ endforeach()
 # List of all tests
 file(GLOB_RECURSE all_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
+# ========= OpenMP Dependency ==========
+
+find_package(OpenMP REQUIRED COMPONENTS CXX)
+add_library(openmp INTERFACE)
+target_compile_options(openmp INTERFACE ${OpenMP_CXX_FLAGS})
+target_link_libraries(openmp INTERFACE ${OpenMP_CXX_FLAGS})
+
+# ==========================================
+
 foreach(test ${all_tests})
   get_filename_component(test_name ${test} NAME_WE)
   get_filename_component(test_dir ${test} DIRECTORY)
   add_executable(${test_name} ${test})
-  target_link_libraries(${test_name} ${PROJECT_NAME}::${PROJECT_NAME}_c ${PROJECT_NAME}_warnings gtest_main)
+  target_link_libraries(${test_name} ${PROJECT_NAME}::${PROJECT_NAME}_c openmp ${PROJECT_NAME}_warnings gtest_main)
   set_property(TARGET ${test_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   add_test(NAME ${test_name}_np2 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ${test_name} ${MPIEXEC_POSTFLAGS} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
   add_test(NAME ${test_name}_np4 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ${test_name} ${MPIEXEC_POSTFLAGS} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dir})
