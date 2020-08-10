@@ -1,4 +1,4 @@
-[![build](https://github.com/TRIQS/mpi/workflows/build/badge.svg?branch=notriqs)](https://github.com/TRIQS/mpi/actions?query=workflow%3Abuild)
+[![build](https://github.com/TRIQS/mpi/workflows/build/badge.svg?branch=unstable)](https://github.com/TRIQS/mpi/actions?query=workflow%3Abuild)
 
 # mpi
 
