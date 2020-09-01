@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #pragma once
-#include "./mpi.hpp"
+#include "mpi.hpp"
 #include <string>
 
 namespace mpi {
