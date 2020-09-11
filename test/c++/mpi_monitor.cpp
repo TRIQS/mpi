@@ -24,6 +24,7 @@ bool test(mpi::communicator c, int fastest_node, int rank_failing, int iteration
     if ((c.rank() == rank_failing) and (i >= iteration_failure)) {
       std::cerr << "Node " << c.rank() << " is failing" << std::endl;
       M.request_emergency_stop();
+      M.request_emergency_stop(); // 2nd call should not do anything
     }
     if (i == N - 1) { std::cerr << "Node " << c.rank() << " done all tasks" << std::endl; }
   }

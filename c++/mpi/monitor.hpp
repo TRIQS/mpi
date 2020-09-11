@@ -76,6 +76,7 @@ namespace mpi {
     /// It the local node is the root, it sends the global bcast to all nodes to order them to stop
     void request_emergency_stop() {
       EXPECTS(!finalized);
+      if (local_stop) { return; } // prevent sending signal multiple times 
       local_stop = 1;
       if (com.rank() == 0) { // root
         global_stop = 1;
