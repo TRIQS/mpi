@@ -30,9 +30,9 @@ namespace mpi {
    *
    *   on a node when failure occurs : request_emergency_stop.
    *
-   *   on all nodes : should_stop -> bool tells where a node a requested an emergency stop
+   *   on all nodes : emergency_occured -> bool tells where a node a requested an emergency stop
    *
-   *   finalize() cleans the monitor object and returns a bool : true iif computation finished normally (no emergency stop). 
+   *   finalize_communications() cleans the monitor object and returns a bool : true iif computation finished normally (no emergency stop).
    */
   class monitor {
 
@@ -71,7 +71,7 @@ namespace mpi {
     monitor(monitor const &) = delete;
     monitor &operator=(monitor const &) = delete;
 
-    ~monitor() { finalize(); }
+    ~monitor() { finalize_communications(); }
 
     /// Request an emergency stop of all nodes contained in the mpi communicator.
     /// It send the message to the root.
@@ -89,8 +89,8 @@ namespace mpi {
     }
 
     /// Any node: should the calculation should be stopped?
-    [[nodiscard]] bool should_stop() {
-      EXPECTS(!finalized);
+    [[nodiscard]] bool emergency_occured() {
+      if (finalized) return global_stop;
       if (global_stop or local_stop) return true;
       if (com.rank() == 0) { // root test whether other nodes have emergency stop and communicates signal
         root_check_nodes_and_bcast();
@@ -106,9 +106,8 @@ namespace mpi {
     /// Finalize the monitor.
     /// At end of this functions, all nodes have completed their work, or have had an emergency stop.
     /// The global_stop result is guaranteed to be the same on all nodes.
-    bool finalize() {
-      if (finalized) return not global_stop;
-      EXPECTS_WITH_MESSAGE(not finalized, "Logic error : mpi::monitor::finalize can only be called once.");
+    void finalize_communications() {
+      if (finalized) return;
       if (com.rank() == 0) {
         // the root is done computing, it just listens to the other nodes and bcast the global_stop until everyone is done.
         while (root_check_nodes_and_bcast()) { usleep(100); } // 100 us (micro seconds)
@@ -124,7 +123,6 @@ namespace mpi {
       MPI_Status status;
       MPI_Wait(&req_ibcast, &status);
       finalized = true;
-      return not global_stop;
     }
 
     private:

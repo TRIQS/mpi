@@ -17,7 +17,7 @@ bool test(mpi::communicator c, int fastest_node, std::vector<int> rank_failing, 
 
   mpi::monitor M{c};
 
-  for (int i = 0; (!M.should_stop()) and (i < N); ++i) {
+  for (int i = 0; (!M.emergency_occured()) and (i < N); ++i) {
     usleep(sleeptime);
 
     std::cerr << "N=" << c.rank() << " i=" << i << std::endl;
@@ -30,9 +30,9 @@ bool test(mpi::communicator c, int fastest_node, std::vector<int> rank_failing, 
     if (i == N - 1) { std::cerr << "Node " << c.rank() << " done all tasks" << std::endl; }
   }
 
-  bool success = M.finalize();
+  M.finalize_communications();
   std::cerr << "Ending on node " << c.rank() << std::endl;
-  return success;
+  return not M.emergency_occured();
 }
 
 // ------------------------
