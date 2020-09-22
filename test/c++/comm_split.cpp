@@ -22,6 +22,9 @@ TEST(Comm, split) {
   communicator world;
   int rank = world.rank();
 
+  // Skip test if only one rank in communicator
+  if (world.size() == 1) return;
+
   ASSERT_TRUE(2 == world.size() or 4 == world.size());
 
   int colors[] = {0, 2, 1, 1};

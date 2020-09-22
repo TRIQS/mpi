@@ -73,6 +73,8 @@ namespace mpi {
       return c;
     }
 
+    void abort(int error_code) { MPI_Abort(_com, error_code); }
+
 #ifdef BOOST_MPI_HPP
     // Conversion to and from boost communicator, Keep for backward compatibility
     inline operator boost::mpi::communicator() const { return boost::mpi::communicator(_com, boost::mpi::comm_duplicate); }
