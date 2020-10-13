@@ -178,7 +178,7 @@ namespace mpi {
   D(long long, MPI_LONG_LONG);
   D(double, MPI_DOUBLE);
   D(float, MPI_FLOAT);
-  D(std::complex<double>, MPI_DOUBLE_COMPLEX);
+  D(std::complex<double>, MPI_CXX_DOUBLE_COMPLEX);
   D(unsigned long, MPI_UNSIGNED_LONG);
   D(unsigned int, MPI_UNSIGNED);
   D(unsigned long long, MPI_UNSIGNED_LONG_LONG);
