@@ -64,6 +64,16 @@ namespace mpi {
   template <typename T>
   std::vector<regular_t<T>> mpi_reduce(std::vector<T> const &a, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     size_t s = a.size();
+
+    // For all==true, guarantee that all vectors are of the same size
+    if (all) {
+      auto max_size = mpi_reduce(s, c, root, all, MPI_MAX);
+      if (s != max_size) {
+        std::cerr << "Cannot all_reduce vectors of different sizes\n";
+        std::abort();
+      }
+    }
+
     if (s == 0) return {}; // nothing to do, and MPI does not like size 0
     if constexpr (has_mpi_type<T>) {
       static_assert(std::is_same_v<regular_t<T>, T>, "Internal error");
