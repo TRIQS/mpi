@@ -135,26 +135,26 @@ namespace mpi {
     return mpi_gather(std::forward<T>(x), c, root, all);
   }
   template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, int root = 0, MPI_Op op = MPI_SUM) {
-    return reduce(std::forward<T>(x), c, root, true, op);
+  [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
+    return reduce(std::forward<T>(x), c, 0, true, op);
   }
   template <typename T>
-  [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, int root = 0, MPI_Op op = MPI_SUM) {
-    return reduce_in_place(std::forward<T>(x), c, root, true, op);
+  [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
+    return reduce_in_place(std::forward<T>(x), c, 0, true, op);
   }
   template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}, int root = 0) {
-    return gather(std::forward<T>(x), c, root, true);
+  [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
+    return gather(std::forward<T>(x), c, 0, true);
   }
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_reduce is deprecated, please use mpi::all_reduce instead")]] inline decltype(auto)
-  mpi_all_reduce(T &&x, communicator c = {}, int root = 0, MPI_Op op = MPI_SUM) {
-    return reduce(std::forward<T>(x), c, root, true, op);
+  mpi_all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
+    return reduce(std::forward<T>(x), c, 0, true, op);
   }
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_gather is deprecated, please use mpi::all_gather instead")]] inline decltype(auto)
-  mpi_all_gather(T &&x, communicator c = {}, int root = 0) {
-    return gather(std::forward<T>(x), c, root, true);
+  mpi_all_gather(T &&x, communicator c = {}) {
+    return gather(std::forward<T>(x), c, 0, true);
   }
 
   /* -----------------------------------------------------------
