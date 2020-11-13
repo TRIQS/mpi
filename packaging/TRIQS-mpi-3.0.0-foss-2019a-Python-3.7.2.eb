@@ -40,9 +40,8 @@ separate_build_dir = True
 runtest = 'test'
 
 sanity_check_paths = {
-    'files': ['lib/libmpi_c.%s' % SHLIB_EXT],
-    'dirs': ['include/mpi', 'lib', 'share',
-             'lib/python%(pyshortver)s/site-packages/mpi'],
+    'files': ['include/mpi/mpi.hpp'],
+    'dirs': ['include/mpi', 'lib', 'share'],
 }
 
 sanity_check_commands = ["python -c 'import mpi'"]
