@@ -43,37 +43,70 @@ namespace mpi {
   };
 
   // ------------------------------------------------------------
+  
+  /// MPI env state variable
+  enum class MPI_ENV {
+      Unchecked,
+      False,
+      True
+  };
+
+  inline MPI_ENV check_mpi_env() {
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
+      return MPI_ENV::True;
+    else
+      return MPI_ENV::False;
+  }
 
   /// The communicator. Todo : add more constructors.
   class communicator {
     MPI_Comm _com = MPI_COMM_WORLD;
+    
+    inline static MPI_ENV _mpi_env = MPI_ENV::Unchecked;
 
     public:
-    communicator() = default;
+    communicator() {
+      if (_mpi_env == MPI_ENV::Unchecked) {
+        _mpi_env = check_mpi_env();
+        //std::cout << "MPI environment (1: False / 2: True):" << int(_mpi_env) << "\n";
+      }
+    }
 
     communicator(MPI_Comm c) : _com(c) {}
 
     [[nodiscard]] MPI_Comm get() const noexcept { return _com; }
 
     [[nodiscard]] int rank() const {
-      int num;
-      MPI_Comm_rank(_com, &num);
-      return num;
+      if (_mpi_env == MPI_ENV::True) {
+        int num;
+        MPI_Comm_rank(_com, &num);
+        return num;
+      } else
+        return 0;
     }
 
     [[nodiscard]] int size() const {
-      int num;
-      MPI_Comm_size(_com, &num);
-      return num;
-    }
+      if (_mpi_env == MPI_ENV::True) {
+        int num;
+        MPI_Comm_size(_com, &num);
+        return num;
+      } else
+        return 1;
+    }  
 
     [[nodiscard]] communicator split(int color, int key = 0) const {
-      communicator c;
-      MPI_Comm_split(_com, color, key, &c._com);
-      return c;
+      if (_mpi_env == MPI_ENV::True) {
+          communicator c;
+          MPI_Comm_split(_com, color, key, &c._com);
+          return c;
+      } else
+//TODO split should not be done without MPI? 
+          return 0;
     }
 
-    void abort(int error_code) { MPI_Abort(_com, error_code); }
+    void abort(int error_code) {
+      if (_mpi_env == MPI_ENV::True) { MPI_Abort(_com, error_code); }
+    }
 
 #ifdef BOOST_MPI_HPP
     // Conversion to and from boost communicator, Keep for backward compatibility
@@ -81,7 +114,9 @@ namespace mpi {
     inline communicator(boost::mpi::communicator c) : _com(c) {}
 #endif
 
-    void barrier() const { MPI_Barrier(_com); }
+    void barrier() const {
+      if (_mpi_env == MPI_ENV::True) { MPI_Barrier(_com); }
+    }
   };
 
   // ----------------------------------------
@@ -116,45 +151,78 @@ namespace mpi {
 
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) broadcast(T &&x, communicator c = {}, int root = 0) {
-    return mpi_broadcast(std::forward<T>(x), c, root);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+      return mpi_broadcast(std::forward<T>(x), c, root);
+    } else
+      return decltype(mpi_broadcast(std::forward<T>(x), c, root))(std::forward<T>(x));
   }
+  
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    return mpi_reduce(std::forward<T>(x), c, root, all, op);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+        return mpi_reduce(std::forward<T>(x), c, root, all, op);
+    } else
+      return decltype(mpi_reduce(std::forward<T>(x), c, root, all, op))(std::forward<T>(x));
   }
+  
   template <typename T>
   [[gnu::always_inline]] inline void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    return mpi_reduce_in_place(std::forward<T>(x), c, root, all, op);
+    if (mpi::check_mpi_env() == MPI_ENV::True) { return mpi_reduce_in_place(std::forward<T>(x), c, root, all, op); }
   }
+  
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
-    return mpi_scatter(std::forward<T>(x), c, root);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+        return mpi_scatter(std::forward<T>(x), c, root);
+    } else
+      return decltype(mpi_scatter(std::forward<T>(x), c, root))(std::forward<T>(x));
   }
+  
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
-    return mpi_gather(std::forward<T>(x), c, root, all);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+      return mpi_gather(std::forward<T>(x), c, root, all);
+    } else
+      return decltype(mpi_gather(std::forward<T>(x), c, root, all))(std::forward<T>(x));
   }
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    return reduce(std::forward<T>(x), c, 0, true, op);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+      return reduce(std::forward<T>(x), c, 0, true, op);
+    } else
+      return decltype(reduce(std::forward<T>(x), c, 0, true, op))(std::forward<T>(x));
   }
+
   template <typename T>
   [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    return reduce_in_place(std::forward<T>(x), c, 0, true, op);
+    if (mpi::check_mpi_env() == MPI_ENV::True) { return reduce_in_place(std::forward<T>(x), c, 0, true, op); }
   }
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
-    return gather(std::forward<T>(x), c, 0, true);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+      return gather(std::forward<T>(x), c, 0, true);
+    } else
+      return decltype(gather(std::forward<T>(x), c, 0, true))(std::forward<T>(x));
   }
+
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_reduce is deprecated, please use mpi::all_reduce instead")]] inline decltype(auto)
   mpi_all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    return reduce(std::forward<T>(x), c, 0, true, op);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+      return reduce(std::forward<T>(x), c, 0, true, op);
+    } else
+      return decltype(reduce(std::forward<T>(x), c, 0, true, op))(std::forward<T>(x));
   }
+
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_gather is deprecated, please use mpi::all_gather instead")]] inline decltype(auto)
   mpi_all_gather(T &&x, communicator c = {}) {
-    return gather(std::forward<T>(x), c, 0, true);
+    if (mpi::check_mpi_env() == MPI_ENV::True) {
+      return gather(std::forward<T>(x), c, 0, true);
+    } else
+      return decltype(gather(std::forward<T>(x), c, 0, true))(std::forward<T>(x));
   }
 
   /* -----------------------------------------------------------
@@ -330,11 +398,20 @@ namespace mpi {
       MPI_Allreduce(MPI_IN_PLACE, &a, 1, mpi_type<T>::get(), op, c.get());
   }
 
-#define MPI_TEST_MAIN                                                                                                                                \
-  int main(int argc, char **argv) {                                                                                                                  \
-    mpi::environment env(argc, argv);                                                                                                                \
-    ::testing::InitGoogleTest(&argc, argv);                                                                                                          \
-    return RUN_ALL_TESTS();                                                                                                                          \
-  }
+#define MPI_TEST_MAIN      \
+  int main(int argc, char **argv) {  \
+\
+    ::testing::InitGoogleTest(&argc, argv); \
+    if (mpi::check_mpi_env() == mpi::MPI_ENV::True) { \
+      mpi::environment env(argc, argv); \
+      std::cout << "MPI environment detected" \
+                << "\n";   \
+    return RUN_ALL_TESTS(); \
+    } \
+    else { \
+    return RUN_ALL_TESTS(); \
+    } \
+    \
+  } 
 
 } // namespace mpi
