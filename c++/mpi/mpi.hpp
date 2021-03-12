@@ -84,7 +84,9 @@ namespace mpi {
     void barrier() const { MPI_Barrier(_com); }
   };
 
-  // ------------------------------------------------------------
+  // ----------------------------------------
+  // ------- MPI Lazy Struct and Tags -------
+  // ----------------------------------------
 
   namespace tag {
     struct reduce {};
@@ -95,20 +97,18 @@ namespace mpi {
   // A small lazy tagged class
   template <typename Tag, typename T>
   struct lazy {
-    T const &rhs;
-    communicator c;
-    int root{};
-    bool all{};
-  };
-
-  template <typename T>
-  struct lazy<tag::reduce, T> {
-    T const &rhs;
+    T rhs;
     communicator c;
     int root{};
     bool all{};
     MPI_Op op{};
   };
+
+  template <typename T>
+  inline constexpr bool is_mpi_lazy = false;
+
+  template <typename Tag, typename T>
+  inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
 
   // ----------------------------------------
   // ------- general functions -------
