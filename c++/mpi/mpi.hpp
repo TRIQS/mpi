@@ -51,7 +51,6 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
-
   /// The communicator. Todo : add more constructors.
   class communicator {
     MPI_Comm _com = MPI_COMM_WORLD;
@@ -126,12 +125,6 @@ namespace mpi {
     MPI_Op op{};
   };
 
-  template <typename T>
-  inline constexpr bool is_mpi_lazy = false;
-
-  template <typename Tag, typename T>
-  inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
-
   // ----------------------------------------
   // ------- general functions -------
   // ----------------------------------------
@@ -143,6 +136,12 @@ namespace mpi {
   }
 
   namespace details {
+
+    template <typename T>
+    inline constexpr bool is_mpi_lazy = false;
+
+    template <typename Tag, typename T>
+    inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
 
     template <typename T>
     inline constexpr bool is_std_vector = false;
@@ -166,7 +165,7 @@ namespace mpi {
   [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     using r_t = decltype(mpi_reduce(std::forward<T>(x), c, root, all, op));
 
-    if constexpr (is_mpi_lazy<r_t>) {
+    if constexpr (details::is_mpi_lazy<r_t>) {
       return mpi_reduce(std::forward<T>(x), c, root, all, op);
     } else {
       if (has_env)
@@ -186,7 +185,7 @@ namespace mpi {
   [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
     using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
 
-    if constexpr (is_mpi_lazy<r_t>) {
+    if constexpr (details::is_mpi_lazy<r_t>) {
       return mpi_scatter(std::forward<T>(x), c, root);
     } else {
       if (has_env)
@@ -200,7 +199,7 @@ namespace mpi {
   [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
     using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
 
-    if constexpr (is_mpi_lazy<r_t>) {
+    if constexpr (details::is_mpi_lazy<r_t>) {
       return mpi_gather(std::forward<T>(x), c, root, all);
     } else {
       if (has_env)
