@@ -31,6 +31,13 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
+  static const bool has_env = []() {
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
+      return true;
+    else
+      return false;
+  }();
+
   /// Environment must be initialized in C++
   struct environment {
 
@@ -44,36 +51,20 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
-  /// MPI env state variable
-  enum class MPI_ENV { Unchecked, False, True };
-
-  inline MPI_ENV check_mpi_env() {
-    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
-      return MPI_ENV::True;
-    else
-      return MPI_ENV::False;
-  }
 
   /// The communicator. Todo : add more constructors.
   class communicator {
     MPI_Comm _com = MPI_COMM_WORLD;
 
-    inline static MPI_ENV _mpi_env = MPI_ENV::Unchecked;
-
     public:
-    communicator() {
-      if (_mpi_env == MPI_ENV::Unchecked) {
-        _mpi_env = check_mpi_env();
-        //std::cout << "MPI environment (1: False / 2: True):" << int(_mpi_env) << "\n";
-      }
-    }
+    communicator() = default;
 
     communicator(MPI_Comm c) : _com(c) {}
 
     [[nodiscard]] MPI_Comm get() const noexcept { return _com; }
 
     [[nodiscard]] int rank() const {
-      if (_mpi_env == MPI_ENV::True) {
+      if (has_env) {
         int num;
         MPI_Comm_rank(_com, &num);
         return num;
@@ -82,7 +73,7 @@ namespace mpi {
     }
 
     [[nodiscard]] int size() const {
-      if (_mpi_env == MPI_ENV::True) {
+      if (has_env) {
         int num;
         MPI_Comm_size(_com, &num);
         return num;
@@ -91,7 +82,7 @@ namespace mpi {
     }
 
     [[nodiscard]] communicator split(int color, int key = 0) const {
-      if (_mpi_env == MPI_ENV::True) {
+      if (has_env) {
         communicator c;
         MPI_Comm_split(_com, color, key, &c._com);
         return c;
@@ -101,7 +92,7 @@ namespace mpi {
     }
 
     void abort(int error_code) {
-      if (_mpi_env == MPI_ENV::True) { MPI_Abort(_com, error_code); }
+      if (has_env) { MPI_Abort(_com, error_code); }
     }
 
 #ifdef BOOST_MPI_HPP
@@ -111,7 +102,7 @@ namespace mpi {
 #endif
 
     void barrier() const {
-      if (_mpi_env == MPI_ENV::True) { MPI_Barrier(_com); }
+      if (has_env) { MPI_Barrier(_com); }
     }
   };
 
@@ -148,7 +139,7 @@ namespace mpi {
   template <typename T>
   [[gnu::always_inline]] inline void broadcast(T &x, communicator c = {}, int root = 0) {
     static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
-    if (mpi::check_mpi_env() == MPI_ENV::True) mpi_broadcast(x, c, root);
+    if (has_env) mpi_broadcast(x, c, root);
   }
 
   namespace details {
@@ -178,7 +169,7 @@ namespace mpi {
     if constexpr (is_mpi_lazy<r_t>) {
       return mpi_reduce(std::forward<T>(x), c, root, all, op);
     } else {
-      if (mpi::check_mpi_env() == MPI_ENV::True)
+      if (has_env)
         return mpi_reduce(std::forward<T>(x), c, root, all, op);
       else
         return details::convert<r_t>(std::forward<T>(x));
@@ -188,7 +179,7 @@ namespace mpi {
   template <typename T>
   [[gnu::always_inline]] inline void reduce_in_place(T &x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     static_assert(not std::is_const_v<T>, "In-place mpi functions cannot be called on const objects");
-    if (mpi::check_mpi_env() == MPI_ENV::True) mpi_reduce_in_place(x, c, root, all, op);
+    if (has_env) mpi_reduce_in_place(x, c, root, all, op);
   }
 
   template <typename T>
@@ -198,7 +189,7 @@ namespace mpi {
     if constexpr (is_mpi_lazy<r_t>) {
       return mpi_scatter(std::forward<T>(x), c, root);
     } else {
-      if (mpi::check_mpi_env() == MPI_ENV::True)
+      if (has_env)
         return mpi_scatter(std::forward<T>(x), c, root);
       else
         return details::convert<r_t>(std::forward<T>(x));
@@ -212,7 +203,7 @@ namespace mpi {
     if constexpr (is_mpi_lazy<r_t>) {
       return mpi_gather(std::forward<T>(x), c, root, all);
     } else {
-      if (mpi::check_mpi_env() == MPI_ENV::True)
+      if (has_env)
         return mpi_gather(std::forward<T>(x), c, root, all);
       else
         return details::convert<r_t>(std::forward<T>(x));
@@ -422,7 +413,7 @@ namespace mpi {
 #define MPI_TEST_MAIN                                                                                                                                \
   int main(int argc, char **argv) {                                                                                                                  \
     ::testing::InitGoogleTest(&argc, argv);                                                                                                          \
-    if (mpi::check_mpi_env() == mpi::MPI_ENV::True) {                                                                                                \
+    if (mpi::has_env) {                                                                                                                              \
       mpi::environment env(argc, argv);                                                                                                              \
       std::cout << "MPI environment detected\n";                                                                                                     \
       return RUN_ALL_TESTS();                                                                                                                        \
