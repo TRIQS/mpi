@@ -43,13 +43,9 @@ namespace mpi {
   };
 
   // ------------------------------------------------------------
-  
+
   /// MPI env state variable
-  enum class MPI_ENV {
-      Unchecked,
-      False,
-      True
-  };
+  enum class MPI_ENV { Unchecked, False, True };
 
   inline MPI_ENV check_mpi_env() {
     if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
@@ -61,7 +57,7 @@ namespace mpi {
   /// The communicator. Todo : add more constructors.
   class communicator {
     MPI_Comm _com = MPI_COMM_WORLD;
-    
+
     inline static MPI_ENV _mpi_env = MPI_ENV::Unchecked;
 
     public:
@@ -92,16 +88,16 @@ namespace mpi {
         return num;
       } else
         return 1;
-    }  
+    }
 
     [[nodiscard]] communicator split(int color, int key = 0) const {
       if (_mpi_env == MPI_ENV::True) {
-          communicator c;
-          MPI_Comm_split(_com, color, key, &c._com);
-          return c;
+        communicator c;
+        MPI_Comm_split(_com, color, key, &c._com);
+        return c;
       } else
-//TODO split should not be done without MPI? 
-          return 0;
+        //TODO split should not be done without MPI?
+        return 0;
     }
 
     void abort(int error_code) {
@@ -164,12 +160,12 @@ namespace mpi {
     } else
       return decltype(mpi_reduce(std::forward<T>(x), c, root, all, op))(std::forward<T>(x));
   }
-  
+
   template <typename T>
   [[gnu::always_inline]] inline void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     if (mpi::check_mpi_env() == MPI_ENV::True) { return mpi_reduce_in_place(std::forward<T>(x), c, root, all, op); }
   }
-  
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
     if (mpi::check_mpi_env() == MPI_ENV::True) {
@@ -177,7 +173,7 @@ namespace mpi {
     } else
       return decltype(mpi_scatter(std::forward<T>(x), c, root))(std::forward<T>(x));
   }
-  
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
     if (mpi::check_mpi_env() == MPI_ENV::True) {
@@ -398,20 +394,15 @@ namespace mpi {
       MPI_Allreduce(MPI_IN_PLACE, &a, 1, mpi_type<T>::get(), op, c.get());
   }
 
-#define MPI_TEST_MAIN      \
-  int main(int argc, char **argv) {  \
-\
-    ::testing::InitGoogleTest(&argc, argv); \
-    if (mpi::check_mpi_env() == mpi::MPI_ENV::True) { \
-      mpi::environment env(argc, argv); \
-      std::cout << "MPI environment detected" \
-                << "\n";   \
-    return RUN_ALL_TESTS(); \
-    } \
-    else { \
-    return RUN_ALL_TESTS(); \
-    } \
-    \
-  } 
+#define MPI_TEST_MAIN                                                                                                                                \
+  int main(int argc, char **argv) {                                                                                                                  \
+    ::testing::InitGoogleTest(&argc, argv);                                                                                                          \
+    if (mpi::check_mpi_env() == mpi::MPI_ENV::True) {                                                                                                \
+      mpi::environment env(argc, argv);                                                                                                              \
+      std::cout << "MPI environment detected\n";                                                                                                     \
+      return RUN_ALL_TESTS();                                                                                                                        \
+    } else                                                                                                                                           \
+      return RUN_ALL_TESTS();                                                                                                                        \
+  }
 
 } // namespace mpi
