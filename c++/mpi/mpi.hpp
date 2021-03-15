@@ -157,10 +157,10 @@ namespace mpi {
       if constexpr (is_std_vector<T>) {
         T res;
         res.reserve(v.size());
-        for (auto &x : v) res.emplace_back(std::move(x));
+        for (auto &x : v) res.emplace_back(convert<typename T::value_type>(std::move(x)));
         return res;
       } else
-        return std::move(v);
+        return T{std::move(v)};
     }
   } // namespace details
 
