@@ -146,79 +146,104 @@ namespace mpi {
   // ----------------------------------------
 
   template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) broadcast(T &&x, communicator c = {}, int root = 0) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
-      return mpi_broadcast(std::forward<T>(x), c, root);
-    } else
-      return decltype(mpi_broadcast(std::forward<T>(x), c, root))(std::forward<T>(x));
+  [[gnu::always_inline]] inline void broadcast(T &x, communicator c = {}, int root = 0) {
+    static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
+    if (mpi::check_mpi_env() == MPI_ENV::True) mpi_broadcast(x, c, root);
   }
-  
+
+  namespace details {
+
+    template <typename T>
+    inline constexpr bool is_std_vector = false;
+
+    template <typename T>
+    inline constexpr bool is_std_vector<std::vector<T>> = true;
+
+    template <typename T, typename V>
+    T convert(V v) {
+      if constexpr (is_std_vector<T>) {
+        T res;
+        res.reserve(v.size());
+        for (auto &x : v) res.emplace_back(std::move(x));
+        return res;
+      } else
+        return std::move(v);
+    }
+  } // namespace details
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
+    using r_t = decltype(mpi_reduce(std::forward<T>(x), c, root, all, op));
+
+    if constexpr (is_mpi_lazy<r_t>) {
+      return mpi_reduce(std::forward<T>(x), c, root, all, op);
+    } else {
+      if (mpi::check_mpi_env() == MPI_ENV::True)
         return mpi_reduce(std::forward<T>(x), c, root, all, op);
-    } else
-      return decltype(mpi_reduce(std::forward<T>(x), c, root, all, op))(std::forward<T>(x));
+      else
+        return details::convert<r_t>(std::forward<T>(x));
+    }
   }
 
   template <typename T>
-  [[gnu::always_inline]] inline void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) { return mpi_reduce_in_place(std::forward<T>(x), c, root, all, op); }
+  [[gnu::always_inline]] inline void reduce_in_place(T &x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+    static_assert(not std::is_const_v<T>, "In-place mpi functions cannot be called on const objects");
+    if (mpi::check_mpi_env() == MPI_ENV::True) mpi_reduce_in_place(x, c, root, all, op);
   }
 
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
+    using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
+
+    if constexpr (is_mpi_lazy<r_t>) {
+      return mpi_scatter(std::forward<T>(x), c, root);
+    } else {
+      if (mpi::check_mpi_env() == MPI_ENV::True)
         return mpi_scatter(std::forward<T>(x), c, root);
-    } else
-      return decltype(mpi_scatter(std::forward<T>(x), c, root))(std::forward<T>(x));
+      else
+        return details::convert<r_t>(std::forward<T>(x));
+    }
   }
 
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
+    using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
+
+    if constexpr (is_mpi_lazy<r_t>) {
       return mpi_gather(std::forward<T>(x), c, root, all);
-    } else
-      return decltype(mpi_gather(std::forward<T>(x), c, root, all))(std::forward<T>(x));
+    } else {
+      if (mpi::check_mpi_env() == MPI_ENV::True)
+        return mpi_gather(std::forward<T>(x), c, root, all);
+      else
+        return details::convert<r_t>(std::forward<T>(x));
+    }
   }
 
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
-      return reduce(std::forward<T>(x), c, 0, true, op);
-    } else
-      return decltype(reduce(std::forward<T>(x), c, 0, true, op))(std::forward<T>(x));
+    return reduce(std::forward<T>(x), c, 0, true, op);
   }
 
   template <typename T>
   [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) { return reduce_in_place(std::forward<T>(x), c, 0, true, op); }
+    reduce_in_place(std::forward<T>(x), c, 0, true, op);
   }
 
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
-      return gather(std::forward<T>(x), c, 0, true);
-    } else
-      return decltype(gather(std::forward<T>(x), c, 0, true))(std::forward<T>(x));
+    return gather(std::forward<T>(x), c, 0, true);
   }
 
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_reduce is deprecated, please use mpi::all_reduce instead")]] inline decltype(auto)
   mpi_all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
-      return reduce(std::forward<T>(x), c, 0, true, op);
-    } else
-      return decltype(reduce(std::forward<T>(x), c, 0, true, op))(std::forward<T>(x));
+    return reduce(std::forward<T>(x), c, 0, true, op);
   }
 
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_gather is deprecated, please use mpi::all_gather instead")]] inline decltype(auto)
   mpi_all_gather(T &&x, communicator c = {}) {
-    if (mpi::check_mpi_env() == MPI_ENV::True) {
-      return gather(std::forward<T>(x), c, 0, true);
-    } else
-      return decltype(gather(std::forward<T>(x), c, 0, true))(std::forward<T>(x));
+    return gather(std::forward<T>(x), c, 0, true);
   }
 
   /* -----------------------------------------------------------
