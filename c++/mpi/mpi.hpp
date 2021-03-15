@@ -91,7 +91,10 @@ namespace mpi {
     }
 
     void abort(int error_code) {
-      if (has_env) { MPI_Abort(_com, error_code); }
+      if (has_env)
+        MPI_Abort(_com, error_code);
+      else
+        std::abort();
     }
 
 #ifdef BOOST_MPI_HPP
