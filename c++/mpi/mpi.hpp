@@ -31,6 +31,10 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
+  /* helper function to check for MPI runtime environment
+   * covers at the moment OpenMPI, MPICH, and intelmpi
+   * as cray uses MPICH under the hood it should work as well 
+   */
   static const bool has_env = []() {
     if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
       return true;
@@ -191,6 +195,7 @@ namespace mpi {
     if constexpr (details::is_mpi_lazy<r_t>) {
       return mpi_scatter(std::forward<T>(x), c, root);
     } else {
+      // if it does not have a mpi lazy type, check manually if triqs is run with MPI
       if (has_env)
         return mpi_scatter(std::forward<T>(x), c, root);
       else
@@ -205,6 +210,7 @@ namespace mpi {
     if constexpr (details::is_mpi_lazy<r_t>) {
       return mpi_gather(std::forward<T>(x), c, root, all);
     } else {
+      // if it does not have a mpi lazy type, check manually if triqs is run with MPI
       if (has_env)
         return mpi_gather(std::forward<T>(x), c, root, all);
       else
