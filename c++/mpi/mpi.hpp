@@ -31,6 +31,17 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
+  /* helper function to check for MPI runtime environment
+   * covers at the moment OpenMPI, MPICH, and intelmpi
+   * as cray uses MPICH under the hood it should work as well 
+   */
+  static const bool has_env = []() {
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
+      return true;
+    else
+      return false;
+  }();
+
   /// Environment must be initialized in C++
   struct environment {
 
@@ -56,24 +67,39 @@ namespace mpi {
     [[nodiscard]] MPI_Comm get() const noexcept { return _com; }
 
     [[nodiscard]] int rank() const {
-      int num;
-      MPI_Comm_rank(_com, &num);
-      return num;
+      if (has_env) {
+        int num;
+        MPI_Comm_rank(_com, &num);
+        return num;
+      } else
+        return 0;
     }
 
     [[nodiscard]] int size() const {
-      int num;
-      MPI_Comm_size(_com, &num);
-      return num;
+      if (has_env) {
+        int num;
+        MPI_Comm_size(_com, &num);
+        return num;
+      } else
+        return 1;
     }
 
     [[nodiscard]] communicator split(int color, int key = 0) const {
-      communicator c;
-      MPI_Comm_split(_com, color, key, &c._com);
-      return c;
+      if (has_env) {
+        communicator c;
+        MPI_Comm_split(_com, color, key, &c._com);
+        return c;
+      } else
+        //TODO split should not be done without MPI?
+        return 0;
     }
 
-    void abort(int error_code) { MPI_Abort(_com, error_code); }
+    void abort(int error_code) {
+      if (has_env)
+        MPI_Abort(_com, error_code);
+      else
+        std::abort();
+    }
 
 #ifdef BOOST_MPI_HPP
     // Conversion to and from boost communicator, Keep for backward compatibility
@@ -81,7 +107,9 @@ namespace mpi {
     inline communicator(boost::mpi::communicator c) : _com(c) {}
 #endif
 
-    void barrier() const { MPI_Barrier(_com); }
+    void barrier() const {
+      if (has_env) { MPI_Barrier(_com); }
+    }
   };
 
   // ----------------------------------------
@@ -104,53 +132,113 @@ namespace mpi {
     MPI_Op op{};
   };
 
-  template <typename T>
-  inline constexpr bool is_mpi_lazy = false;
-
-  template <typename Tag, typename T>
-  inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
-
   // ----------------------------------------
   // ------- general functions -------
   // ----------------------------------------
 
   template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) broadcast(T &&x, communicator c = {}, int root = 0) {
-    return mpi_broadcast(std::forward<T>(x), c, root);
+  [[gnu::always_inline]] inline void broadcast(T &x, communicator c = {}, int root = 0) {
+    static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
+    if (has_env) mpi_broadcast(x, c, root);
   }
+
+  namespace details {
+
+    template <typename T>
+    inline constexpr bool is_mpi_lazy = false;
+
+    template <typename Tag, typename T>
+    inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
+
+    template <typename T>
+    inline constexpr bool is_std_vector = false;
+
+    template <typename T>
+    inline constexpr bool is_std_vector<std::vector<T>> = true;
+
+    template <typename T, typename V>
+    T convert(V v) {
+      if constexpr (is_std_vector<T>) {
+        T res;
+        res.reserve(v.size());
+        for (auto &x : v) res.emplace_back(convert<typename T::value_type>(std::move(x)));
+        return res;
+      } else
+        return T{std::move(v)};
+    }
+  } // namespace details
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    return mpi_reduce(std::forward<T>(x), c, root, all, op);
+    using r_t = decltype(mpi_reduce(std::forward<T>(x), c, root, all, op));
+
+    if constexpr (details::is_mpi_lazy<r_t>) {
+      return mpi_reduce(std::forward<T>(x), c, root, all, op);
+    } else {
+      if (has_env)
+        return mpi_reduce(std::forward<T>(x), c, root, all, op);
+      else
+        return details::convert<r_t>(std::forward<T>(x));
+    }
   }
+
   template <typename T>
-  [[gnu::always_inline]] inline void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    return mpi_reduce_in_place(std::forward<T>(x), c, root, all, op);
+  [[gnu::always_inline]] inline void reduce_in_place(T &x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+    static_assert(not std::is_const_v<T>, "In-place mpi functions cannot be called on const objects");
+    if (has_env) mpi_reduce_in_place(x, c, root, all, op);
   }
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
-    return mpi_scatter(std::forward<T>(x), c, root);
+    using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
+
+    if constexpr (details::is_mpi_lazy<r_t>) {
+      return mpi_scatter(std::forward<T>(x), c, root);
+    } else {
+      // if it does not have a mpi lazy type, check manually if triqs is run with MPI
+      if (has_env)
+        return mpi_scatter(std::forward<T>(x), c, root);
+      else
+        return details::convert<r_t>(std::forward<T>(x));
+    }
   }
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
-    return mpi_gather(std::forward<T>(x), c, root, all);
+    using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
+
+    if constexpr (details::is_mpi_lazy<r_t>) {
+      return mpi_gather(std::forward<T>(x), c, root, all);
+    } else {
+      // if it does not have a mpi lazy type, check manually if triqs is run with MPI
+      if (has_env)
+        return mpi_gather(std::forward<T>(x), c, root, all);
+      else
+        return details::convert<r_t>(std::forward<T>(x));
+    }
   }
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
     return reduce(std::forward<T>(x), c, 0, true, op);
   }
+
   template <typename T>
   [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    return reduce_in_place(std::forward<T>(x), c, 0, true, op);
+    reduce_in_place(std::forward<T>(x), c, 0, true, op);
   }
+
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
     return gather(std::forward<T>(x), c, 0, true);
   }
+
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_reduce is deprecated, please use mpi::all_reduce instead")]] inline decltype(auto)
   mpi_all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
     return reduce(std::forward<T>(x), c, 0, true, op);
   }
+
   template <typename T>
   [[gnu::always_inline]] [[deprecated("mpi_all_gather is deprecated, please use mpi::all_gather instead")]] inline decltype(auto)
   mpi_all_gather(T &&x, communicator c = {}) {
@@ -332,9 +420,13 @@ namespace mpi {
 
 #define MPI_TEST_MAIN                                                                                                                                \
   int main(int argc, char **argv) {                                                                                                                  \
-    mpi::environment env(argc, argv);                                                                                                                \
     ::testing::InitGoogleTest(&argc, argv);                                                                                                          \
-    return RUN_ALL_TESTS();                                                                                                                          \
+    if (mpi::has_env) {                                                                                                                              \
+      mpi::environment env(argc, argv);                                                                                                              \
+      std::cout << "MPI environment detected\n";                                                                                                     \
+      return RUN_ALL_TESTS();                                                                                                                        \
+    } else                                                                                                                                           \
+      return RUN_ALL_TESTS();                                                                                                                        \
   }
 
 } // namespace mpi
