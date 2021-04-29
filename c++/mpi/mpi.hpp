@@ -20,6 +20,7 @@
 #include <complex>
 #include <type_traits>
 #include <algorithm>
+#include <unistd.h>
 
 namespace mpi {
 
@@ -107,8 +108,31 @@ namespace mpi {
     inline communicator(boost::mpi::communicator c) : _com(c) {}
 #endif
 
-    void barrier() const {
-      if (has_env) { MPI_Barrier(_com); }
+    // Default barrier is implemented as a poll barrier, which only checks each msec's if
+    // all ranks reached the barrier by using a non blocking MPI_Ibarrier combined with MPI_Test.
+    // The default of 1 msec reduces CPU load considerably:
+    // 1 msec ~ 1% cpu load
+    // 10 msec ~ 0.5% cpu load
+    // 100 msec ~ 0.01% cpu load
+    // For very unbalanced load that takes long times to finish, 1000msec is a good choice.
+    // If poll_msec==0 the classic MPI_Barrier will be called.
+    void barrier(long poll_msec = 1) {
+      if (has_env) {
+        if (poll_msec == 0) {
+          MPI_Barrier(_com);
+        } else {
+          MPI_Request req;
+          int flag;
+          // non blocking barrier to check which rank is here
+          MPI_Ibarrier(_com, &req);
+          // check each poll_msec via MPI_Test if all ranks reached the barrier
+          do {
+            MPI_Test(&req, &flag, MPI_STATUS_IGNORE);
+            // convert to millisec
+            usleep(poll_msec * 1000);
+          } while (!flag);
+        }
+      }
     }
   };
 
