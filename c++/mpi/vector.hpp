@@ -97,66 +97,62 @@ namespace mpi {
   template <typename T>
   std::vector<T> mpi_scatter(std::vector<T> const &a, communicator c = {}, int root = 0) {
 
+    auto slow_size  = a.size();
+    auto sendcounts = std::vector<int>(c.size());
+    auto displs     = std::vector<int>(c.size() + 1, 0);
+    int recvcount   = chunk_length(slow_size, c.size(), c.rank());
+    std::vector<T> b(recvcount);
+
+    for (int r = 0; r < c.size(); ++r) {
+      sendcounts[r] = chunk_length(slow_size, c.size(), r);
+      displs[r + 1] = sendcounts[r] + displs[r];
+    }
+
     if constexpr (has_mpi_type<T>) {
-      auto slow_size  = a.size();
-      auto sendcounts = std::vector<int>(c.size());
-      auto displs     = std::vector<int>(c.size() + 1, 0);
-      int recvcount   = chunk_length(slow_size, c.size(), c.rank());
-      std::vector<T> b(recvcount);
-
-      for (int r = 0; r < c.size(); ++r) {
-        sendcounts[r] = chunk_length(slow_size, c.size(), r);
-        displs[r + 1] = sendcounts[r] + displs[r];
-      }
-
       MPI_Scatterv((void *)a.data(), &sendcounts[0], &displs[0], mpi_type<T>::get(), (void *)b.data(), recvcount, mpi_type<T>::get(), root, c.get());
-      return b;
+    } else {
+      std::copy(cbegin(a) + displs[c.rank()], cbegin(a) + displs[c.rank() + 1], begin(b));
     }
 
-    // FIXME SHOULD WE KEEP THIS ? It is not a clear API. Probably a static assert would be better
-    else {
-      int s = a.size();
-      std::vector<T> lhs;
-      lhs.reserve(s);
-      for (auto i = 0; i < s; ++i) lhs.push_back(mpi_scatter(a[i], c, root));
-      return lhs;
-    }
+    return b;
   }
   // ---------------- gather  ---------------------
 
   template <typename T>
   std::vector<T> mpi_gather(std::vector<T> const &a, communicator c = {}, int root = 0, bool all = false) {
 
+    long size = mpi_reduce(a.size(), c, root, all);
+    std::vector<T> b((all || (c.rank() == root) ? size : 0));
+
+    auto recvcounts = std::vector<int>(c.size());
+    auto displs     = std::vector<int>(c.size() + 1, 0);
+    int sendcount   = a.size();
+    auto mpi_ty     = mpi_type<int>::get();
+    if (!all)
+      MPI_Gather(&sendcount, 1, mpi_ty, &recvcounts[0], 1, mpi_ty, root, c.get());
+    else
+      MPI_Allgather(&sendcount, 1, mpi_ty, &recvcounts[0], 1, mpi_ty, c.get());
+
+    for (int r = 0; r < c.size(); ++r) displs[r + 1] = recvcounts[r] + displs[r];
+
     if constexpr (has_mpi_type<T>) {
-      long size = mpi_reduce(a.size(), c, root, all);
-      std::vector<T> b((all || (c.rank() == root) ? size : 0));
-
-      auto recvcounts = std::vector<int>(c.size());
-      auto displs     = std::vector<int>(c.size() + 1, 0);
-      int sendcount   = a.size();
-      auto mpi_ty     = mpi_type<int>::get();
-      if (!all)
-        MPI_Gather(&sendcount, 1, mpi_ty, &recvcounts[0], 1, mpi_ty, root, c.get());
-      else
-        MPI_Allgather(&sendcount, 1, mpi_ty, &recvcounts[0], 1, mpi_ty, c.get());
-
-      for (int r = 0; r < c.size(); ++r) displs[r + 1] = recvcounts[r] + displs[r];
-
       if (!all)
         MPI_Gatherv((void *)a.data(), sendcount, mpi_type<T>::get(), (void *)b.data(), &recvcounts[0], &displs[0], mpi_type<T>::get(), root, c.get());
       else
         MPI_Allgatherv((void *)a.data(), sendcount, mpi_type<T>::get(), (void *)b.data(), &recvcounts[0], &displs[0], mpi_type<T>::get(), c.get());
-
-      return b;
+    } else {
+      if (!all)
+        throw std::runtime_error{"mpi_gather for custom types only implemented with 'all = true'\n"};
+      else {
+        for (int r = 0; r < c.size(); ++r) {
+          for (auto i = displs[r]; i < displs[r + 1]; ++i) {
+            if (c.rank() == r) b[i] = a[i - displs[r]];
+            mpi::broadcast(b[i], c, r);
+          }
+        }
+      }
     }
 
-    // FIXME SHOULD WE KEEP THIS ? It is not a clear API. Probably a static assert would be better
-    else {
-      int s = a.size();
-      std::vector<T> lhs;
-      lhs.reserve(s);
-      for (auto i = 0; i < s; ++i) lhs.push_back(mpi_gather(a[i], c, root, all));
-      return lhs;
-    }
+    return b;
   }
 } // namespace mpi
