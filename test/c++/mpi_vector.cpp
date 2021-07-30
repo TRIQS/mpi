@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <mpi/vector.hpp>
+#include <mpi/pair.hpp>
+#include <mpi/string.hpp>
 #include <gtest/gtest.h>
 
 #include <complex>
@@ -58,6 +60,20 @@ TEST(MPI, vector_gather_scatter) {
   AA = mpi::all_gather(B, world);
 
   EXPECT_EQ(A, AA);
+}
+
+// -----------------------------------
+
+TEST(MPI, vector_gather_scatter_pair) {
+
+  auto v = std::vector<std::pair<int, std::string>>{{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"}};
+
+  auto vsct = mpi::scatter(v);
+  auto vgth = mpi::all_gather(vsct);
+
+  mpi::communicator world;
+  if (world.size() > 1) EXPECT_NE(vsct, vgth);
+  EXPECT_EQ(v, vgth);
 }
 
 MPI_TEST_MAIN;
