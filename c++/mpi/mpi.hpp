@@ -404,7 +404,7 @@ namespace mpi {
     */
   template <typename T>
   auto chunk(T &&range, communicator comm = {}) {
-    auto total_size           = std::distance(std::cbegin(range), std::cend(range));
+    auto total_size           = itertools::distance(std::cbegin(range), std::cend(range));
     auto [start_idx, end_idx] = itertools::chunk_range(0, total_size, comm.size(), comm.rank());
     return itertools::slice(std::forward<T>(range), start_idx, end_idx);
   }
