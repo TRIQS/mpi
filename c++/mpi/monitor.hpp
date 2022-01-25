@@ -39,11 +39,11 @@ namespace mpi {
     mpi::communicator com;
 
     struct future {
-      MPI_Request request;
+      MPI_Request request{};
       int value = 0;
     };
     std::vector<future> root_futures;  // communication of local_stop from the nodes to the root. On root only.
-    MPI_Request req_ibcast, req_isent; // request for the ibcast and isent. On all nodes.
+    MPI_Request req_ibcast{}, req_isent{}; // request for the ibcast and isent. On all nodes.
 
     int local_stop  = 0;     // = 1 if the node has requested an emergency stop. Local to the node. (No bool in MPI.)
     int global_stop = 0;     // = 1 if any node has requested an emergency stop. Always the same on all nodes.
@@ -96,7 +96,7 @@ namespace mpi {
         root_check_nodes_and_bcast();
       } else { // other nodes just listen to the root bcast to see if an emergency stop broadcast has occured
         MPI_Status status;
-        int flag;
+        int flag = 0;
         MPI_Test(&req_ibcast, &flag, &status);
         // if flag, then global_stop is now what was bcasted by the root
       }
@@ -135,7 +135,7 @@ namespace mpi {
       bool some_nodes_are_still_running = false;
       for (auto &f : root_futures) {
         MPI_Status status;
-        int flag;
+        int flag = 0;
         MPI_Test(&(f.request), &flag, &status);
         if (flag and (not global_stop) and (f.value > 0)) request_emergency_stop(); // the root requires the stop now. It also stops itself...
         some_nodes_are_still_running |= (flag == 0);

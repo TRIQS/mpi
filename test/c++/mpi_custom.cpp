@@ -62,7 +62,7 @@ TEST(MPI_CUSTOM, custom_type_op) {
   MPI_Reduce(a, answer, 10, mpi::mpi_type<Complex>::get(), mpi::map_add<Complex>(), root, MPI_COMM_WORLD);
 
   if (rank == root)
-    for (int u = 0; u < 10; ++u) { ASSERT_NEAR(answer[u].real, size * (size + 1) / 2, 1.e-14); }
+    for (auto &u : answer) { ASSERT_NEAR(u.real, size * (size + 1) / 2, 1.e-14); }
 }
 
 //---------------------------------------
@@ -87,7 +87,7 @@ TEST(MPI_CUSTOM, custom_type_op2) {
   MPI_Reduce(a, answer, 10, mpi::mpi_type<Complex>::get(), mpi::map_C_function<Complex, fff>(), root, MPI_COMM_WORLD);
 
   if (rank == root)
-    for (int u = 0; u < 10; ++u) { ASSERT_NEAR(answer[u].real, size * (size + 1) / 2, 1.e-14); }
+    for (auto &u : answer) { ASSERT_NEAR(u.real, size * (size + 1) / 2, 1.e-14); }
 }
 
 //---------------------------------------
@@ -115,9 +115,9 @@ TEST(MPI_CUSTOM, struct_custom_add) {
 
   A a[10], answer[10];
 
-  for (int u = 0; u < 10; ++u) {
-    a[u].i = rank + 1;
-    a[u].d = 3.0 * (rank + 1);
+  for (auto &u : a) {
+    u.i = rank + 1;
+    u.d = 3.0 * (rank + 1);
   }
 
   int root = 0;

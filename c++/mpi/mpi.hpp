@@ -25,7 +25,7 @@
 namespace mpi {
 
   inline bool is_initialized() noexcept {
-    int flag;
+    int flag = 0;
     MPI_Initialized(&flag);
     return flag;
   }
@@ -69,7 +69,7 @@ namespace mpi {
 
     [[nodiscard]] int rank() const {
       if (has_env) {
-        int num;
+        int num = 0;
         MPI_Comm_rank(_com, &num);
         return num;
       } else
@@ -78,7 +78,7 @@ namespace mpi {
 
     [[nodiscard]] int size() const {
       if (has_env) {
-        int num;
+        int num = 0;
         MPI_Comm_size(_com, &num);
         return num;
       } else
@@ -91,8 +91,7 @@ namespace mpi {
         MPI_Comm_split(_com, color, key, &c._com);
         return c;
       } else
-        //TODO split should not be done without MPI?
-        return 0;
+        return {};
     }
 
     void abort(int error_code) {
@@ -121,8 +120,8 @@ namespace mpi {
         if (poll_msec == 0) {
           MPI_Barrier(_com);
         } else {
-          MPI_Request req;
-          int flag;
+          MPI_Request req = nullptr;
+          int flag        = 0;
           // non blocking barrier to check which rank is here
           MPI_Ibarrier(_com, &req);
           // check each poll_msec via MPI_Test if all ranks reached the barrier
@@ -325,7 +324,7 @@ namespace mpi {
       std::abort();
     }
 
-    MPI_Datatype cty;
+    MPI_Datatype cty = nullptr;
     MPI_Type_create_struct(N, blocklen, disp, types, &cty);
     MPI_Type_commit(&cty);
     return cty;
@@ -370,7 +369,7 @@ namespace mpi {
    */
   template <typename T, T (*F)(T const &, T const &)>
   MPI_Op map_C_function() {
-    MPI_Op myOp;
+    MPI_Op myOp = nullptr;
     MPI_Op_create(details::_map_function<T, F>, true, &myOp);
     return myOp;
   }
@@ -381,7 +380,7 @@ namespace mpi {
    */
   template <typename T>
   MPI_Op map_add() {
-    MPI_Op myOp;
+    MPI_Op myOp = nullptr;
     MPI_Op_create(details::_map_function<T, details::_generic_add<T>>, true, &myOp);
     return myOp;
   }
