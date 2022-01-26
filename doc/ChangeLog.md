@@ -1,5 +1,8 @@
-Version 1.0.0
-=============
+(changelog)=
+
+# Changelog
+
+## Version 1.0.0
 
 mpi is a high-level C++ interface to the [Message Passing Interface].
 
