@@ -58,6 +58,7 @@ namespace mpi {
       using type = typename T::regular_type;
     };
   } // namespace detail
+
   template <typename T>
   using regular_t = typename detail::_regular<std::decay_t<T>>::type;
 

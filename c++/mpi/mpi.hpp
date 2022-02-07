@@ -22,8 +22,10 @@
 #include <algorithm>
 #include <unistd.h>
 
+/// Library namespace
 namespace mpi {
 
+  /// Check if MPI was initialized
   inline bool is_initialized() noexcept {
     int flag = 0;
     MPI_Initialized(&flag);
@@ -34,7 +36,7 @@ namespace mpi {
 
   /* helper function to check for MPI runtime environment
    * covers at the moment OpenMPI, MPICH, and intelmpi
-   * as cray uses MPICH under the hood it should work as well 
+   * as cray uses MPICH under the hood it should work as well
    */
   static const bool has_env = []() {
     if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
@@ -56,7 +58,7 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
-  /// The communicator. Todo : add more constructors.
+  /// The communicator class
   class communicator {
     MPI_Comm _com = MPI_COMM_WORLD;
 
@@ -159,13 +161,16 @@ namespace mpi {
   // ------- general functions -------
   // ----------------------------------------
 
+  /**
+   * Generic broadcast implementation
+   */
   template <typename T>
-  [[gnu::always_inline]] inline void broadcast(T &x, communicator c = {}, int root = 0) {
+  [[gnu::always_inline]] void broadcast(T &x, communicator c = {}, int root = 0) {
     static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
     if (has_env) mpi_broadcast(x, c, root);
   }
 
-  namespace details {
+  namespace detail {
 
     template <typename T>
     inline constexpr bool is_mpi_lazy = false;
@@ -189,19 +194,19 @@ namespace mpi {
       } else
         return T{std::move(v)};
     }
-  } // namespace details
+  } // namespace detail
 
   template <typename T>
   [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     using r_t = decltype(mpi_reduce(std::forward<T>(x), c, root, all, op));
 
-    if constexpr (details::is_mpi_lazy<r_t>) {
+    if constexpr (detail::is_mpi_lazy<r_t>) {
       return mpi_reduce(std::forward<T>(x), c, root, all, op);
     } else {
       if (has_env)
         return mpi_reduce(std::forward<T>(x), c, root, all, op);
       else
-        return details::convert<r_t>(std::forward<T>(x));
+        return detail::convert<r_t>(std::forward<T>(x));
     }
   }
 
@@ -215,14 +220,14 @@ namespace mpi {
   [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
     using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
 
-    if constexpr (details::is_mpi_lazy<r_t>) {
+    if constexpr (detail::is_mpi_lazy<r_t>) {
       return mpi_scatter(std::forward<T>(x), c, root);
     } else {
       // if it does not have a mpi lazy type, check manually if triqs is run with MPI
       if (has_env)
         return mpi_scatter(std::forward<T>(x), c, root);
       else
-        return details::convert<r_t>(std::forward<T>(x));
+        return detail::convert<r_t>(std::forward<T>(x));
     }
   }
 
@@ -230,14 +235,14 @@ namespace mpi {
   [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
     using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
 
-    if constexpr (details::is_mpi_lazy<r_t>) {
+    if constexpr (detail::is_mpi_lazy<r_t>) {
       return mpi_gather(std::forward<T>(x), c, root, all);
     } else {
       // if it does not have a mpi lazy type, check manually if triqs is run with MPI
       if (has_env)
         return mpi_gather(std::forward<T>(x), c, root, all);
       else
-        return details::convert<r_t>(std::forward<T>(x));
+        return detail::convert<r_t>(std::forward<T>(x));
     }
   }
 
@@ -302,13 +307,13 @@ namespace mpi {
   template <typename T>
   constexpr bool has_mpi_type<T, std::void_t<decltype(mpi_type<T>::get())>> = true;
 
-  namespace details {
+  namespace detail {
 
     template <typename... T, size_t... Is>
     void _init_mpi_tuple_displ(std::index_sequence<Is...>, std::tuple<T...> _tie, MPI_Aint *disp) {
       ((void)(disp[Is] = {(char *)&std::get<Is>(_tie) - (char *)&std::get<0>(_tie)}), ...);
     }
-  } // namespace details
+  } // namespace detail
 
   template <typename... T>
   MPI_Datatype get_mpi_type(std::tuple<T...> _tie) {
@@ -318,7 +323,7 @@ namespace mpi {
     int blocklen[N];
     for (int i = 0; i < N; ++i) { blocklen[i] = 1; }
     MPI_Aint disp[N];
-    details::_init_mpi_tuple_displ(std::index_sequence_for<T...>{}, _tie, disp);
+    detail::_init_mpi_tuple_displ(std::index_sequence_for<T...>{}, _tie, disp);
     if (std::any_of(disp, disp + N, [](MPI_Aint i) { return i < 0; })) {
       std::cerr << "ERROR: Custom mpi types require non-negative displacements\n";
       std::abort();
@@ -346,7 +351,7 @@ namespace mpi {
   *   Custom mpi operator
   * ---------------------------------------------------------- */
 
-  namespace details {
+  namespace detail {
     // variable template that maps the function
     // for the meaning of +[](...) , cf
     // https://stackoverflow.com/questions/17822131/resolving-ambiguous-overload-on-function-pointer-and-stdfunction-for-a-lambda
@@ -362,7 +367,7 @@ namespace mpi {
     T _generic_add(T const &lhs, T const &rhs) {
       return lhs + rhs;
     }
-  } // namespace details
+  } // namespace detail
   /**
    * @tparam T  Type on which the function will operate
    * @tparam F  The C function to be mapped
@@ -370,7 +375,7 @@ namespace mpi {
   template <typename T, T (*F)(T const &, T const &)>
   MPI_Op map_C_function() {
     MPI_Op myOp = nullptr;
-    MPI_Op_create(details::_map_function<T, F>, true, &myOp);
+    MPI_Op_create(detail::_map_function<T, F>, true, &myOp);
     return myOp;
   }
 
@@ -381,7 +386,7 @@ namespace mpi {
   template <typename T>
   MPI_Op map_add() {
     MPI_Op myOp = nullptr;
-    MPI_Op_create(details::_map_function<T, details::_generic_add<T>>, true, &myOp);
+    MPI_Op_create(detail::_map_function<T, detail::_generic_add<T>>, true, &myOp);
     return myOp;
   }
 
