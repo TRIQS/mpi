@@ -290,6 +290,8 @@ namespace mpi {
   struct mpi_type<T> {                                                                                                                               \
     static MPI_Datatype get() noexcept { return MPI_TY; }                                                                                            \
   }
+  template <typename T>
+  struct mpi_type<const T> : mpi_type<T> {};
   D(bool, MPI_CXX_BOOL);
   D(char, MPI_CHAR);
   D(int, MPI_INT);
