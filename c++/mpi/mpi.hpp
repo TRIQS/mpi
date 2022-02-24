@@ -124,8 +124,8 @@ namespace mpi {
         if (poll_msec == 0) {
           MPI_Barrier(_com);
         } else {
-          MPI_Request req = nullptr;
-          int flag        = 0;
+          MPI_Request req{};
+          int flag = 0;
           // non blocking barrier to check which rank is here
           MPI_Ibarrier(_com, &req);
           // check each poll_msec via MPI_Test if all ranks reached the barrier
