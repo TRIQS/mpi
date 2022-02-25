@@ -333,7 +333,7 @@ namespace mpi {
       std::abort();
     }
 
-    MPI_Datatype cty = nullptr;
+    MPI_Datatype cty{};
     MPI_Type_create_struct(N, blocklen, disp, types, &cty);
     MPI_Type_commit(&cty);
     return cty;
@@ -378,7 +378,7 @@ namespace mpi {
    */
   template <typename T, T (*F)(T const &, T const &)>
   MPI_Op map_C_function() {
-    MPI_Op myOp = nullptr;
+    MPI_Op myOp{};
     MPI_Op_create(detail::_map_function<T, F>, true, &myOp);
     return myOp;
   }
@@ -389,7 +389,7 @@ namespace mpi {
    */
   template <typename T>
   MPI_Op map_add() {
-    MPI_Op myOp = nullptr;
+    MPI_Op myOp{};
     MPI_Op_create(detail::_map_function<T, detail::_generic_add<T>>, true, &myOp);
     return myOp;
   }
