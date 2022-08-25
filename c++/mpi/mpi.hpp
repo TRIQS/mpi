@@ -41,7 +41,7 @@ namespace mpi {
    * as cray uses MPICH under the hood it should work as well
    */
   static const bool has_env = []() {
-    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("pmi_rank") != nullptr or std::getenv("CRAY_MPICH_VERSION") != nullptr)
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr or std::getenv("CRAY_MPICH_VERSION") != nullptr)
       return true;
     else
       return false;
