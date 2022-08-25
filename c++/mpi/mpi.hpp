@@ -41,7 +41,7 @@ namespace mpi {
    * as cray uses MPICH under the hood it should work as well
    */
   static const bool has_env = []() {
-    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr)
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("pmi_rank") != nullptr or std::getenv("CRAY_MPICH_VERSION") != nullptr)
       return true;
     else
       return false;
@@ -292,14 +292,14 @@ namespace mpi {
   }
   template <typename T>
   struct mpi_type<const T> : mpi_type<T> {};
-  D(bool, MPI_CXX_BOOL);
+  D(bool, MPI_C_BOOL);
   D(char, MPI_CHAR);
   D(int, MPI_INT);
   D(long, MPI_LONG);
   D(long long, MPI_LONG_LONG);
   D(double, MPI_DOUBLE);
   D(float, MPI_FLOAT);
-  D(std::complex<double>, MPI_CXX_DOUBLE_COMPLEX);
+  D(std::complex<double>, MPI_C_DOUBLE_COMPLEX);
   D(unsigned long, MPI_UNSIGNED_LONG);
   D(unsigned int, MPI_UNSIGNED);
   D(unsigned long long, MPI_UNSIGNED_LONG_LONG);
