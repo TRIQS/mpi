@@ -55,7 +55,7 @@ endif()
 
 # Documentation
 option(Build_Documentation "Build documentation" OFF)
-if(Build_Documentation AND NOT PythonSupport)
+if(NOT IS_SUBPROJECT AND (Build_Documentation AND NOT PythonSupport))
   message(FATAL_ERROR "Build_Documentation=ON requires PythonSupport to be enabled")
 endif()
 
@@ -137,7 +137,7 @@ if(Build_Tests)
 endif()
 
 # Docs
-if(Build_Documentation)
+if(NOT IS_SUBPROJECT AND Build_Documentation)
   add_subdirectory(doc)
 endif()
 
