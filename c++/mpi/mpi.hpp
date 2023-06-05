@@ -39,9 +39,12 @@ namespace mpi {
   /* helper function to check for MPI runtime environment
    * covers at the moment OpenMPI, MPICH, and intelmpi
    * as cray uses MPICH under the hood it should work as well
+   * TRIQS_FORCE_MPI_INIT can be used to overwrite manually on
+   * on runtime.
    */
   static const bool has_env = []() {
-    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr or std::getenv("CRAY_MPICH_VERSION") != nullptr)
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr or std::getenv("CRAY_MPICH_VERSION") != nullptr
+        or std::getenv("TRIQS_FORCE_MPI_INIT") != nullptr)
       return true;
     else
       return false;
