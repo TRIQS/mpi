@@ -56,9 +56,11 @@ namespace mpi {
     // MPICH does not allow Init without argc, argv, so we do not allow default constructors
     // for portability, cf #133
     environment(int argc, char *argv[]) { // NOLINT
-      if (!is_initialized()) MPI_Init(&argc, &argv);
+      if (has_env && !is_initialized()) MPI_Init(&argc, &argv);
     }
-    ~environment() { MPI_Finalize(); }
+    ~environment() {
+      if (has_env) MPI_Finalize();
+    }
   };
 
   // ------------------------------------------------------------
