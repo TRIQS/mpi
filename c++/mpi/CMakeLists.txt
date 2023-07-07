@@ -5,14 +5,7 @@ add_library(${PROJECT_NAME}_c INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME}_c ALIAS ${PROJECT_NAME}_c)
 
 # Set C++ Standard
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++20" HAS_CPP20)
-if(HAS_CPP20 AND cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  target_compile_features(${PROJECT_NAME}_c INTERFACE cxx_std_20)
-else()
-  target_compile_features(${PROJECT_NAME}_c INTERFACE cxx_std_17)
-  target_compile_options(${PROJECT_NAME}_c INTERFACE $<$<CXX_COMPILER_ID:GNU>:-fconcepts>)
-endif()
+target_compile_features(${PROJECT_NAME}_c INTERFACE cxx_std_23)
 
 # Configure target and compilation
 target_include_directories(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
@@ -91,7 +84,7 @@ if(ANALYZE_SOURCES)
 	TARGET ${PROJECT_NAME}_c
 	COMMAND ${CPPCHECK_EXECUTABLE}
 	  --enable=warning,style,performance,portability
-	  --std=c++20
+	  --std=c++23
 	  --template=gcc
 	  --verbose
 	  --force
@@ -106,21 +99,28 @@ if(ANALYZE_SOURCES)
 
 endif()
 
-
 # ========= Dynamic Analyzer Checks ==========
 
 option(ASAN OFF "Compile library and executables with LLVM Address Sanitizer")
-option(UBSAN OFF "Compile library and executables with LLVM Undefined Behavior Sanitizer")
-
 if(ASAN)
-  if(NOT TARGET asan)
-    find_package(sanitizer REQUIRED "asan")
-  endif()
+  find_package(sanitizer REQUIRED COMPONENTS asan)
   target_link_libraries(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:asan>)
 endif()
+
+option(UBSAN OFF "Compile library and executables with LLVM Undefined Behavior Sanitizer")
 if(UBSAN)
-  if(NOT TARGET ubsan)
-    find_package(sanitizer REQUIRED "ubsan")
-  endif()
+  find_package(sanitizer REQUIRED COMPONENTS ubsan)
   target_link_libraries(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:ubsan>)
+endif()
+
+option(MSAN OFF "Compile library and executables with LLVM Memory Sanitizer")
+if(MSAN)
+  find_package(sanitizer REQUIRED COMPONENTS msan)
+  target_link_libraries(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:msan>)
+endif()
+
+option(TSAN OFF "Compile library and executables with LLVM Thread Sanitizer")
+if(TSAN)
+  find_package(sanitizer REQUIRED COMPONENTS tsan)
+  target_link_libraries(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:tsan>)
 endif()
