@@ -1,11 +1,11 @@
 {% set version = "1.2.0" %}
 
 package:
-  name: app4triqs
+  name: mpi
   version: {{ version }}
 
 source:
-  url: https://github.com/TRIQS/app4triqs/releases/download/{{ version }}/app4triqs-{{ version }}.tar.gz
+  url: https://github.com/TRIQS/mpi/releases/download/{{ version }}/mpi-{{ version }}.tar.gz
   sha256: PUT HERE THE SHA256 OF YOUR RELEASE TARBALL
 
 build:
@@ -38,10 +38,10 @@ test:
     - export OMPI_MCA_rmaps_base_oversubscribe=yes
     - export OMPI_MCA_btl_vader_single_copy_mechanism=none
     - export mpiexec="mpiexec --allow-run-as-root"
-    - python -c "import app4triqs"
+    - python -c "import mpi"
 
 about:
-  home: https://triqs.github.io/app4triqs
+  home: https://triqs.github.io/mpi
   license: Apache-2.0
   license_family: Apache
   license_file: LICENSE.txt
