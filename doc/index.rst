@@ -3,9 +3,9 @@
 mpi
 ***
 
-.. sidebar:: mpi 1.0.0
+.. sidebar:: mpi |PROJECT_VERSION|
 
-   This is the homepage of mpi v1.0.0.
+   This is the homepage of mpi |PROJECT_VERSION|.
    For changes see the :ref:`changelog page <changelog>`.
       
       .. image:: _static/logo_github.png

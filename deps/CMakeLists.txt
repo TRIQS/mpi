@@ -69,7 +69,7 @@ external_dependency(GTest
 # -- itertools --
 external_dependency(itertools
   GIT_REPO https://github.com/TRIQS/itertools
-  VERSION 1.0
+  VERSION 1.2
   GIT_TAG unstable
 
 )

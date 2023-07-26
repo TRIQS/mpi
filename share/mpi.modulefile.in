@@ -8,7 +8,7 @@ set     root        @CMAKE_INSTALL_PREFIX@
 set     git_hash    @PROJECT_GIT_HASH@
 
 set     url         "https://github.com/TRIQS/@PROJECT_NAME@"
-set     description "A high-level C++ Interface"
+set     description "A high-level MPI C++ Interface"
 
 module-whatis   "$description"
 

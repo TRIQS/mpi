@@ -6,6 +6,9 @@ import sys
 sys.path.insert(0, "@CMAKE_CURRENT_SOURCE_DIR@/sphinxext")
 sys.path.insert(0, "@CMAKE_CURRENT_SOURCE_DIR@/sphinxext/numpydoc")
 
+# exclude these folders from scanning by sphinx
+exclude_patterns = ['_templates']
+
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.intersphinx',
@@ -39,10 +42,21 @@ pygments_style = 'sphinx'
 
 source_suffix = '.rst'
 
-project = '@PROJECT_NAME@ - A high-level C++ Interface'
+# Turn on sphinx.ext.autosummary
+autosummary_generate = True
+autosummary_imported_members=False
+
+project = '@PROJECT_NAME@ - A high-level MPI C++ Interface'
 version = '@PROJECT_VERSION@'
 
-copyright = '2017-2018 O. Parcollet 2019-2022 The Simons Foundation, authors: N. Wentzell, O. Parcollet'
+# this makes the current project version available as var in every rst file
+rst_epilog = """
+.. |PROJECT_VERSION| replace:: {version}
+""".format(
+version = version,
+)
+
+copyright = '2018-2021 The Simons Foundation, authors: A. Hampel, O. Parcollet, D. Simons, H. Strand, N. Wentzell'
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=default"
 templates_path = ['@CMAKE_CURRENT_SOURCE_DIR@/_templates']
@@ -51,9 +65,6 @@ templates_path = ['@CMAKE_CURRENT_SOURCE_DIR@/_templates']
 html_theme = 'sphinx_rtd_theme'
 # this loads the custom css file to change the page width
 html_style = 'css/custom.css'
-
-#html_favicon = '@CMAKE_CURRENT_SOURCE_DIR@/logos/favicon.ico'
-#html_logo = '@CMAKE_CURRENT_SOURCE_DIR@/logos/logo.png'
 
 # options for the the rtd theme
 html_theme_options = {
@@ -66,7 +77,7 @@ html_theme_options = {
     # Toc options
     'collapse_navigation': False,
     'sticky_navigation': True,
-    'navigation_depth': 4,
+    'navigation_depth': 5,
     'includehidden': True,
     'titles_only': False
 }
@@ -80,7 +91,12 @@ html_sidebars = {'index': ['sideb.html', 'searchbox.html']}
 
 htmlhelp_basename = '@PROJECT_NAME@doc'
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3.8', None)}
+# Plot options
+plot_include_source = True
+plot_html_show_source_link = False
+plot_html_show_formats = False
+
+intersphinx_mapping = {'python': ('https://docs.python.org/3.11', None)}
 
 # open links in new tab instead of same window
 from sphinx.writers.html import HTMLTranslator

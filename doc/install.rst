@@ -8,7 +8,7 @@ Install mpi
 Compiling mpi from source
 =========================
 
-.. note:: To guarantee reproducibility in scientific calculations we strongly recommend the use of a stable `release <https://github.com/TRIQS/triqs/releases>`_ of both TRIQS and its applications.
+.. note:: To guarantee reproducibility in scientific calculations we strongly recommend the use of a stable `release <https://github.com/TRIQS/mpi/releases>`_ of mpi.
 
 Installation steps
 ------------------
@@ -51,14 +51,14 @@ The compilation of ``mpi`` can be configured using CMake-options::
 
     cmake ../mpi.src -DOPTION1=value1 -DOPTION2=value2 ...
 
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Options                                                         | Syntax                                        |
-+=================================================================+===============================================+
-| Specify an installation path other than path_to_triqs           | -DCMAKE_INSTALL_PREFIX=path_to_mpi      |
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Build in Debugging Mode                                         | -DCMAKE_BUILD_TYPE=Debug                      |
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Disable testing (not recommended)                               | -DBuild_Tests=OFF                             |
-+-----------------------------------------------------------------+-----------------------------------------------+
-| Build the documentation                                         | -DBuild_Documentation=ON                      |
-+-----------------------------------------------------------------+-----------------------------------------------+
++-----------------------------------------+-----------------------------------------------+
+| Options                                 | Syntax                                        |
++=========================================+===============================================+
+| Specify an installation path            | -DCMAKE_INSTALL_PREFIX=path_to_mpi            |
++-----------------------------------------+-----------------------------------------------+
+| Build in Debugging Mode                 | -DCMAKE_BUILD_TYPE=Debug                      |
++-----------------------------------------+-----------------------------------------------+
+| Disable testing (not recommended)       | -DBuild_Tests=OFF                             |
++-----------------------------------------+-----------------------------------------------+
+| Build the documentation                 | -DBuild_Documentation=ON                      |
++-----------------------------------------+-----------------------------------------------+
