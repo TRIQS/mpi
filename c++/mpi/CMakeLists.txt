@@ -5,7 +5,7 @@ add_library(${PROJECT_NAME}_c INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME}_c ALIAS ${PROJECT_NAME}_c)
 
 # Configure target and compilation
-target_compile_features(${PROJECT_NAME}_c INTERFACE cxx_std_23)
+target_compile_features(${PROJECT_NAME}_c INTERFACE cxx_std_20)
 target_include_directories(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/c++>)
 target_include_directories(${PROJECT_NAME}_c SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
 target_compile_definitions(${PROJECT_NAME}_c INTERFACE
