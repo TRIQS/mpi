@@ -44,7 +44,7 @@ namespace mpi {
       MPI_Request request{};
       int value = 0;
     };
-    std::vector<future> root_futures;  // communication of local_stop from the nodes to the root. On root only.
+    std::vector<future> root_futures;      // communication of local_stop from the nodes to the root. On root only.
     MPI_Request req_ibcast{}, req_isent{}; // request for the ibcast and isent. On all nodes.
 
     int local_stop  = 0;     // = 1 if the node has requested an emergency stop. Local to the node. (No bool in MPI.)
@@ -70,7 +70,7 @@ namespace mpi {
       }
     }
 
-    monitor(monitor const &) = delete;
+    monitor(monitor const &)            = delete;
     monitor &operator=(monitor const &) = delete;
 
     ~monitor() { finalize_communications(); }

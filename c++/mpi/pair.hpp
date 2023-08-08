@@ -22,8 +22,7 @@ namespace mpi {
 
   // ---------------- broadcast ---------------------
 
-  template <typename T1, typename T2>
-  void mpi_broadcast(std::pair<T1, T2> &p, communicator c = {}, int root = 0) {
+  template <typename T1, typename T2> void mpi_broadcast(std::pair<T1, T2> &p, communicator c = {}, int root = 0) {
     broadcast(p.first, c, root);
     broadcast(p.second, c, root);
   }

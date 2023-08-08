@@ -155,8 +155,7 @@ namespace mpi {
   } // namespace tag
 
   // A small lazy tagged class
-  template <typename Tag, typename T>
-  struct lazy {
+  template <typename Tag, typename T> struct lazy {
     T rhs;
     communicator c;
     int root{};
@@ -171,28 +170,22 @@ namespace mpi {
   /**
    * Generic broadcast implementation
    */
-  template <typename T>
-  [[gnu::always_inline]] void broadcast(T &x, communicator c = {}, int root = 0) {
+  template <typename T> [[gnu::always_inline]] void broadcast(T &x, communicator c = {}, int root = 0) {
     static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
     if (has_env) mpi_broadcast(x, c, root);
   }
 
   namespace detail {
 
-    template <typename T>
-    inline constexpr bool is_mpi_lazy = false;
+    template <typename T> inline constexpr bool is_mpi_lazy = false;
 
-    template <typename Tag, typename T>
-    inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
+    template <typename Tag, typename T> inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
 
-    template <typename T>
-    inline constexpr bool is_std_vector = false;
+    template <typename T> inline constexpr bool is_std_vector = false;
 
-    template <typename T>
-    inline constexpr bool is_std_vector<std::vector<T>> = true;
+    template <typename T> inline constexpr bool is_std_vector<std::vector<T>> = true;
 
-    template <typename T, typename V>
-    T convert(V v) {
+    template <typename T, typename V> T convert(V v) {
       if constexpr (is_std_vector<T>) {
         T res;
         res.reserve(v.size());
@@ -223,8 +216,7 @@ namespace mpi {
     if (has_env) mpi_reduce_in_place(x, c, root, all, op);
   }
 
-  template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
+  template <typename T> [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
     using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
 
     if constexpr (detail::is_mpi_lazy<r_t>) {
@@ -238,8 +230,7 @@ namespace mpi {
     }
   }
 
-  template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
+  template <typename T> [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
     using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
 
     if constexpr (detail::is_mpi_lazy<r_t>) {
@@ -253,18 +244,15 @@ namespace mpi {
     }
   }
 
-  template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
+  template <typename T> [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
     return reduce(std::forward<T>(x), c, 0, true, op);
   }
 
-  template <typename T>
-  [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
+  template <typename T> [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
     reduce_in_place(std::forward<T>(x), c, 0, true, op);
   }
 
-  template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
+  template <typename T> [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
     return gather(std::forward<T>(x), c, 0, true);
   }
 
@@ -287,16 +275,13 @@ namespace mpi {
   // Specialize this struct for any type with member function
   //   static MPI_Datatype get() noexcept
   // to provide its MPI type
-  template <typename T>
-  struct mpi_type {};
+  template <typename T> struct mpi_type {};
 
 #define D(T, MPI_TY)                                                                                                                                 \
-  template <>                                                                                                                                        \
-  struct mpi_type<T> {                                                                                                                               \
+  template <> struct mpi_type<T> {                                                                                                                   \
     static MPI_Datatype get() noexcept { return MPI_TY; }                                                                                            \
   }
-  template <typename T>
-  struct mpi_type<const T> : mpi_type<T> {};
+  template <typename T> struct mpi_type<const T> : mpi_type<T> {};
   D(bool, MPI_C_BOOL);
   D(char, MPI_CHAR);
   D(int, MPI_INT);
@@ -311,21 +296,17 @@ namespace mpi {
 #undef D
 
   // Helper Functions
-  template <typename T, typename = void>
-  constexpr bool has_mpi_type = false;
-  template <typename T>
-  constexpr bool has_mpi_type<T, std::void_t<decltype(mpi_type<T>::get())>> = true;
+  template <typename T, typename = void> constexpr bool has_mpi_type                              = false;
+  template <typename T> constexpr bool has_mpi_type<T, std::void_t<decltype(mpi_type<T>::get())>> = true;
 
   namespace detail {
 
-    template <typename... T, size_t... Is>
-    void _init_mpi_tuple_displ(std::index_sequence<Is...>, std::tuple<T...> _tie, MPI_Aint *disp) {
+    template <typename... T, size_t... Is> void _init_mpi_tuple_displ(std::index_sequence<Is...>, std::tuple<T...> _tie, MPI_Aint *disp) {
       ((void)(disp[Is] = {(char *)&std::get<Is>(_tie) - (char *)&std::get<0>(_tie)}), ...);
     }
   } // namespace detail
 
-  template <typename... T>
-  MPI_Datatype get_mpi_type(std::tuple<T...> _tie) {
+  template <typename... T> MPI_Datatype get_mpi_type(std::tuple<T...> _tie) {
     static constexpr int N = sizeof...(T);
     MPI_Datatype types[N]  = {mpi_type<std::remove_reference_t<T>>::get()...};
 
@@ -344,15 +325,13 @@ namespace mpi {
     return cty;
   }
 
-  template <typename... T>
-  struct mpi_type<std::tuple<T...>> {
+  template <typename... T> struct mpi_type<std::tuple<T...>> {
     static MPI_Datatype get() noexcept { return get_mpi_type(std::tuple<T...>{}); }
   };
 
   // A generic implementation for a struct
   // the struct should have as_tie
-  template <typename T>
-  struct mpi_type_from_tie {
+  template <typename T> struct mpi_type_from_tie {
     static MPI_Datatype get() noexcept { return get_mpi_type(tie_data(T{})); }
   };
 
@@ -372,17 +351,13 @@ namespace mpi {
     };
 
     // Generic addition
-    template <typename T>
-    T _generic_add(T const &lhs, T const &rhs) {
-      return lhs + rhs;
-    }
+    template <typename T> T _generic_add(T const &lhs, T const &rhs) { return lhs + rhs; }
   } // namespace detail
   /**
    * @tparam T  Type on which the function will operate
    * @tparam F  The C function to be mapped
    */
-  template <typename T, T (*F)(T const &, T const &)>
-  MPI_Op map_C_function() {
+  template <typename T, T (*F)(T const &, T const &)> MPI_Op map_C_function() {
     MPI_Op myOp{};
     MPI_Op_create(detail::_map_function<T, F>, true, &myOp);
     return myOp;
@@ -392,8 +367,7 @@ namespace mpi {
    * Map addition
    * @tparam T  Type on which the addition will operate
    */
-  template <typename T>
-  MPI_Op map_add() {
+  template <typename T> MPI_Op map_add() {
     MPI_Op myOp{};
     MPI_Op_create(detail::_map_function<T, detail::_generic_add<T>>, true, &myOp);
     return myOp;
@@ -416,8 +390,7 @@ namespace mpi {
     * @param range The range to chunk
     * @param comm The mpi communicator
     */
-  template <typename T>
-  auto chunk(T &&range, communicator comm = {}) {
+  template <typename T> auto chunk(T &&range, communicator comm = {}) {
     auto total_size           = itertools::distance(std::cbegin(range), std::cend(range));
     auto [start_idx, end_idx] = itertools::chunk_range(0, total_size, comm.size(), comm.rank());
     return itertools::slice(std::forward<T>(range), start_idx, end_idx);
@@ -430,8 +403,7 @@ namespace mpi {
   // NOTE: We keep the naming mpi_XXX for the actual implementation functions
   // so they can be defined in other namespaces and the mpi::reduce(T,...) function
   // can find them via ADL
-  template <typename T>
-  std::enable_if_t<has_mpi_type<T>> mpi_broadcast(T &a, communicator c = {}, int root = 0) {
+  template <typename T> std::enable_if_t<has_mpi_type<T>> mpi_broadcast(T &a, communicator c = {}, int root = 0) {
     MPI_Bcast(&a, 1, mpi_type<T>::get(), root, c.get());
   }
 
