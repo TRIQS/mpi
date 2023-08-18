@@ -74,7 +74,7 @@ TEST(MPI, vector_gather_scatter_pair) {
   auto vgth = mpi::all_gather(vsct);
 
   mpi::communicator world;
-  if (world.size() > 1) EXPECT_NE(vsct, vgth);
+  if (world.size() > 1) { EXPECT_NE(vsct, vgth); }
   EXPECT_EQ(v, vgth);
 }
 
