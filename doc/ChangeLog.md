@@ -2,6 +2,35 @@
 
 # Changelog
 
+## Version 1.2.0
+
+This is version 1.2.0 of mpi, a high-level C++ interface to the [Message Passing Interface].
+
+We thank all contributors: Thomas Hahn, Alexander Hampel, Dylan Simon, Hugo U.R. Strand, Nils Wentzell
+
+Find below an itemized list of changes in this release.
+
+### General
+* Force mpi initialization when FORCE_MPI_INIT is set in environment
+* Add support for cray MPICH environments
+* Fix compiler warnings
+* clang-format all source files
+
+### cmake
+* Add compiler warnings for IntelLLVM
+* Do not build documentation as subproject
+* Synchronize deps/CMakeLists.txt with nda
+* Remove redundant PythonSupport check
+* Update Findsanitizer.cmake to include TSAN and MSAN
+
+### fixes
+* Make sure to specialize mpi_type<..> also for constant builtin types
+* Use value initialization for also for MPI_Op and MPI_Datatype
+* Fix #8 restore compatibility against MPICH
+* Protect mpi::environment construction outside of mpirun
+* Demote MPI CXX types to C
+
+
 ## Version 1.1.0
 
 This is version 1.1.0 of mpi, a high-level C++ interface to the [Message Passing Interface].
