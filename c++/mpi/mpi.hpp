@@ -19,6 +19,7 @@
 #include <itertools/itertools.hpp>
 
 #include <mpi.h>
+#include <cassert>
 #include <complex>
 #include <type_traits>
 #include <algorithm>
@@ -64,8 +65,11 @@ namespace mpi {
 
   // ------------------------------------------------------------
 
+  class shared_communicator;
+
   /// The communicator class
   class communicator {
+    friend class shared_communicator;
     MPI_Comm _com = MPI_COMM_WORLD;
 
     public:
@@ -101,6 +105,8 @@ namespace mpi {
       } else
         return {};
     }
+
+    [[nodiscard]] shared_communicator split_shared(int split_type = MPI_COMM_TYPE_SHARED, int key = 0) const;
 
     void abort(int error_code) {
       if (has_env)
@@ -142,6 +148,18 @@ namespace mpi {
       }
     }
   };
+
+  /// The shared communicator class
+  class shared_communicator : public communicator {};
+
+  [[nodiscard]] shared_communicator communicator::split_shared(int split_type, int key) const {
+    if (has_env) {
+      shared_communicator c;
+      MPI_Comm_split_type(_com, split_type, key, MPI_INFO_NULL, &c._com);
+      return c;
+    } else
+      return {};
+  }
 
   // ----------------------------------------
   // ------- MPI Lazy Struct and Tags -------
@@ -332,6 +350,76 @@ namespace mpi {
   // the struct should have as_tie
   template <typename T> struct mpi_type_from_tie {
     static MPI_Datatype get() noexcept { return get_mpi_type(tie_data(T{})); }
+  };
+
+  template <class BaseType> class shared_window;
+
+  /// The window class
+  template <class BaseType=void>
+  class window {
+    friend class shared_window<BaseType>;
+    std::unique_ptr<MPI_Win, decltype(&MPI_Win_free)> win{new MPI_Win{MPI_WIN_NULL}, &MPI_Win_free};
+  public:
+    window() = default;
+
+    explicit window(communicator &c, BaseType *base, MPI_Aint size = 0) {
+      MPI_Win_create(base, size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), win.get());
+    }
+
+    void fence(int assert = 0) {
+      MPI_Win_fence(assert, *win);
+    }
+
+    template <typename TargetType = BaseType, typename OriginType>
+    std::enable_if_t<has_mpi_type<OriginType> && has_mpi_type<TargetType>, void>
+    get(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp = 0, int target_count = -1) {
+        MPI_Datatype origin_datatype = mpi_type<OriginType>::get();
+        MPI_Datatype target_datatype = mpi_type<TargetType>::get();
+        int target_count_ = target_count < 0 ? origin_count : target_count;
+        MPI_Get(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count_, target_datatype, *win.get());
+    };
+
+    template <typename TargetType = BaseType, typename OriginType>
+    std::enable_if_t<has_mpi_type<OriginType> && has_mpi_type<TargetType>, void>
+    put(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp = 0, int target_count = -1) {
+        MPI_Datatype origin_datatype = mpi_type<OriginType>::get();
+        MPI_Datatype target_datatype = mpi_type<TargetType>::get();
+        int target_count_ = target_count < 0 ? origin_count : target_count;
+        MPI_Put(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count_, target_datatype, *win.get());
+    };
+
+    void* get_attr(int win_keyval) const {
+      int flag;
+      void *attribute_val;
+      MPI_Win_get_attr(*win, win_keyval, &attribute_val, &flag);
+      assert(flag);
+      return attribute_val;
+    }
+    BaseType* base() const { return static_cast<BaseType*>(get_attr(MPI_WIN_BASE)); }
+    MPI_Aint size() const { return *static_cast<MPI_Aint*>(get_attr(MPI_WIN_SIZE)); }
+    int disp_unit() const { return *static_cast<int*>(get_attr(MPI_WIN_DISP_UNIT)); }
+  };
+
+  /// The shared_window class
+  template <class BaseType>
+  class shared_window : public window<BaseType> {
+  public:
+    shared_window(shared_communicator& c, MPI_Aint size) {
+      void* baseptr = nullptr;
+      MPI_Win_allocate_shared(size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), &baseptr, this->win.get());
+    }
+
+    std::tuple<MPI_Aint, int, void*> query(int rank = MPI_PROC_NULL) const {
+      MPI_Aint size = 0;
+      int disp_unit = 0;
+      void *baseptr = nullptr;
+      MPI_Win_shared_query(*this->win.get(), rank, &size, &disp_unit, &baseptr);
+      return {size, disp_unit, baseptr};
+    }
+
+    MPI_Aint size(int rank = MPI_PROC_NULL) const { return std::get<0>(query(rank)) / sizeof(BaseType); }
+    int disp_unit(int rank = MPI_PROC_NULL) const { return std::get<1>(query(rank)); }
+    BaseType* base(int rank = MPI_PROC_NULL) const { return static_cast<BaseType*>(std::get<2>(query(rank))); }
   };
 
   /* -----------------------------------------------------------
