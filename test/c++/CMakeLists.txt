@@ -9,8 +9,8 @@ file(GLOB_RECURSE all_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
 # List of all no mpi tests
 file(GLOB_RECURSE nompi_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
-# remove custom and monitor mpi tests as they explicitly use MPI
-list(REMOVE_ITEM nompi_tests mpi_custom.cpp mpi_monitor.cpp)
+# remove custom, monitor, and window mpi tests as they explicitly use MPI
+list(REMOVE_ITEM nompi_tests mpi_custom.cpp mpi_monitor.cpp mpi_window.cpp)
 
 # ========= OpenMP Dependency ==========
 

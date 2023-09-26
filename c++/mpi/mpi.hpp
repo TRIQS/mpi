@@ -34,6 +34,7 @@
 #include "./string.hpp"
 #include "./utils.hpp"
 #include "./vector.hpp"
+#include "./window.hpp"
 
 namespace mpi {
 

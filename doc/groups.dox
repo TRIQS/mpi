@@ -94,6 +94,13 @@
  */
 
 /**
+ * @defgroup mpi_osc_shm MPI one-sided communication and shared memory
+ * @brief Abstraction over the `MPI_Win` object that facilitates remote memory access and node-local shared memory.
+ *
+ * @details The primary usage is the shared memory to deduplicate data that is shared by all MPI ranks.
+ */
+
+/**
  * @defgroup mpi_lazy Lazy MPI communication
  * @brief Allow specific types to use lazy MPI communication.
  *

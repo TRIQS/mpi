@@ -24,6 +24,10 @@ If you are looking for a specific function, class, etc., try using the search ba
   Besides storing the `MPI_Comm` object, it also provides some convient functions for getting the size of the
   communicator, the rank of the current process or for splitting an existing communicator.
 
+* The mpi::group class is a simple wrapper around an `MPI_Group` object.
+  Besides storing the `MPI_Group` object, it also provides some convient functions for getting the size of the
+  group, the rank of the current process or for splitting the group based on include rules.
+
 It further contains the convenient function mpi::is_initialized and the static boolean mpi::has_env.
 
 ## MPI datatypes and operations
@@ -55,6 +59,17 @@ Other generic functions in **mpi** work similarly.
 See the "Functions" section in @ref coll_comm to check which datatypes and MPI operations are supported out of the box.
 
 In case your datatype is not supported, you are free to provide your own specialization.
+
+## MPI one-sided communication and shared memory
+
+@ref mpi_osc_shm can be used to get data from or put data directly to the memory
+of another process.  This can be done without the involvement of processes that
+are unaffected by the data transfer, i.e. no collective call is required, only
+the origin and target process of the data transfer must cooperate.
+
+Another use-case of @ref mpi_osc_shm is the shared memory aspect by which
+MPI applications can reduce their memory requirements through the deduplication
+of replicated data between MPI ranks that are executed on the same SMP node.
 
 ## Lazy MPI communication
 

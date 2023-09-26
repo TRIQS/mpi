@@ -31,6 +31,8 @@
 
 namespace mpi {
 
+  class shared_communicator;
+
   /**
    * @ingroup mpi_essentials
    * @brief C++ wrapper around `MPI_Comm` providing various convenience functions.
@@ -41,6 +43,7 @@ namespace mpi {
    * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
    */
   class communicator {
+    friend class shared_communicator;
     // Wrapped `MPI_Comm` object.
     MPI_Comm _com = MPI_COMM_WORLD;
 
@@ -56,6 +59,8 @@ namespace mpi {
 
     /// Get the wrapped `MPI_Comm` object.
     [[nodiscard]] MPI_Comm get() const noexcept { return _com; }
+
+    [[nodiscard]] bool is_null() const noexcept { return _com == MPI_COMM_NULL; }
 
     /**
      * @brief Get the rank of the calling process in the communicator.
@@ -103,6 +108,8 @@ namespace mpi {
       } else
         return {};
     }
+
+    [[nodiscard]] shared_communicator split_shared(int split_type = MPI_COMM_TYPE_SHARED, int key = 0) const;
 
     /**
      * @brief Duplicate the communicator.
@@ -186,5 +193,41 @@ namespace mpi {
       }
     }
   };
+
+  /**
+   * @ingroup mpi_osc_shm
+   * @brief C++ wrapper around @p MPI_Comm that is a result of the @p split_shared operation.
+   *
+   * @details In the plain MPI C API it is not distinguishable whether an @p
+   * MPI_Comm is local to a shared memory island or not. Thus we introduce an
+   * extra type for that whose only purpose is to make that distinction on the
+   * type-level to prevent wrong usage of the shared memory APIs.
+   */
+  class shared_communicator : public communicator {
+    public:
+    using communicator::communicator;
+    shared_communicator() : communicator(MPI_COMM_NULL) {}
+  };
+
+  /**
+   * @brief Partition the communicator into subcommunicators according to their type.
+   *
+   * @details In the MPI3.0 standard the only supported split type is @p
+   * MPI_COMM_TYPE_SHARED. OpenMPI (and possibly other implementations) provide
+   * more custom split types, however, they are not portable.
+   *
+   * @param split_type Type of processes to be grouped together.
+   * @param key Control of rank assignment.
+   *
+   * @return New communicator.
+   */
+  [[nodiscard]] inline shared_communicator communicator::split_shared(int split_type, int key) const {
+    if (has_env) {
+      shared_communicator c;
+      MPI_Comm_split_type(_com, split_type, key, MPI_INFO_NULL, &c._com);
+      return c;
+    } else
+      return {};
+  }
 
 } // namespace mpi
