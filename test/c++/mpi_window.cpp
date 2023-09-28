@@ -16,6 +16,7 @@
 
 #include "mpi/mpi.hpp"
 #include <gtest/gtest.h>
+#include <numeric>
 
 TEST(MPI_Window, SharedCommunicator) {
   mpi::communicator world;
@@ -87,6 +88,29 @@ TEST(MPI_Window, RingOneSidedAllowShared) {
   }
 
   EXPECT_EQ(sum, (size_shm * (size_shm - 1)) / 2);
+}
+
+TEST(MPI_Window, SharedArray) {
+  mpi::communicator world;
+  auto shm = world.split_shared();
+  int const rank_shm = shm.rank();
+
+  constexpr int const size = 20;
+  constexpr int const magic = 21;
+
+  mpi::shared_window<int> win{shm, rank_shm == 0 ? size : 0};
+  std::span array_view{win.base(0), static_cast<std::size_t>(win.size(0))};
+
+  win.fence();
+  if (rank_shm == 0) {
+      for (auto &&el : array_view) {
+          el = magic;
+      }
+  }
+  win.fence();
+
+  int sum = std::accumulate(array_view.begin(), array_view.end(), int{0});
+  EXPECT_EQ(sum, size * magic);
 }
 
 MPI_TEST_MAIN;

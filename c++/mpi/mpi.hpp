@@ -355,43 +355,56 @@ namespace mpi {
   template <class BaseType> class shared_window;
 
   /// The window class
-  template <class BaseType=void>
+  template <class BaseType>
   class window {
     friend class shared_window<BaseType>;
-    std::unique_ptr<MPI_Win, decltype(&MPI_Win_free)> win{new MPI_Win{MPI_WIN_NULL}, &MPI_Win_free};
+    MPI_Win win{MPI_WIN_NULL};
   public:
     window() = default;
+    window(window const&) = delete;
+    window(window &&) = delete;
+    window& operator=(window const&) = delete;
+    window& operator=(window &&) = delete;
 
     explicit window(communicator &c, BaseType *base, MPI_Aint size = 0) {
-      MPI_Win_create(base, size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), win.get());
+      MPI_Win_create(base, size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), &win);
     }
 
-    void fence(int assert = 0) {
-      MPI_Win_fence(assert, *win);
+    ~window() {
+      if (win != MPI_WIN_NULL) {
+        MPI_Win_free(&win);
+      }
+    }
+
+    operator MPI_Win() const { return win; };
+    operator MPI_Win*() { return &win; };
+
+    void fence(int assert = 0) const {
+      MPI_Win_fence(assert, win);
     }
 
     template <typename TargetType = BaseType, typename OriginType>
     std::enable_if_t<has_mpi_type<OriginType> && has_mpi_type<TargetType>, void>
-    get(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp = 0, int target_count = -1) {
+    get(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp = 0, int target_count = -1) const {
         MPI_Datatype origin_datatype = mpi_type<OriginType>::get();
         MPI_Datatype target_datatype = mpi_type<TargetType>::get();
         int target_count_ = target_count < 0 ? origin_count : target_count;
-        MPI_Get(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count_, target_datatype, *win.get());
+        MPI_Get(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count_, target_datatype, win);
     };
 
     template <typename TargetType = BaseType, typename OriginType>
     std::enable_if_t<has_mpi_type<OriginType> && has_mpi_type<TargetType>, void>
-    put(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp = 0, int target_count = -1) {
+    put(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp = 0, int target_count = -1) const {
         MPI_Datatype origin_datatype = mpi_type<OriginType>::get();
         MPI_Datatype target_datatype = mpi_type<TargetType>::get();
         int target_count_ = target_count < 0 ? origin_count : target_count;
-        MPI_Put(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count_, target_datatype, *win.get());
+        MPI_Put(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count_, target_datatype, win);
     };
 
     void* get_attr(int win_keyval) const {
       int flag;
       void *attribute_val;
-      MPI_Win_get_attr(*win, win_keyval, &attribute_val, &flag);
+      MPI_Win_get_attr(win, win_keyval, &attribute_val, &flag);
       assert(flag);
       return attribute_val;
     }
@@ -406,14 +419,14 @@ namespace mpi {
   public:
     shared_window(shared_communicator& c, MPI_Aint size) {
       void* baseptr = nullptr;
-      MPI_Win_allocate_shared(size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), &baseptr, this->win.get());
+      MPI_Win_allocate_shared(size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), &baseptr, &(this->win));
     }
 
     std::tuple<MPI_Aint, int, void*> query(int rank = MPI_PROC_NULL) const {
       MPI_Aint size = 0;
       int disp_unit = 0;
       void *baseptr = nullptr;
-      MPI_Win_shared_query(*this->win.get(), rank, &size, &disp_unit, &baseptr);
+      MPI_Win_shared_query(this->win, rank, &size, &disp_unit, &baseptr);
       return {size, disp_unit, baseptr};
     }
 
