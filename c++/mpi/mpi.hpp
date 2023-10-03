@@ -79,6 +79,8 @@ namespace mpi {
 
     [[nodiscard]] MPI_Comm get() const noexcept { return _com; }
 
+    [[nodiscard]] bool is_null() const noexcept { return _com == MPI_COMM_NULL; }
+
     [[nodiscard]] int rank() const {
       if (has_env) {
         int num = 0;
