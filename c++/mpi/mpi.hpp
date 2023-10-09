@@ -23,6 +23,7 @@
 #include <complex>
 #include <type_traits>
 #include <algorithm>
+#include <utility>
 #include <unistd.h>
 
 /// Library namespace
@@ -364,9 +365,15 @@ namespace mpi {
   public:
     window() = default;
     window(window const&) = delete;
-    window(window &&) = delete;
+    window(window &&other) noexcept : win{std::exchange(other.win, MPI_WIN_NULL)} {}
     window& operator=(window const&) = delete;
-    window& operator=(window &&) = delete;
+    window& operator=(window &&rhs) noexcept {
+      if (this != std::addressof(rhs)) {
+        this->free();
+        this->win = std::exchange(rhs.win, MPI_WIN_NULL);
+      }
+      return *this;
+    }
 
     /// Create a window over an existing local memory buffer
     explicit window(communicator &c, BaseType *base, MPI_Aint size = 0) noexcept {
@@ -379,14 +386,16 @@ namespace mpi {
       MPI_Win_allocate(size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), &baseptr, &win);
     }
 
-    ~window() {
+    ~window() { free(); }
+
+    explicit operator MPI_Win() const noexcept { return win; };
+    explicit operator MPI_Win*() noexcept { return &win; };
+
+    void free() noexcept {
       if (win != MPI_WIN_NULL) {
         MPI_Win_free(&win);
       }
     }
-
-    explicit operator MPI_Win() const noexcept { return win; };
-    explicit operator MPI_Win*() noexcept { return &win; };
 
     /// Synchronization routine in active target RMA. It opens and closes an access epoch.
     void fence(int assert = 0) const noexcept {
@@ -474,8 +483,10 @@ namespace mpi {
   template <class BaseType>
   class shared_window : public window<BaseType> {
   public:
+    shared_window() = default;
+
     /// Create a window and allocate memory for a shared memory buffer
-    shared_window(shared_communicator& c, MPI_Aint size) noexcept {
+    explicit shared_window(shared_communicator& c, MPI_Aint size) noexcept {
       void* baseptr = nullptr;
       MPI_Win_allocate_shared(size * sizeof(BaseType), alignof(BaseType), MPI_INFO_NULL, c.get(), &baseptr, &(this->win));
     }
