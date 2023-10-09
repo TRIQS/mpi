@@ -19,6 +19,13 @@
 #include <gtest/gtest.h>
 #include <numeric>
 
+// Test cases are adapted from slides and exercises of the HLRS course:
+// Introduction to the Message Passing Interface (MPI)
+// Authors: Joel Malard, Alan Simpson, (EPCC)
+//          Rolf Rabenseifner, Traugott Streicher, Tobias Haas (HLRS)
+// https://fs.hlrs.de/projects/par/par_prog_ws/pdf/mpi_3.1_rab.pdf
+// https://fs.hlrs.de/projects/par/par_prog_ws/practical/MPI31single.tar.gz
+
 TEST(MPI_Window, SharedCommunicator) {
   mpi::communicator world;
   [[maybe_unused]] auto shm = world.split_shared();
@@ -68,7 +75,7 @@ TEST(MPI_Window, RingOneSidedPut) {
   EXPECT_EQ(sum, (size * (size - 1)) / 2);
 }
 
-TEST(MPI_Window, RingOneSidedAllowShared) {
+TEST(MPI_Window, RingOneSidedAllocShared) {
   mpi::communicator world;
   auto shm = world.split_shared();
   int const rank_shm = shm.rank();
@@ -89,6 +96,66 @@ TEST(MPI_Window, RingOneSidedAllowShared) {
   }
 
   EXPECT_EQ(sum, (size_shm * (size_shm - 1)) / 2);
+}
+
+TEST(MPI_Window, RingOneSidedStoreWinAllocSharedSignal) {
+  mpi::communicator world;
+  auto shm = world.split_shared();
+
+  int const rank_shm = shm.rank();
+  int const size_shm = shm.size();
+  int const right = (rank_shm+1) % size_shm;
+  int const left = (rank_shm-1+size_shm) % size_shm;
+
+  mpi::shared_window<int> win{shm, 1};
+  int *rcv_buf_ptr = win.base(rank_shm);
+  win.lock();
+
+  int sum = 0;
+  int snd_buf = rank_shm;
+
+  MPI_Request rq;
+  MPI_Status status;
+  int snd_dummy, rcv_dummy;
+
+  for(int i = 0; i < size_shm; ++i) {
+    // ... The local Win_syncs are needed to sync the processor and real memory.
+    // ... The following pair of syncs is needed that the read-write-rule is fulfilled.
+    win.sync();
+
+    // ... tag=17: posting to left that rcv_buf is exposed to left, i.e.,
+    //             the left process is now allowed to store data into the local rcv_buf
+    MPI_Irecv(&rcv_dummy, 0, MPI_INT, right, 17, shm.get(), &rq);
+    MPI_Send (&snd_dummy, 0, MPI_INT, left,  17, shm.get());
+    MPI_Wait(&rq, &status);
+
+    win.sync();
+
+    // MPI_Put(&snd_buf, 1, MPI_INT, right, (MPI_Aint) 0, 1, MPI_INT, win);
+    //   ... is substited by (with offset "right-my_rank" to store into right neigbor's rcv_buf):
+    *(rcv_buf_ptr+(right-rank_shm)) = snd_buf;
+
+
+    // ... The following pair of syncs is needed that the write-read-rule is fulfilled.
+    win.sync();
+
+    // ... The following communication synchronizes the processors in the way
+    //     that the origin processor has finished the store
+    //     before the target processor starts to load the data.
+    // ... tag=18: posting to right that rcv_buf was stored from left
+    MPI_Irecv(&rcv_dummy, 0, MPI_INT, left,  18, shm.get(), &rq);
+    MPI_Send (&snd_dummy, 0, MPI_INT, right, 18, shm.get());
+    MPI_Wait(&rq, &status);
+
+    win.sync();
+
+    snd_buf = *rcv_buf_ptr;
+    sum += *rcv_buf_ptr;
+  }
+
+  EXPECT_EQ(sum, (size_shm * (size_shm - 1)) / 2);
+
+  win.unlock();
 }
 
 TEST(MPI_Window, SharedArray) {
