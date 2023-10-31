@@ -155,7 +155,7 @@ namespace mpi {
   /// The shared communicator class
   class shared_communicator : public communicator {};
 
-  [[nodiscard]] shared_communicator communicator::split_shared(int split_type, int key) const {
+  [[nodiscard]] inline shared_communicator communicator::split_shared(int split_type, int key) const {
     if (has_env) {
       shared_communicator c;
       MPI_Comm_split_type(_com, split_type, key, MPI_INFO_NULL, &c._com);
