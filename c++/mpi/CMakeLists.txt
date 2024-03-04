@@ -10,7 +10,7 @@ target_include_directories(${PROJECT_NAME}_c INTERFACE $<BUILD_INTERFACE:${PROJE
 target_include_directories(${PROJECT_NAME}_c SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
 target_compile_definitions(${PROJECT_NAME}_c INTERFACE
 				MPI_GIT_HASH=${PROJECT_GIT_HASH}
-				$<$<CONFIG:Debug,RelWithDebInfo>:MPI_DEBUG>
+				$<$<CONFIG:Debug>:MPI_DEBUG>
 			  )
 
 # Install library and headers
