@@ -14,18 +14,35 @@
 //
 // Authors: Olivier Parcollet, Nils Wentzell
 
+/**
+ * @file
+ * @brief Provides an MPI broadcast for std::string.
+ */
+
 #pragma once
-#include "mpi.hpp"
+
+#include "./mpi.hpp"
+
+#include <mpi.h>
+
 #include <string>
 
 namespace mpi {
 
-  // ---------------- broadcast ---------------------
+  /**
+   * @brief Implementation of an MPI broadcast for a std::string.
+   *
+   * @details Simply calls `MPI_Bcast` for the underlying C-string.
+   *
+   * @param s std::string to broadcast.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   */
   inline void mpi_broadcast(std::string &s, communicator c, int root) {
     size_t len = s.size();
     broadcast(len, c, root);
     if (c.rank() != root) s.resize(len);
-    if (len != 0) MPI_Bcast((void *)s.c_str(), s.size(), mpi_type<char>::get(), root, c.get());
+    if (len != 0) MPI_Bcast((void *)s.c_str(), static_cast<int>(s.size()), mpi_type<char>::get(), root, c.get());
   }
 
 } // namespace mpi

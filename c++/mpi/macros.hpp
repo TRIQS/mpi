@@ -14,6 +14,11 @@
 //
 // Authors: Olivier Parcollet
 
+/**
+ * @file
+ * @brief Macros used in the mpi library.
+ */
+
 #ifndef _CCQ_MACROS_GUARD_H
 #define _CCQ_MACROS_GUARD_H
 
@@ -21,15 +26,17 @@
 // GUARD IT do not use pragma once
 // hence one can simply include them in every projects
 
-// --- Stringify macros -----
+// ---------------- Stringify ----------------
 
 #define AS_STRING(...) AS_STRING2(__VA_ARGS__)
 #define AS_STRING2(...) #__VA_ARGS__
 
+// ---------------- Print ----------------
+
 #define PRINT(X) std::cerr << AS_STRING(X) << " = " << X << "      at " << __FILE__ << ":" << __LINE__ << '\n'
 #define NDA_PRINT(X) std::cerr << AS_STRING(X) << " = " << X << "      at " << __FILE__ << ":" << __LINE__ << '\n'
 
-// --- Concept macros -----
+// ---------------- C++20 specific ----------------
 
 #if (__cplusplus > 201703L)
 
@@ -70,11 +77,13 @@
 
 #endif
 
-#endif
+#endif // C++20
 
-// -----------------------------------------------------------
+// ---------------- Inline ----------------
 
 #define FORCEINLINE __inline__ __attribute__((always_inline))
+
+// ---------------- Debugging ----------------
 
 #ifdef NDEBUG
 
@@ -124,6 +133,6 @@
     std::terminate();                                                                                                                                \
   }
 
-#endif
+#endif // NDEBUG
 
-#endif
+#endif // _CCQ_MACROS_GUARD_H
