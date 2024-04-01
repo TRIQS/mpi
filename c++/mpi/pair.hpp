@@ -30,6 +30,11 @@
 namespace mpi {
 
   /**
+   * @addtogroup coll_comm
+   * @{
+   */
+
+  /**
    * @brief Implementation of an MPI broadcast for a std::pair.
    *
    * @details Simply calls the generic mpi::broadcast for the first and second element of the pair.
@@ -63,5 +68,7 @@ namespace mpi {
   auto mpi_reduce(std::pair<T1, T2> const &p, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     return std::make_pair(reduce(p.first, c, root, all, op), reduce(p.second, c, root, all, op));
   }
+
+  /** @} */
 
 } // namespace mpi

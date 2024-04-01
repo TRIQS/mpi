@@ -17,13 +17,13 @@
 /**
  * @file
  * @brief Provides a class for monitoring and communicating exceptions and other errors of
- * individual nodes.
+ * individual processes.
  */
 
 #pragma once
 
-#include "./mpi.hpp"
 #include "./macros.hpp"
+#include "./mpi.hpp"
 
 #include <mpi.h>
 
@@ -33,6 +33,7 @@
 namespace mpi {
 
   /**
+   * @ingroup err_handling
    * @brief Constructed on top of an MPI communicator, this class helps to monitor and communicate
    * exceptions and other errors of individual processes.
    *
@@ -41,41 +42,34 @@ namespace mpi {
    * processes.
    */
   class monitor {
-
-    /**
-     * @brief Future struct for the non-blocking send/receive done on the root process.
-     *
-     * @details The root process stores a future object for every non-root process. If a non-root
-     * process sends an emergency stop request, the value in the corresponding future object on
-     * the root process will be set to 1.
-     */
+    // Future struct for the non-blocking send/receive done on the root process.
     struct future {
-      /// MPI request for the non-blocking receive on the root process.
+      // MPI request for the non-blocking receive on the root process.
       MPI_Request request{};
 
-      /// 0 means that no error has occurred, 1 means that an error has occurred.
+      // 0 means that no error has occurred, 1 means that an error has occurred.
       int value = 0;
     };
 
-    /// MPI communicator.
+    // MPI communicator.
     mpi::communicator com;
 
-    /// Future objects stored on the root process for every non-root process.
+    // Future objects stored on the root process for every non-root process.
     std::vector<future> root_futures;
 
-    /// MPI request for broadcasting the emergency stop to all non-root processes.
+    // MPI request for broadcasting the emergency stop to all non-root processes.
     MPI_Request req_ibcast{};
 
-    /// MPI request for sending the emergency stop request to the root process.
+    // MPI request for sending the emergency stop request to the root process.
     MPI_Request req_isent{};
 
-    /// Set to 1, if the process has encountered a local error and requested an emergency stop.
+    // Set to 1, if the process has encountered a local error and requested an emergency stop.
     int local_stop = 0;
 
-    /// Set to 1, if the process has received an emergency stop broadcasted by the root process.
+    // Set to 1, if the process has received an emergency stop broadcasted by the root process.
     int global_stop = 0;
 
-    /// Set to true, if finialize_communications() has been called.
+    // Set to true, if finialize_communications() has been called.
     bool finalized = false;
 
     public:
@@ -112,9 +106,9 @@ namespace mpi {
      * @brief Request an emergency stop.
      *
      * @details This function can be called on any process in case a local error has occurred. On the
-     * root process, it sets `local_stop` and `global_stop` to 1 and broadcasts the `global_stop` variable
-     * to all non-root processes. On non-root processes, it sets `local_stop` to 1 and sends the `local_stop`
-     * variable to the root process.
+     * root process, it sets its `local_stop` and `global_stop` members to 1 and broadcasts `global_stop`
+     * to all non-root processes. On non-root processes, it sets `local_stop` to 1 and sends it to the
+     * root process.
      */
     void request_emergency_stop() {
       EXPECTS(!finalized);
@@ -137,10 +131,11 @@ namespace mpi {
      * @brief Check if an emergency stop has been requested.
      *
      * @details This function can be called on any process to check if an emergency has occurred somewhere.
-     * It first checks, if `local_stop` or `global_stop` is set to 1 and returns `true` in case it is. Otherwise,
-     * on the root process, it calls `root_check_nodes_and_bcast()` to check if some other process has sent an
-     * emergency message and to possibly forward the received signal. On non-root processes, it checks if the root
-     * process has broadcasted an emergency stop, which it has received from some other process.
+     * It first checks, if its `local_stop` or `global_stop` members are set to 1 and returns `true` in case
+     * one of them is. Otherwise, on the root process, it calls `root_check_nodes_and_bcast()` to check if
+     * some other process has sent an emergency message and to possibly forward the received signal.
+     * On non-root processes, it checks if the root process has broadcasted an emergency stop, which it has
+     * received from some other process.
      *
      * @return True, if an emergency stop has been requested. Otherwise, it returns false.
      */
@@ -167,7 +162,8 @@ namespace mpi {
      * @brief Finalize all pending communications.
      *
      * @details At the end of this function, all processes have completed their work or have had a local
-     * emergency stop. `global_stop` is guaranteed to be the same on all processes when this function returns.
+     * emergency stop. The member `global_stop` is guaranteed to be the same on all processes when this
+     * function returns.
      */
     void finalize_communications() {
       if (finalized) return;

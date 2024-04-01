@@ -36,6 +36,11 @@
 namespace mpi {
 
   /**
+   * @addtogroup coll_comm
+   * @{
+   */
+
+  /**
    * @brief Implementation of an MPI broadcast for a std::vector.
    *
    * @details If mpi::has_mpi_type<T> is true then the vector is broadcasted using a simple `MPI_Bcast`. Otherwise,
@@ -61,7 +66,7 @@ namespace mpi {
    * @brief Implementation of an in-place MPI reduce for a std::vector.
    *
    * @details If mpi::has_mpi_type<T> is true then the vector is reduced using a simple `MPI_Reduce` or `MPI_Allreduce`.
-   * Otherwise, the specialized mpi_reduce_in_place is called for each element of the vector.
+   * Otherwise, the specialized `mpi_reduce_in_place` is called for each element of the vector.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to reduce.
@@ -84,18 +89,12 @@ namespace mpi {
 
   namespace detail {
 
-    /**
-     * @brief Helper struct to get the regular type of a type.
-     * @tparam T Type to check.
-     */
+    // Helper struct to get the regular type of a type.
     template <typename T, typename Enable = void> struct _regular {
       using type = T;
     };
 
-    /**
-     * @brief Spezialization of _regular for types with a `regular_type` type alias.
-     * @tparam T Type to check.
-     */
+    // Spezialization of _regular for types with a `regular_type` type alias.
     template <typename T> struct _regular<T, std::void_t<typename T::regular_type>> {
       using type = typename T::regular_type;
     };
@@ -103,6 +102,7 @@ namespace mpi {
   } // namespace detail
 
   /**
+   * @ingroup utilities
    * @brief Type trait to get the regular type of a type.
    * @tparam T Type to check.
    */
@@ -249,5 +249,7 @@ namespace mpi {
     }
     return res;
   }
+
+  /** @} */
 
 } // namespace mpi

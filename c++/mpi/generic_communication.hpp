@@ -18,7 +18,7 @@
  * @file
  * @brief Provides generic implementations for a subset of collective MPI communications (broadcast, reduce, gather, scatter).
  * @details The generic functions (mpi::broadcast, mpi::reduce, mpi::scatter, ...) call their more specialized counterparts
- * (`mpi_broadcast`, `mpi_reduce`, `mpi_scatter`, ...). They depend on ADL.
+ * (e.g. mpi::mpi_broadcast, mpi::mpi_reduce, mpi::mpi_scatter, ...). They depend on ADL.
  */
 
 #pragma once
@@ -34,32 +34,20 @@
 
 namespace mpi {
 
+  /**
+   * @addtogroup coll_comm
+   * @{
+   */
+
   namespace detail {
 
-    /**
-     * @brief Type trait to check if a type is a std::vector.
-     * @tparam T Type to be checked.
-     */
+    // Type trait to check if a type is a std::vector.
     template <typename T> inline constexpr bool is_std_vector = false;
 
-    /**
-     * @brief Spezialization of is_std_vector for std::vector<T>.
-     * @tparam T Value type of the std::vector.
-     */
+    // Spezialization of is_std_vector for std::vector<T>.
     template <typename T> inline constexpr bool is_std_vector<std::vector<T>> = true;
 
-    /**
-     * @brief Convert an object of type V to an object of type T.
-     *
-     * @details If V is a std::vector, the function creates a new std::vector of type T and moves the elements
-     * of the input vector into the new vector. Otherwise, it simply constructs a new object of type T from the input
-     * object.
-     *
-     * @tparam T Output type.
-     * @tparam V Input type.
-     * @param v Input object of type V.
-     * @return Converted object of type T.
-     */
+    // Convert an object of type V to an object of type T.
     template <typename T, typename V> T convert(V v) {
       if constexpr (is_std_vector<T>) {
         T res;
@@ -235,7 +223,7 @@ namespace mpi {
 
   /**
    * @brief Implementation of an MPI broadcast for types that have a corresponding MPI datatype, i.e. for which
-   * a specialization of mpi_type has been defined.
+   * a specialization of mpi::mpi_type has been defined.
    *
    * @tparam T Type to be broadcasted.
    * @param x Object to be broadcasted.
@@ -248,7 +236,7 @@ namespace mpi {
 
   /**
    * @brief Implementation of an MPI reduce for types that have a corresponding MPI datatype, i.e. for which
-   * a specialization of mpi_type has been defined.
+   * a specialization of mpi::mpi_type has been defined.
    *
    * @tparam T Type to be reduced.
    * @param x Object to be reduced.
@@ -272,7 +260,7 @@ namespace mpi {
 
   /**
    * @brief Implementation of an in-place MPI reduce for types that have a corresponding MPI datatype, i.e. for which
-   * a specialization of mpi_type has been defined.
+   * a specialization of mpi::mpi_type has been defined.
    *
    * @tparam T Type to be reduced.
    * @param x Object to be reduced.
@@ -288,5 +276,7 @@ namespace mpi {
     else
       MPI_Allreduce(MPI_IN_PLACE, &x, 1, mpi_type<T>::get(), op, c.get());
   }
+
+  /** @} */
 
 } // namespace mpi

@@ -25,31 +25,23 @@
 
 namespace mpi {
 
+  /**
+   * @addtogroup mpi_types_ops
+   * @{
+   */
+
   namespace detail {
 
-    /**
-     * @brief Lambda that maps a binary user function to an `MPI_User_function`.
-     *
-     * @details The unary plus in front of the lambda is necessary to convert it to a function pointer.
-     *
-     * @tparam T Type on which the binary function operates.
-     * @tparam F Binary function pointer to be mapped.
-     */
+    // Lambda that maps a binary user function to an `MPI_User_function`.
     template <typename T, T (*F)(T const &, T const &)>
+    // unary plus converts the lambda to a function pointer
     MPI_User_function *_map_function = +[](void *in, void *inout, int *len, MPI_Datatype *) { // NOLINT (MPI_Op_create needs a non-const pointer)
       auto *inT    = static_cast<T *>(in);
       auto *inoutT = static_cast<T *>(inout);
       for (int i = 0; i < *len; ++i, ++inT, ++inoutT) { *inoutT = F(*inoutT, *inT); }
     };
 
-    /**
-     * @brief Generic addition.
-     *
-     * @tparam T Type used for the addition.
-     * @param lhs Left hand side summand.
-     * @param rhs Right hand side summand.
-     * @return Sum of given arguments.
-     */
+    // Generic addition.
     template <typename T> T _generic_add(T const &lhs, T const &rhs) { return lhs + rhs; }
 
   } // namespace detail

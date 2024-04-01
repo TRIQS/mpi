@@ -31,13 +31,14 @@
 namespace mpi {
 
   /**
+   * @ingroup mpi_essentials
    * @brief C++ wrapper around `MPI_Comm` providing various convenience functions.
    *
    * @details It stores an `MPI_Comm` object as its only member which by default is set to `MPI_COMM_WORLD`.
    * Note that copying the communicator simply copies the `MPI_Comm` object, without calling `MPI_Comm_dup`.
    */
   class communicator {
-    /// Wrapped `MPI_Comm` object.
+    // Wrapped `MPI_Comm` object.
     MPI_Comm _com = MPI_COMM_WORLD;
 
     public:
@@ -85,8 +86,8 @@ namespace mpi {
      * @details Calls `MPI_Comm_split` with the given color and key arguments. See the MPI documentation for more details,
      * e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_split.3.html">open-mpi docs</a>.
      *
-     * @return If mpi::has_env is true, return the split `MPI_Comm` object wrapped in a new communicator, otherwise
-     * return a default constructed communicator.
+     * @return If mpi::has_env is true, return the split `MPI_Comm` object wrapped in a new mpi::communicator, otherwise
+     * return a default constructed mpi::communicator.
      */
     [[nodiscard]] communicator split(int color, int key = 0) const {
       if (has_env) {
@@ -124,6 +125,7 @@ namespace mpi {
      *     - 1 msec ~ 1% cpu load
      *     - 10 msec ~ 0.5% cpu load
      *     - 100 msec ~ 0.01% cpu load
+     *
      * For a very unbalanced load that takes a long time to finish, 1000 msec is a good choice.
      *
      * @param poll_msec The polling interval in milliseconds. If set to 0, a simple `MPI_Barrier` call is used.

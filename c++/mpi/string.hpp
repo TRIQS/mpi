@@ -30,6 +30,7 @@
 namespace mpi {
 
   /**
+   * @ingroup coll_comm
    * @brief Implementation of an MPI broadcast for a std::string.
    *
    * @details Simply calls `MPI_Bcast` for the underlying C-string.

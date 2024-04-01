@@ -29,21 +29,31 @@ namespace mpi {
 
   namespace tag {
 
-    /// Tag to specify a lazy MPI reduce call.
+    /**
+     * @ingroup mpi_lazy
+     * @brief Tag to specify a lazy MPI reduce call.
+     */
     struct reduce {};
 
-    /// Tag to specify a lazy MPI scatter call.
+    /**
+     * @ingroup mpi_lazy
+     * @brief Tag to specify a lazy MPI scatter call.
+     */
     struct scatter {};
 
-    /// Tag to specify a lazy MPI gather call.
+    /**
+     * @ingroup mpi_lazy
+     * @brief Tag to specify a lazy MPI gather call.
+     */
     struct gather {};
 
   } // namespace tag
 
   /**
+   * @ingroup mpi_lazy
    * @brief Represents a lazy MPI communication.
    *
-   * @tparam Tag Type to specify the kind of MPI communication.
+   * @tparam Tag An mpi::tag to specify the kind of MPI communication.
    * @tparam T Type to be communicated.
    */
   template <typename Tag, typename T> struct lazy {
@@ -59,7 +69,7 @@ namespace mpi {
     /// Should we use `MPI_Allxxx`?
     bool all{};
 
-    /// `MPI_Op` used in the lazy communication (only relevant if tag::reduce is used).
+    /// `MPI_Op` used in the lazy communication (only relevant if mpi::tag::reduce is used).
     MPI_Op op{};
   };
 
@@ -67,12 +77,14 @@ namespace mpi {
   namespace detail {
 
     /**
+     * @ingroup mpi_lazy
      * @brief Type trait to check if a type is mpi::lazy.
      * @tparam T Type to be checked.
      */
     template <typename T> inline constexpr bool is_mpi_lazy = false;
 
     /**
+     * @ingroup mpi_lazy
      * @brief Spezialization of is_mpi_lazy.
      *
      * @tparam Tag Type to specify the kind of MPI call.

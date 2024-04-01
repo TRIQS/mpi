@@ -31,19 +31,21 @@
 namespace mpi {
 
   /**
-   * @brief Get the length of the i^th subrange after splitting the integer range `[0, end)` evenly across n subranges.
+   * @ingroup utilities
+   * @brief Get the length of the i<sup>th</sup> subrange after splitting the integer range `[0, end)` evenly across n subranges.
    *
    * @param end End of the integer range `[0, end)`.
    * @param n Number of subranges.
-   * @param i Index of subrange of interest.
-   * @return Length of i^th subrange.
+   * @param i Index of the subrange of interest.
+   * @return Length of the i<sup>th</sup> subrange.
    */
-  inline long chunk_length(long end, int n, int i) {
+  [[nodiscard]] inline long chunk_length(long end, int n, int i) {
     auto [node_begin, node_end] = itertools::chunk_range(0, end, n, i);
     return node_end - node_begin;
   }
 
   /**
+   * @ingroup utilities
    * @brief Divide a given range as evenly as possible across the MPI processes in a communicator and get the subrange
    * assigned to the calling process.
    *
@@ -52,7 +54,7 @@ namespace mpi {
    * @param c mpi::communicator.
    * @return An itertools::sliced range assigned to the calling process.
    */
-  template <typename R> auto chunk(R &&rg, communicator c = {}) {
+  template <typename R> [[nodiscard]] auto chunk(R &&rg, communicator c = {}) {
     auto total_size           = itertools::distance(std::cbegin(rg), std::cend(rg));
     auto [start_idx, end_idx] = itertools::chunk_range(0, total_size, c.size(), c.rank());
     return itertools::slice(std::forward<R>(rg), start_idx, end_idx);

@@ -34,16 +34,14 @@
 
 namespace mpi {
 
+  /**
+   * @addtogroup mpi_types_ops
+   * @{
+   */
+
   namespace detail {
 
-    /**
-     * @brief Helper function to get the memory displacements of the different elements in a tuple w.r.t. the first element.
-     *
-     * @tparam Ts Tuple element types.
-     * @tparam Is Indices.
-     * @param tup Tuple object.
-     * @param disp Pointer to an array of memory displacements.
-     */
+    // Helper function to get the memory displacements of the different elements in a tuple w.r.t. the first element.
     template <typename... T, size_t... Is> void _init_mpi_tuple_displ(std::index_sequence<Is...>, std::tuple<T...> tup, MPI_Aint *disp) {
       ((void)(disp[Is] = {(char *)&std::get<Is>(tup) - (char *)&std::get<0>(tup)}), ...);
     }
@@ -69,7 +67,7 @@ namespace mpi {
 #define D(T, MPI_TY)                                                                                                                                 \
   /** @brief Specialization of mpi_type for T. */                                                                                                    \
   template <> struct mpi_type<T> {                                                                                                                   \
-    static MPI_Datatype get() noexcept { return MPI_TY; }                                                                                            \
+    [[nodiscard]] static MPI_Datatype get() noexcept { return MPI_TY; }                                                                              \
   }
 
   // mpi_type specialization for various built-in types
@@ -87,19 +85,19 @@ namespace mpi {
 #undef D
 
   /**
-   * @brief Specialization of mpi_type for `const` types.
+   * @brief Specialization of mpi::mpi_type for `const` types.
    * @tparam T C++ type.
    */
   template <typename T> struct mpi_type<const T> : mpi_type<T> {};
 
   /**
-   * @brief Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi_type has been specialized.
+   * @brief Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been specialized.
    * @tparam T Type to be checked.
    */
   template <typename T, typename = void> constexpr bool has_mpi_type = false;
 
   /**
-   * @brief Specialization of has_mpi_type for types which have a corresponding MPI datatype.
+   * @brief Specialization of mpi::has_mpi_type for types which have a corresponding MPI datatype.
    * @tparam T Type to be checked.
    */
   template <typename T> constexpr bool has_mpi_type<T, std::void_t<decltype(mpi_type<T>::get())>> = true;
@@ -107,14 +105,14 @@ namespace mpi {
   /**
    * @brief Create a new `MPI_Datatype` from a tuple.
    *
-   * @details The tuple element types must have corresponding MPI datatypes, i.e. they must have mpi_type
+   * @details The tuple element types must have corresponding MPI datatypes, i.e. they must have mpi::mpi_type
    * specializtions. It uses `MPI_Type_create_struct` to create a new datatype consisting of the tuple element types.
    *
    * @tparam Ts Tuple element types.
    * @param tup Tuple object.
    * @return `MPI_Datatype` consisting of the types of the tuple elements.
    */
-  template <typename... Ts> MPI_Datatype get_mpi_type(std::tuple<Ts...> tup) {
+  template <typename... Ts> [[nodiscard]] MPI_Datatype get_mpi_type(std::tuple<Ts...> tup) {
     static constexpr int N            = sizeof...(Ts);
     std::array<MPI_Datatype, N> types = {mpi_type<std::remove_reference_t<Ts>>::get()...};
 
@@ -138,18 +136,18 @@ namespace mpi {
   }
 
   /**
-   * @brief Specialization of mpi_type for std::tuple.
+   * @brief Specialization of mpi::mpi_type for std::tuple.
    * @tparam Ts Tuple element types.
    */
   template <typename... T> struct mpi_type<std::tuple<T...>> {
-    static MPI_Datatype get() noexcept { return get_mpi_type(std::tuple<T...>{}); }
+    [[nodiscard]] static MPI_Datatype get() noexcept { return get_mpi_type(std::tuple<T...>{}); }
   };
 
   /**
    * @brief Create an `MPI_Datatype` from some struct.
    *
    * @details It is assumed that there is a free function `tie_data` which returns a tuple containing the data
-   * members of the given type. The intended use is as a base class for a specialization of mpi_type:
+   * members of the given type. The intended use is as a base class for a specialization of mpi::mpi_type:
    *
    * @code{.cpp}
    * // type to use for MPI communication
@@ -170,7 +168,9 @@ namespace mpi {
    * @tparam T Type to be converted to an `MPI_Datatype`.
    */
   template <typename T> struct mpi_type_from_tie {
-    static MPI_Datatype get() noexcept { return get_mpi_type(tie_data(T{})); }
+    [[nodiscard]] static MPI_Datatype get() noexcept { return get_mpi_type(tie_data(T{})); }
   };
+
+  /** @} */
 
 } // namespace mpi
