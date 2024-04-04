@@ -14,60 +14,63 @@
 //
 // Authors: Nils Wentzell
 
-#include <mpi/vector.hpp>
+#include <gtest/gtest.h>
+#include <itertools/itertools.hpp>
 #include <mpi/pair.hpp>
 #include <mpi/string.hpp>
-#include <gtest/gtest.h>
+#include <mpi/vector.hpp>
 
 #include <complex>
+#include <string>
+#include <utility>
+#include <vector>
 
-using namespace itertools;
-
-TEST(MPI, vector_reduce) {
-
+TEST(MPI, VectorReduce) {
+  // reduce a vector of complex numbers
   mpi::communicator world;
+  using vec_type = std::vector<std::complex<double>>;
 
-  const int N = 7;
-  using VEC   = std::vector<std::complex<double>>;
+  const int size = 7;
+  vec_type vec(size), reduced_vec;
 
-  VEC A(N), B;
+  for (int i = 0; i < size; ++i) vec[i] = i;
 
-  for (int i = 0; i < N; ++i) A[i] = i; //+ world.rank();
+  reduced_vec = mpi::all_reduce(vec, world);
 
-  B = mpi::all_reduce(A, world);
+  vec_type exp_vec(size);
+  for (int i = 0; i < size; ++i) exp_vec[i] = world.size() * i;
 
-  VEC res(N);
-  for (int i = 0; i < N; ++i) res[i] = world.size() * i; // +  world.size()*(world.size() - 1)/2;
-
-  EXPECT_EQ(B, res);
+  EXPECT_EQ(reduced_vec, exp_vec);
 }
 
-// -----------------------------------
-
-TEST(MPI, vector_gather_scatter) {
-
+TEST(MPI, EmptyVectorReduce) {
+  // reduce an empty vector
   mpi::communicator world;
-
-  std::vector<std::complex<double>> A(7), B(7), AA(7);
-
-  for (auto [i, v_i] : enumerate(A)) v_i = i + 1;
-
-  B      = mpi::scatter(A, world);
-  auto C = mpi::scatter(A, world);
-
-  for (auto &x : B) x *= -1;
-  for (auto &x : AA) x = 0;
-  for (auto &x : A) x *= -1;
-
-  AA = mpi::all_gather(B, world);
-
-  EXPECT_EQ(A, AA);
+  std::vector<double> v1{};
+  std::vector<double> v2 = mpi::reduce(v1, world);
 }
 
-// -----------------------------------
+TEST(MPI, VectorGatherScatter) {
+  // scatter and gather a vector of complex numbers
+  mpi::communicator world;
 
-TEST(MPI, vector_gather_scatter_pair) {
+  std::vector<std::complex<double>> vec(7), scattered_vec(7), gathered_vec(7, {0.0, 0.0});
 
+  for (auto [i, v_i] : itertools::enumerate(vec)) v_i = static_cast<double>(i) + 1.0;
+
+  scattered_vec = mpi::scatter(vec, world);
+  auto tmp      = mpi::scatter(vec, world);
+
+  for (auto &x : scattered_vec) x *= -1;
+  for (auto &x : vec) x *= -1;
+
+  gathered_vec = mpi::all_gather(scattered_vec, world);
+
+  EXPECT_EQ(vec, gathered_vec);
+}
+
+TEST(MPI, VectorGatherScatterPair) {
+  // scatter and gather a vector of pairs
   auto v = std::vector<std::pair<int, std::string>>{{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"}};
 
   auto vsct = mpi::scatter(v);

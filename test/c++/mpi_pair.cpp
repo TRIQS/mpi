@@ -14,14 +14,16 @@
 //
 // Authors: Nils Wentzell
 
+#include <gtest/gtest.h>
 #include <mpi/pair.hpp>
 #include <mpi/string.hpp>
-#include <gtest/gtest.h>
 
 #include <complex>
+#include <string>
+#include <utility>
 
-TEST(MPI, pair_broadcast) {
-
+TEST(MPI, PairBroadcast) {
+  // broadcast a pair consisting of a string and a complex number
   std::pair<std::string, std::complex<double>> p;
 
   auto str  = std::string{"Hello"};
@@ -36,10 +38,8 @@ TEST(MPI, pair_broadcast) {
   EXPECT_EQ(cplx, cplx_bc);
 }
 
-// -----------------------------------
-
-TEST(MPI, pair_reduce) {
-
+TEST(MPI, PairReduce) {
+  // reduce a pair of integers
   mpi::communicator world;
   auto r = world.rank();
   auto p = std::pair{1, r};

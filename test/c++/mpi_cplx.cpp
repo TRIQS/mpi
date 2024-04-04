@@ -14,13 +14,13 @@
 //
 // Authors: Hugo U. R. Strand
 
-#include <mpi/mpi.hpp>
 #include <gtest/gtest.h>
+#include <mpi/mpi.hpp>
 
 #include <complex>
 
-TEST(MPI, complex_broadcast) {
-
+TEST(MPI, ComplexBroadcast) {
+  // broadcast a complex number
   mpi::communicator world;
 
   std::complex<double> cplx;

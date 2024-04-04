@@ -14,31 +14,31 @@
 //
 // Authors: Olivier Parcollet, Nils Wentzell
 
-#include <mpi/mpi.hpp>
 #include <gtest/gtest.h>
+#include <mpi/mpi.hpp>
 
-using namespace mpi;
+#include <array>
 
-TEST(Comm, split) {
-
-  communicator world;
+TEST(MPI, CommunicatorSplit) {
+  mpi::communicator world;
   int rank = world.rank();
 
-  // Skip test if only one rank in communicator
+  // skip test if only one rank in communicator
   if (world.size() == 1) return;
 
+  // only works for 2 or 4 processes
   ASSERT_TRUE(2 == world.size() or 4 == world.size());
 
-  int colors[] = {0, 2, 1, 1};
-  int keys[]   = {5, 7, 13, 18};
+  // split the communicator into 2 (3) for 2 (4) processes
+  auto colors = std::array{0, 2, 1, 1};
+  auto keys   = std::array{5, 7, 13, 18};
+  auto comm   = world.split(colors[rank], keys[rank]);
 
-  auto comm = world.split(colors[rank], keys[rank]);
-
-  int comm_sizes[] = {1, 1, 2, 2};
-  int comm_ranks[] = {0, 0, 0, 1};
-
-  EXPECT_EQ(comm_sizes[rank], comm.size());
-  EXPECT_EQ(comm_ranks[rank], comm.rank());
+  // check results
+  auto exp_sizes = std::array{1, 1, 2, 2};
+  auto exp_ranks = std::array{0, 0, 0, 1};
+  EXPECT_EQ(exp_sizes[rank], comm.size());
+  EXPECT_EQ(exp_ranks[rank], comm.rank());
 }
 
 MPI_TEST_MAIN;

@@ -14,11 +14,13 @@
 //
 // Authors: Nils Wentzell
 
-#include <mpi/string.hpp>
 #include <gtest/gtest.h>
+#include <mpi/string.hpp>
 
-TEST(MPI, string_broadcast) {
+#include <string>
 
+TEST(MPI, StringBroadcast) {
+  // broadcast a string
   mpi::communicator world;
 
   std::string s;

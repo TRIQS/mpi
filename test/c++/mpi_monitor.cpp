@@ -14,46 +14,50 @@
 //
 // Authors: Philipp Dumitrescu, Olivier Parcollet, Nils Wentzell
 
-#include "mpi/mpi.hpp"
-#include "mpi/monitor.hpp"
-#include <vector>
 #include <gtest/gtest.h>
+#include <mpi/monitor.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
 #include <unistd.h>
 
-const int delta_tau_sleep = 1000; // in micro second : 3 ms
+// in micro second = 1 milli second
+const int delta_tau_sleep = 1000;
 
-// fastest_node : position of the fastest node
+// Monitor all nodes while some of them might fail.
+//
+// c: MPI communicator
+// fastest_node: rank of the fastest node
+// rank_failing: ranks of the nodes that will fail
+// iteration_failure: iteration at which the nodes will fail
 bool test(mpi::communicator c, int fastest_node, std::vector<int> rank_failing, int iteration_failure = 3) {
-
-  const int N     = 10;
-  const long size = c.size();
+  const int niter = 10;
+  const int size  = c.size();
   int sleeptime   = delta_tau_sleep * (((c.rank() - fastest_node + size) % size) + 1);
   bool will_fail  = std::any_of(rank_failing.cbegin(), rank_failing.cend(), [&c](int i) { return i == c.rank(); });
   std::cerr << "Node " << c.rank() << ": sleeptime " << sleeptime << std::endl;
 
-  mpi::monitor M{c};
+  mpi::monitor monitor{c};
 
-  for (int i = 0; (!M.emergency_occured()) and (i < N); ++i) {
+  for (int i = 0; (!monitor.emergency_occured()) and (i < niter); ++i) {
     usleep(sleeptime);
-
-    std::cerr << "N=" << c.rank() << " i=" << i << std::endl;
-
+    std::cerr << "Node " << c.rank() << "is in iteration " << i << std::endl;
     if (will_fail and (i >= iteration_failure)) {
       std::cerr << "Node " << c.rank() << " is failing" << std::endl;
-      M.request_emergency_stop();
-      M.request_emergency_stop(); // 2nd call should not resend MPI message
+      monitor.request_emergency_stop();
+      monitor.request_emergency_stop(); // 2nd call should not resend MPI message
     }
-    if (i == N - 1) { std::cerr << "Node " << c.rank() << " done all tasks" << std::endl; }
+    if (i == niter - 1) { std::cerr << "Node " << c.rank() << " has done all tasks" << std::endl; }
   }
 
-  M.finalize_communications();
+  monitor.finalize_communications();
   std::cerr << "Ending on node " << c.rank() << std::endl;
-  return not M.emergency_occured();
+  return not monitor.emergency_occured();
 }
 
-// ------------------------
-
-TEST(MPI_Monitor, NoFailure) {
+TEST(MPI, MonitorNoFailure) {
+  // no failure
   usleep(1000);
   mpi::communicator world;
   for (int i = 0; i < world.size(); ++i) {
@@ -64,9 +68,8 @@ TEST(MPI_Monitor, NoFailure) {
   }
 }
 
-// ------------------------
-
-TEST(MPI_Monitor, OneFailureOnRoot) {
+TEST(MPI, MonitorOneFailureOnRoot) {
+  // root node fails
   usleep(1000);
   mpi::communicator world;
   for (int i = 0; i < world.size(); ++i) {
@@ -78,7 +81,8 @@ TEST(MPI_Monitor, OneFailureOnRoot) {
   usleep(1000);
 }
 
-TEST(MPI_Monitor, OneFailureNoRoot) {
+TEST(MPI, MonitorOneFailureOnNonRoot) {
+  // one non-root node fails
   usleep(1000);
   mpi::communicator world;
   if (world.size() < 2) {
@@ -95,7 +99,8 @@ TEST(MPI_Monitor, OneFailureNoRoot) {
   usleep(1000);
 }
 
-TEST(MPI_Monitor, TwoFailuresWithRoot) {
+TEST(MPI, MonitorTwoFailuresWithRoot) {
+  // two nodes fail including the root process
   usleep(1000);
   mpi::communicator world;
   if (world.size() < 2) {
@@ -111,7 +116,8 @@ TEST(MPI_Monitor, TwoFailuresWithRoot) {
   usleep(1000);
 }
 
-TEST(MPI_Monitor, TwoFailuresWithoutRoot) {
+TEST(MPI, MonitorTwoFailuresWithoutRoot) {
+  // two nodes fail excluding the root process
   usleep(1000);
   mpi::communicator world;
   if (world.size() < 3) {

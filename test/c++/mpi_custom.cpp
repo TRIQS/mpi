@@ -14,118 +14,112 @@
 //
 // Authors: Nils Wentzell
 
-#include <mpi/mpi.hpp>
 #include <gtest/gtest.h>
+#include <mpi/mpi.hpp>
+#include <mpi.h>
+
+#include <array>
+#include <tuple>
 
 using namespace mpi;
 
-// a simple structure
-struct Complex {
-  double real, imag;
+// a simple struct representing a complex number
+struct custom_cplx {
+  double real{}, imag{};
 
-  Complex operator+(Complex y) const {
-    y.real += real;
-    y.imag += imag;
-    return y;
+  // add two custom_cplx objects
+  custom_cplx operator+(custom_cplx z) const {
+    z.real += real;
+    z.imag += imag;
+    return z;
   }
 };
 
-// tie the data
-inline auto tie_data(Complex c) { return std::tie(c.real, c.imag); }
+// tie the data (used to construct the custom MPI type)
+inline auto tie_data(custom_cplx z) { return std::tie(z.real, z.imag); }
 
-// The mpi custom type is implemented using a tie
-namespace mpi {
-  template <> struct mpi_type<Complex> : mpi_type_from_tie<Complex> {};
-} // namespace mpi
+// specialize mpi_type for custom_cplx
+template <> struct mpi::mpi_type<custom_cplx> : mpi::mpi_type_from_tie<custom_cplx> {};
 
-// a user defined function
-Complex fff(Complex const &x, Complex const &y) { return x + y; }
+// stand-alone add function (the same as the operator+ above)
+custom_cplx add(custom_cplx const &x, custom_cplx const &y) { return x + y; }
 
-//---------------------------------------
-
-TEST(MPI_CUSTOM, custom_type_op) {
-
-  communicator world;
-  int rank = world.rank();
-  int size = world.size();
-
-  Complex a[10], answer[10];
-
-  for (int u = 0; u < 10; ++u) {
-    a[u].real      = rank + 1;
-    a[u].imag      = 0;
-    answer[u].real = 0;
-    answer[u].imag = 0;
+// specialize mpi_reduce for std::array
+template <typename T, size_t N>
+std::array<T, N> mpi_reduce(std::array<T, N> const &arr, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  std::array<T, N> res{};
+  if (all) {
+    MPI_Allreduce(arr.data(), res.data(), N, mpi::mpi_type<T>::get(), op, c.get());
+  } else {
+    MPI_Reduce(arr.data(), res.data(), N, mpi::mpi_type<T>::get(), op, root, c.get());
   }
-
-  int root = 0;
-
-  MPI_Reduce(a, answer, 10, mpi::mpi_type<Complex>::get(), mpi::map_add<Complex>(), root, MPI_COMM_WORLD);
-
-  if (rank == root)
-    for (auto &u : answer) { ASSERT_NEAR(u.real, size * (size + 1) / 2, 1.e-14); }
+  return res;
 }
 
-//---------------------------------------
-
-TEST(MPI_CUSTOM, custom_type_op2) {
-
+TEST(MPI, CustomTypeMapAdd) {
   communicator world;
   int rank = world.rank();
   int size = world.size();
-
-  Complex a[10], answer[10];
-
-  for (int u = 0; u < 10; ++u) {
-    a[u].real      = rank + 1;
-    a[u].imag      = 0;
-    answer[u].real = 0;
-    answer[u].imag = 0;
-  }
-
   int root = 0;
 
-  MPI_Reduce(a, answer, 10, mpi::mpi_type<Complex>::get(), mpi::map_C_function<Complex, fff>(), root, MPI_COMM_WORLD);
+  // array of custom_cplx objects to be reduced
+  std::array<custom_cplx, 10> arr;
+  for (int i = 0; i < 10; ++i) {
+    arr[i].real = rank + 1;
+    arr[i].imag = 0;
+  }
 
+  // reduce and check result
+  auto reduced_arr = mpi::reduce(arr, world, root, false, mpi::map_add<custom_cplx>());
   if (rank == root)
-    for (auto &u : answer) { ASSERT_NEAR(u.real, size * (size + 1) / 2, 1.e-14); }
+    for (auto &z : reduced_arr) { ASSERT_NEAR(z.real, size * (size + 1) / 2.0, 1.e-14); }
 }
 
-//---------------------------------------
-
-// A struct with elementwise addition on first and last component
-struct A {
-  int i;
-  long long ll;
-  double d;
-};
-A add_As(A const &lhs, A const &rhs) { return A{lhs.i + rhs.i, 0ll, lhs.d + rhs.d}; }
-
-// Tie the data to construct the custom MPI type
-inline auto tie_data(A a) { return std::tie(a.i, a.ll, a.d); }
-namespace mpi {
-  template <> struct mpi_type<A> : mpi_type_from_tie<A> {};
-} // namespace mpi
-
-TEST(MPI_CUSTOM, struct_custom_add) {
-
+TEST(MPI, CustomTypeMapCFunction) {
   communicator world;
   int rank = world.rank();
   int size = world.size();
-
-  A a[10], answer[10];
-
-  for (auto &u : a) {
-    u.i = rank + 1;
-    u.d = 3.0 * (rank + 1);
-  }
-
   int root = 0;
 
-  MPI_Reduce(a, answer, 2, mpi_type<A>::get(), mpi::map_C_function<A, add_As>(), root, MPI_COMM_WORLD);
+  // array of custom_cplx objects to be reduced
+  std::array<custom_cplx, 10> arr;
+  for (int i = 0; i < 10; ++i) {
+    arr[i].real = rank + 1;
+    arr[i].imag = 0;
+  }
 
+  // reduce and check result
+  auto reduced_arr = mpi::reduce(arr, world, root, false, mpi::map_C_function<custom_cplx, add>());
   if (rank == root)
-    for (int u = 0; u < 2; ++u) { ASSERT_NEAR(answer[u].i + answer[u].d, 2 * size * (size + 1), 1.e-14); }
+    for (auto &z : reduced_arr) { ASSERT_NEAR(z.real, size * (size + 1) / 2.0, 1.e-14); }
+}
+
+// custom tuple type
+using tuple_type = std::tuple<int, long long, double>;
+
+// two tuples are summed by adding the first and last component, the middle one is zeroed
+auto add(tuple_type const &lhs, tuple_type const &rhs) {
+  return std::make_tuple(std::get<0>(lhs) + std::get<0>(rhs), 0ll, std::get<2>(lhs) + std::get<2>(rhs));
+}
+
+TEST(MPI, TupleTypeMapCFunction) {
+  communicator world;
+  int rank = world.rank();
+  int size = world.size();
+  int root = 0;
+
+  // array of custom_type objects to be reduced
+  std::array<tuple_type, 10> arr;
+  for (auto &tup : arr) {
+    std::get<0>(tup) = rank + 1;
+    std::get<2>(tup) = 3.0 * (rank + 1);
+  }
+
+  // reduce and check result
+  auto reduced_arr = mpi::reduce(arr, world, root, false, mpi::map_C_function<tuple_type, add>());
+  // MPI_Reduce(arr.data(), reduced_arr.data(), 10, mpi_type<tuple_type>::get(), mpi::map_C_function<tuple_type, add>(), root, MPI_COMM_WORLD);
+  if (rank == root)
+    for (int i = 0; i < 10; ++i) { ASSERT_NEAR(std::get<0>(reduced_arr[i]) + std::get<2>(reduced_arr[i]), 2 * size * (size + 1), 1.e-14); }
 }
 
 MPI_TEST_MAIN;
