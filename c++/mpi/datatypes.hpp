@@ -27,7 +27,6 @@
 #include <array>
 #include <complex>
 #include <cstdlib>
-#include <iostream>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -42,8 +41,10 @@ namespace mpi {
   namespace detail {
 
     // Helper function to get the memory displacements of the different elements in a tuple w.r.t. the first element.
-    template <typename... T, size_t... Is> void _init_mpi_tuple_displ(std::index_sequence<Is...>, std::tuple<T...> tup, MPI_Aint *disp) {
-      ((void)(disp[Is] = {(char *)&std::get<Is>(tup) - (char *)&std::get<0>(tup)}), ...);
+    template <typename... Ts, size_t... Is> void _init_mpi_tuple_displ(std::index_sequence<Is...>, std::tuple<Ts...> tup, MPI_Aint *disp) {
+      ((disp[Is] = (char *)&std::get<Is>(tup) - (char *)&std::get<0>(tup)), ...);
+      auto min_el = std::min_element(disp, disp + sizeof...(Ts));
+      ((disp[Is] -= *min_el), ...);
     }
 
   } // namespace detail
@@ -123,10 +124,6 @@ namespace mpi {
     // displacements of the blocks in bytes w.r.t. to the memory address of the first block
     std::array<MPI_Aint, N> disp;
     detail::_init_mpi_tuple_displ(std::index_sequence_for<Ts...>{}, tup, disp.data());
-    if (std::any_of(disp.begin(), disp.end(), [](MPI_Aint i) { return i < 0; })) {
-      std::cerr << "ERROR: Custom mpi types require non-negative displacements\n";
-      std::abort();
-    }
 
     // create and return MPI datatype
     MPI_Datatype cty{};

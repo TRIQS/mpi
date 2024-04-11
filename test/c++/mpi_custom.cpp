@@ -21,8 +21,6 @@
 #include <array>
 #include <tuple>
 
-using namespace mpi;
-
 // a simple struct representing a complex number
 struct custom_cplx {
   double real{}, imag{};
@@ -33,6 +31,9 @@ struct custom_cplx {
     z.imag += imag;
     return z;
   }
+
+  // default equal-to operator
+  bool operator==(const custom_cplx&) const = default;
 };
 
 // tie the data (used to construct the custom MPI type)
@@ -46,7 +47,7 @@ custom_cplx add(custom_cplx const &x, custom_cplx const &y) { return x + y; }
 
 // specialize mpi_reduce for std::array
 template <typename T, size_t N>
-std::array<T, N> mpi_reduce(std::array<T, N> const &arr, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+std::array<T, N> mpi_reduce(std::array<T, N> const &arr, mpi::communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
   std::array<T, N> res{};
   if (all) {
     MPI_Allreduce(arr.data(), res.data(), N, mpi::mpi_type<T>::get(), op, c.get());
@@ -57,7 +58,7 @@ std::array<T, N> mpi_reduce(std::array<T, N> const &arr, communicator c = {}, in
 }
 
 TEST(MPI, CustomTypeMapAdd) {
-  communicator world;
+  mpi::communicator world;
   int rank = world.rank();
   int size = world.size();
   int root = 0;
@@ -76,7 +77,7 @@ TEST(MPI, CustomTypeMapAdd) {
 }
 
 TEST(MPI, CustomTypeMapCFunction) {
-  communicator world;
+  mpi::communicator world;
   int rank = world.rank();
   int size = world.size();
   int root = 0;
@@ -103,7 +104,7 @@ auto add(tuple_type const &lhs, tuple_type const &rhs) {
 }
 
 TEST(MPI, TupleTypeMapCFunction) {
-  communicator world;
+  mpi::communicator world;
   int rank = world.rank();
   int size = world.size();
   int root = 0;
@@ -120,6 +121,37 @@ TEST(MPI, TupleTypeMapCFunction) {
   // MPI_Reduce(arr.data(), reduced_arr.data(), 10, mpi_type<tuple_type>::get(), mpi::map_C_function<tuple_type, add>(), root, MPI_COMM_WORLD);
   if (rank == root)
     for (int i = 0; i < 10; ++i) { ASSERT_NEAR(std::get<0>(reduced_arr[i]) + std::get<2>(reduced_arr[i]), 2 * size * (size + 1), 1.e-14); }
+}
+
+TEST(MPI, TupleMPIDatatypes) {
+  mpi::communicator world;
+  int rank = world.rank();
+  int root = 0;
+
+  // check custom MPI datatypes of various tuple types
+  using type1 = std::tuple<int>;
+  type1 tup1;
+  if (rank == root) {
+      tup1 = std::make_tuple(100);
+  }
+  mpi::broadcast(tup1, world, root);
+  EXPECT_EQ(tup1, std::make_tuple(100));
+
+  using type2 = std::tuple<int, double>;
+  type2 tup2;
+  if (rank == root) {
+      tup2 = std::make_tuple(100, 3.1314);
+  }
+  mpi::broadcast(tup2, world, root);
+  EXPECT_EQ(tup2, std::make_tuple(100, 3.1314));
+
+  using type5 = std::tuple<int, double, char, custom_cplx, bool>;
+  type5 tup5;
+  if (rank == root) {
+      tup5 = std::make_tuple(100, 3.1314, 'r', custom_cplx{1.0, 2.0}, false);
+  }
+  mpi::broadcast(tup5, world, root);
+  EXPECT_EQ(tup5, std::make_tuple(100, 3.1314, 'r', custom_cplx{1.0, 2.0}, false));
 }
 
 MPI_TEST_MAIN;
