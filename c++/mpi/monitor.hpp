@@ -48,7 +48,7 @@ namespace mpi {
       MPI_Request request{};
 
       // 0 means that no error has occurred, 1 means that an error has occurred.
-      int value = 0;
+      int node_stop = 0;
     };
 
     // MPI communicator.
@@ -86,7 +86,7 @@ namespace mpi {
       if (com.rank() == 0) {
         root_futures.resize(c.size() - 1);
         for (int rank = 1; rank < c.size(); ++rank) {
-          MPI_Irecv(&(root_futures[rank - 1].value), 1, MPI_INT, rank, 0, MPI_COMM_WORLD, &(root_futures[rank - 1].request));
+          MPI_Irecv(&(root_futures[rank - 1].node_stop), 1, MPI_INT, rank, 0, MPI_COMM_WORLD, &(root_futures[rank - 1].request));
         }
       } else {
         MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast);
@@ -149,11 +149,6 @@ namespace mpi {
       if (com.rank() == 0) {
         // root checks if some other process has requested an emergency stop
         root_check_nodes_and_bcast();
-      } else {
-        // non-root checks if the root has broadcasted an emergency stop
-        MPI_Status status;
-        int flag = 0;
-        MPI_Test(&req_ibcast, &flag, &status);
       }
       return global_stop;
     }
@@ -170,13 +165,13 @@ namespace mpi {
       if (com.rank() == 0) {
         // root just listens to the other processes and bcasts the global_stop until everyone is done
         while (root_check_nodes_and_bcast()) { usleep(100); } // 100 us (micro seconds)
-        // all other nodes have finished
-        // if the root has never emitted the ibcast, we do it and wait since we can not cancel it FIXME (why ??)
-        if (!global_stop) { MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast); }
+        // all others node have finished
+        // if the root has never emitted the ibcast, we do it now
+        if (not global_stop) { MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast); }
       } else {
-        // on non-root node: either the Isend was done when local_stop was set (during request_emergency_stop),
-        // or it has to happen now, sending local_stop = 0, i.e, work is done and everything went fine
-        if (!local_stop) { MPI_Isend(&local_stop, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &req_isent); }
+        // on non-root node: either Isend was done when local_stop was set to 1 during request_emergency_stop,
+        // or it has to happen now, i.e, work is done, and fine.
+        if (not local_stop) { MPI_Isend(&local_stop, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &req_isent); }
       }
       // all nodes wait for the ibcast of the global_stop to be complete
       MPI_Status status;
@@ -197,16 +192,15 @@ namespace mpi {
       EXPECTS(com.rank() == 0);
       // loop over all non-root processes
       bool some_nodes_are_still_running = false;
-      for (auto &f : root_futures) {
+      for (auto &[request, node_stop] : root_futures) {
         // check for an emergency stop request
         MPI_Status status;
-        int flag = 0;
-        MPI_Test(&(f.request), &flag, &status);
+        int comm_received = 0;
+        MPI_Test(&request, &comm_received, &status);
         // for the first time an emergency stop has been requested -> root calls request_emergency_stop()
         // to broadcast to all other processes
-        if (flag and (not global_stop) and (f.value > 0)) request_emergency_stop();
-        // if (flag == 0) -> process is still running because it has not finished its MPI_Isend
-        some_nodes_are_still_running |= (flag == 0);
+        if (comm_received and (not global_stop) and node_stop) request_emergency_stop(); // the root requires the stop now. It also stops itself...
+        some_nodes_are_still_running |= (not comm_received);
       }
       return some_nodes_are_still_running;
     }
