@@ -202,26 +202,6 @@ namespace mpi {
   }
 
   /**
-   * @brief Generic MPI all-reduce.
-   * @deprecated Use mpi::all_reduce instead.
-   */
-  template <typename T>
-  [[gnu::always_inline]] [[deprecated("mpi_all_reduce is deprecated, please use mpi::all_reduce instead")]] inline decltype(auto)
-  mpi_all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    return reduce(std::forward<T>(x), c, 0, true, op);
-  }
-
-  /**
-   * @brief Generic MPI all-reduce.
-   * @deprecated Use mpi::all_gather instead.
-   */
-  template <typename T>
-  [[gnu::always_inline]] [[deprecated("mpi_all_gather is deprecated, please use mpi::all_gather instead")]] inline decltype(auto)
-  mpi_all_gather(T &&x, communicator c = {}) {
-    return gather(std::forward<T>(x), c, 0, true);
-  }
-
-  /**
    * @brief Implementation of an MPI broadcast for types that have a corresponding MPI datatype, i.e. for which
    * a specialization of mpi::mpi_type has been defined.
    *
