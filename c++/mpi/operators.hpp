@@ -30,22 +30,6 @@ namespace mpi {
    * @{
    */
 
-  namespace detail {
-
-    // Lambda that maps a binary user function to an `MPI_User_function`.
-    template <typename T, T (*F)(T const &, T const &)>
-    // unary plus converts the lambda to a function pointer
-    MPI_User_function *_map_function = +[](void *in, void *inout, int *len, MPI_Datatype *) { // NOLINT (MPI_Op_create needs a non-const pointer)
-      auto *inT    = static_cast<T *>(in);
-      auto *inoutT = static_cast<T *>(inout);
-      for (int i = 0; i < *len; ++i, ++inT, ++inoutT) { *inoutT = F(*inoutT, *inT); }
-    };
-
-    // Generic addition.
-    template <typename T> T _generic_add(T const &lhs, T const &rhs) { return lhs + rhs; }
-
-  } // namespace detail
-
   /**
    * @brief Create a new `MPI_Op` from a given binary function by calling `MPI_Op_create`.
    *
@@ -57,7 +41,12 @@ namespace mpi {
    */
   template <typename T, T (*F)(T const &, T const &)> MPI_Op map_C_function() {
     MPI_Op myOp{};
-    MPI_Op_create(detail::_map_function<T, F>, true, &myOp);
+    MPI_User_function *map_function = +[](void *in, void *inout, int *len, MPI_Datatype *) { // NOLINT (MPI_Op_create needs a non-const pointer)
+      auto *inT    = static_cast<T *>(in);
+      auto *inoutT = static_cast<T *>(inout);
+      for (int i = 0; i < *len; ++i, ++inT, ++inoutT) { *inoutT = F(*inoutT, *inT); }
+    };
+    MPI_Op_create(map_function, true, &myOp);
     return myOp;
   }
 
@@ -70,9 +59,8 @@ namespace mpi {
    * @return `MPI_Op` for the generic addition of the given type.
    */
   template <typename T> MPI_Op map_add() {
-    MPI_Op myOp{};
-    MPI_Op_create(detail::_map_function<T, detail::_generic_add<T>>, true, &myOp);
-    return myOp;
+    auto generic_add = [](T const &lhs, T const &rhs) { return lhs + rhs; };
+    return map_C_function<T, generic_add>();
   }
 
 } // namespace mpi
