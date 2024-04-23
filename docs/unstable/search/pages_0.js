@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['1_3a_20hello_20world_0',['Example 1: Hello world!',['../ex1.html',1,'']]]
+];

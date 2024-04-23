@@ -1,0 +1,11 @@
+var searchData=
+[
+  ['map_5fadd_0',['map_add',['../group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0',1,'mpi']]],
+  ['map_5fc_5ffunction_1',['map_C_function',['../group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9',1,'mpi']]],
+  ['monitor_2',['monitor',['../classmpi_1_1monitor.html#a3fa9f28472d037348e1370f8e5a2d4ef',1,'mpi::monitor::monitor(mpi::communicator c)'],['../classmpi_1_1monitor.html#a9e6bcc154b5eeb8f09db41f96a89c52d',1,'mpi::monitor::monitor(monitor const &amp;)=delete']]],
+  ['mpi_5fbroadcast_3',['mpi_broadcast',['../group__coll__comm.html#ga7b441294b27fb668e3876294ba7fdc03',1,'mpi::mpi_broadcast(T &amp;x, communicator c={}, int root=0)'],['../group__coll__comm.html#gab331d0f1361f69228665b60f3262588a',1,'mpi::mpi_broadcast(std::pair&lt; T1, T2 &gt; &amp;p, communicator c={}, int root=0)'],['../group__coll__comm.html#gabcb8e2f22f68900179f4edd9ea175eab',1,'mpi::mpi_broadcast(std::string &amp;s, communicator c, int root)'],['../group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb',1,'mpi::mpi_broadcast(std::vector&lt; T &gt; &amp;v, communicator c={}, int root=0)']]],
+  ['mpi_5fgather_4',['mpi_gather',['../group__coll__comm.html#ga45186badcc4923ea5458a5c87b1cf01f',1,'mpi']]],
+  ['mpi_5freduce_5',['mpi_reduce',['../group__coll__comm.html#gab133dac60af76a9b16bc0d6983601a1f',1,'mpi::mpi_reduce(T const &amp;x, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)'],['../group__coll__comm.html#ga596d7bf8804da7049839279e1670fcff',1,'mpi::mpi_reduce(std::pair&lt; T1, T2 &gt; const &amp;p, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)'],['../group__coll__comm.html#ga358e88080562398983adeb6bfd584477',1,'mpi::mpi_reduce(std::vector&lt; T &gt; const &amp;v, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)']]],
+  ['mpi_5freduce_5fin_5fplace_6',['mpi_reduce_in_place',['../group__coll__comm.html#ga3f37de03067953c6038ce322e81df7e6',1,'mpi::mpi_reduce_in_place(T &amp;x, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)'],['../group__coll__comm.html#gae123b365235e205f4a4b992ff11b9722',1,'mpi::mpi_reduce_in_place(std::vector&lt; T &gt; &amp;v, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)']]],
+  ['mpi_5fscatter_7',['mpi_scatter',['../group__coll__comm.html#gad6813475336c8758f11e666476d57aab',1,'mpi']]]
+];
