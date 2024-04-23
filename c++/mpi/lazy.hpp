@@ -66,7 +66,7 @@ namespace mpi {
     /// Rank of the root process.
     int root{};
 
-    /// Should we use `MPI_Allxxx`?
+    /// Whether to use the `MPI_Allxxx` operation
     bool all{};
 
     /// `MPI_Op` used in the lazy communication (only relevant if mpi::tag::reduce is used).

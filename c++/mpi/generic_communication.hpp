@@ -253,9 +253,9 @@ namespace mpi {
     auto d = mpi_type<T>::get();
     if (!all)
       // old MPI implementations may require a non-const send buffer
-      MPI_Reduce(const_cast<T *>(&x), &b, 1, d, op, root, c.get()); // NOLINT (or should we remove the const_cast?)
+      MPI_Reduce(const_cast<T *>(&x), &b, 1, d, op, root, c.get()); // NOLINT
     else
-      MPI_Allreduce(const_cast<T *>(&x), &b, 1, d, op, c.get()); // NOLINT (or should we remove the const_cast?)
+      MPI_Allreduce(const_cast<T *>(&x), &b, 1, d, op, c.get()); // NOLINT
     return b;
   }
 

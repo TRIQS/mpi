@@ -119,7 +119,7 @@ namespace mpi {
      * @brief Barrier synchronization.
      *
      * @details Does nothing if mpi::has_env is false. Otherwise, it either uses a blocking `MPI_Barrier`
-     * (if the given argument is 0) or a a non-blocking `MPI_Ibarrier` call. The given parameter determines
+     * (if the given argument is 0) or a non-blocking `MPI_Ibarrier` call. The given parameter determines
      * in milliseconds how often each process calls `MPI_Test` to check if all processes have reached the barrier.
      * This can considerably reduce the CPU load:
      *     - 1 msec ~ 1% cpu load
