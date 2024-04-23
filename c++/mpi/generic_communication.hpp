@@ -95,7 +95,7 @@ namespace mpi {
   [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     // return type of mpi_reduce
     using r_t = decltype(mpi_reduce(std::forward<T>(x), c, root, all, op));
-    if constexpr (detail::is_mpi_lazy<r_t>) {
+    if constexpr (is_mpi_lazy<r_t>) {
       return mpi_reduce(std::forward<T>(x), c, root, all, op);
     } else {
       if (has_env)
@@ -140,7 +140,7 @@ namespace mpi {
   template <typename T> [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
     // return type of mpi_scatter
     using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
-    if constexpr (detail::is_mpi_lazy<r_t>) {
+    if constexpr (is_mpi_lazy<r_t>) {
       return mpi_scatter(std::forward<T>(x), c, root);
     } else {
       if (has_env)
@@ -167,7 +167,7 @@ namespace mpi {
   template <typename T> [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
     // return type of mpi_gather
     using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
-    if constexpr (detail::is_mpi_lazy<r_t>) {
+    if constexpr (is_mpi_lazy<r_t>) {
       return mpi_gather(std::forward<T>(x), c, root, all);
     } else {
       if (has_env)

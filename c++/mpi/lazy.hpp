@@ -50,7 +50,11 @@ namespace mpi {
   } // namespace tag
 
   /**
-   * @ingroup mpi_lazy
+   * @addtogroup mpi_lazy
+   * @{
+   */
+
+  /**
    * @brief Represents a lazy MPI communication.
    *
    * @tparam Tag An mpi::tag to specify the kind of MPI communication.
@@ -73,25 +77,20 @@ namespace mpi {
     MPI_Op op{};
   };
 
-  // should this be in detail?
-  namespace detail {
+  /**
+   * @brief Type trait to check if a type is mpi::lazy.
+   * @tparam T Type to be checked.
+   */
+  template <typename T> inline constexpr bool is_mpi_lazy = false;
 
-    /**
-     * @ingroup mpi_lazy
-     * @brief Type trait to check if a type is mpi::lazy.
-     * @tparam T Type to be checked.
-     */
-    template <typename T> inline constexpr bool is_mpi_lazy = false;
+  /**
+   * @brief Spezialization of mpi::is_mpi_lazy.
+   *
+   * @tparam Tag Type to specify the kind of MPI call.
+   * @tparam T Type to be checked.
+   */
+  template <typename Tag, typename T> inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
 
-    /**
-     * @ingroup mpi_lazy
-     * @brief Spezialization of is_mpi_lazy.
-     *
-     * @tparam Tag Type to specify the kind of MPI call.
-     * @tparam T Type to be checked.
-     */
-    template <typename Tag, typename T> inline constexpr bool is_mpi_lazy<lazy<Tag, T>> = true;
-
-  } // namespace detail
+  /** @} */
 
 } // namespace mpi

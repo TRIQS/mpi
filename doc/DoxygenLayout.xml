@@ -82,7 +82,7 @@
         <tab type="user" url="@ref mpi::tag::gather" title="gather tag"/>
         <tab type="user" url="@ref mpi::tag::reduce" title="reduce tag"/>
         <tab type="user" url="@ref mpi::tag::scatter" title="scatter tag"/>
-        <tab type="user" url="@ref mpi::detail::is_mpi_lazy" title="is_mpi_lazy"/>
+        <tab type="user" url="@ref mpi::is_mpi_lazy" title="is_mpi_lazy"/>
       </tab>
       <tab type="usergroup" url="@ref err_handling" title="Error handling">
         <tab type="user" url="@ref mpi::monitor" title="monitor"/>
