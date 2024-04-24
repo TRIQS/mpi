@@ -6,8 +6,7 @@ var searchData=
   ['all_5fgather_3',['all_gather',['../group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e',1,'mpi']]],
   ['all_5freduce_4',['all_reduce',['../group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca',1,'mpi']]],
   ['all_5freduce_5fin_5fplace_5',['all_reduce_in_place',['../group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77',1,'mpi']]],
-  ['and_20operations_6',['MPI datatypes and operations',['../group__mpi__types__ops.html',1,'']]],
-  ['and_20operations_7',['MPI datatypes and operations',['../documentation.html#autotoc_md10',1,'']]],
-  ['and_20operator_8',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
-  ['api_20documentation_9',['API Documentation',['../documentation.html',1,'']]]
+  ['and_20operations_6',['and operations',['../group__mpi__types__ops.html',1,'MPI datatypes and operations'],['../documentation.html#autotoc_md10',1,'MPI datatypes and operations']]],
+  ['and_20operator_7',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
+  ['api_20documentation_8',['API Documentation',['../documentation.html',1,'']]]
 ];

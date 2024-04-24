@@ -90,7 +90,7 @@ var menudata={children:[
 {text:"gather tag",url:"structmpi_1_1tag_1_1gather.html"},
 {text:"reduce tag",url:"structmpi_1_1tag_1_1reduce.html"},
 {text:"scatter tag",url:"structmpi_1_1tag_1_1scatter.html"},
-{text:"is_mpi_lazy",url:"group__mpi__lazy.html#gac297d27e56328194184d9474f8bb5f87"}]},
+{text:"is_mpi_lazy",url:"group__mpi__lazy.html#gaea1d1d296f80ece0880a0d39aa8ca6bb"}]},
 {text:"Error handling",url:"group__err__handling.html",children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[
