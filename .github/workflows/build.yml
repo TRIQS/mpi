@@ -101,12 +101,12 @@ jobs:
         cd $HOME
         git clone https://github.com/doxygen/doxygen.git
         cd doxygen
-        git checkout Release_1_10_0
+        git checkout 0a7e79813
         mkdir build
         cd build
         cmake .. -Duse_libclang=ON -Dstatic_libclang=ON -Duse_libc++=OFF -DLLVM_ROOT=/usr/lib/llvm-15/lib/cmake/llvm -DClang_ROOT=/usr/lib/llvm-15/lib/cmake/clang
         make -j 2 VERBOSE=1
-        make install
+        cp bin/doxygen /usr/local/bin/doxygen
 
     - name: add clang cxxflags
       if: ${{ contains(matrix.cxx, 'clang') }}

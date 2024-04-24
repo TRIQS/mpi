@@ -4,16 +4,6 @@
 
 In this example, we show how to use mpi::mpi_type_from_tie, mpi::map_C_function and mpi::map_add to register a new MPI datatype and to define MPI operations for it.
 
-> **Note:** We had to comment the last function parameter in the following two lines in the example code below, otherwise Doxygen would have produced various spurious links:
-> ```cpp
-> auto sum = mpi::reduce(z, world, 0, false, /* mpi::map_add<my_complex>() */);
-> ```
-> and
-> ```cpp
-> auto product = mpi::reduce(z, world, 0, false, /* mpi::map_C_function<my_complex, my_product>() */);
-> ```
-> To run the code, please remove the comments.
-
 ```cpp
 #include <mpi/mpi.hpp>
 #include <iostream>
@@ -46,7 +36,7 @@ int main(int argc, char *argv[]) {
   my_complex z = { world.rank() + 1.0, static_cast<double>(world.rank()) };
 
   // sum z over all processes
-  auto sum = mpi::reduce(z, world, 0, false, /* mpi::map_add<my_complex>() */); // valid C++ code, but doxygen produces spurious links when uncommented
+  auto sum = mpi::reduce(z, world, 0, false, mpi::map_add<my_complex>());
 
   // define a product for my_complex
   auto my_product = [](const my_complex& z1, const my_complex& z2) {
@@ -54,7 +44,7 @@ int main(int argc, char *argv[]) {
   };
 
   // multiply z over all processes
-  auto product = mpi::reduce(z, world, 0, false, /* mpi::map_C_function<my_complex, my_product>() */); // valid C++ code, but doxygen produces spurious links when uncommented
+  auto product = mpi::reduce(z, world, 0, false, mpi::map_C_function<my_complex, my_product>());
 
   // print result
   if (world.rank() == 0) {
