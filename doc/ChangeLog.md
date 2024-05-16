@@ -1,5 +1,40 @@
 @page changelog Changelog
 
+## Version 1.3.0
+
+This is version 1.3.0 of mpi, a high-level C++ interface to the [Message Passing Interface].
+
+We thank all contributors: Thomas Hahn, Alexander Hampel, Henri Menke, Dylan Simon, Hugo U.R. Strand, Nils Wentzell
+
+Find below an itemized list of changes in this release.
+
+### General
+* Clean up detail namespace to consistently contain implementation details
+* Improve test coverage and clean up tests
+* Remove deprecated functions mpi_all_reduce and mpi_all_gather
+* Remove remaining use of enable_if_t
+* Various code improvements in c++/mpi/monitor.hpp
+* Bug fix for custom MPI tuple types
+* Split mpi.hpp into multiple header files
+* Fix np2 tests to actually run with 2 cores and not 4
+* Improve doc for has_env and rename TRIQS_FORCE_MPI_INIT to FORCE_MPI_INIT
+* Protect mpi::environment construction outside of mpirun
+* Use value initialization for also for MPI_Op and MPI_Datatype
+* Fix #8 to restore compatibility against MPICH
+* Make sure to specialize mpi_type<..> also for constant builtin types
+
+### cmake
+* Remove python and cpp2py dependencies
+* Use GNUInstallDirs in install commands
+* Set policy CMP0144 to new
+* Export MPIEXEC_MAX_NUMPROCS variable
+
+### doc
+* Add documentation to the C++ source code files
+* Remove any sphinx related files and switch to doxygen to generate documentation
+* Build and deploy documentation with GitHub Actions
+
+
 ## Version 1.2.0
 
 This is version 1.2.0 of mpi, a high-level C++ interface to the [Message Passing Interface].
