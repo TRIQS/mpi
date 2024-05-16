@@ -1,4 +1,5 @@
-// Copyright (c) 2020 Hugo U. R. Strand
+// Copyright (c) 2022-2024 Simons Foundation
+// Copyright (c) 2022 Hugo U.R. Strand
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Authors: Hugo U. R. Strand
+// Authors: Thomas Hahn, Hugo U.R. Strand
 
 #include <gtest/gtest.h>
 #include <mpi/mpi.hpp>
