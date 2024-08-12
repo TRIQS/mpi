@@ -113,11 +113,11 @@ namespace mpi {
     // displacements of the blocks in bytes w.r.t. to the memory address of the first block
     std::array<MPI_Aint, N> disp;
     // initialize displacement array from the tuple element addresses
-    []<size_t... Is>(std::index_sequence<Is...>, auto &tup, MPI_Aint *disp) {
-      ((disp[Is] = (char *)&std::get<Is>(tup) - (char *)&std::get<0>(tup)), ...);
+    []<size_t... Is>(std::index_sequence<Is...>, auto &t, MPI_Aint *d) {
+      ((d[Is] = (char *)&std::get<Is>(t) - (char *)&std::get<0>(t)), ...);
       // account for non-trivial memory layouts of the tuple elements
-      auto min_el = *std::min_element(disp, disp + sizeof...(Ts));
-      ((disp[Is] -= min_el), ...);
+      auto min_el = *std::min_element(d, d + sizeof...(Ts));
+      ((d[Is] -= min_el), ...);
     }(std::index_sequence_for<Ts...>{}, tup, disp.data());
 
     // create and return MPI datatype
