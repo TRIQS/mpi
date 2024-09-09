@@ -99,6 +99,37 @@ namespace mpi {
     }
 
     /**
+     * @brief Duplicate the communicator.
+     *
+     * @details Calls `MPI_Comm_dup` to duplicate the communicator. See the MPI documentation for more details, e.g.
+     * <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_dup.3.html">open-mpi docs</a>.
+     *
+     * @return If mpi::has_env is true, return the duplicated `MPI_Comm` object wrapped in a new mpi::communicator,
+     * otherwise return a default constructed mpi::communicator.
+     */
+    [[nodiscard]] communicator duplicate() const {
+      if (has_env) {
+        communicator c;
+        MPI_Comm_dup(_com, &c._com);
+        return c;
+      } else
+        return {};
+    }
+
+    /**
+     * @brief Free the communicator.
+     *
+     * @details Calls `MPI_Comm_free` to mark the communicator for deallocation. See the MPI documentation for more
+     * details, e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_free.3.html">open-mpi docs
+     * </a>.
+     *
+     * Does nothing, if mpi::has_env is false.
+     */
+    void free() {
+      if (has_env) { MPI_Comm_free(&_com); }
+    }
+
+    /**
      * @brief If mpi::has_env is true, `MPI_Abort` is called with the given error code, otherwise std::abort is called.
      * @param error_code The error code to pass to `MPI_Abort`.
      */
