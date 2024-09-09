@@ -17,35 +17,35 @@ int main(int argc, char *argv[]) {
   // initialize monitor
   mpi::monitor monitor(world);
 
-  // in case a stop has been requested, print some info and return true
+  // in case an event has occurred, print some info and return true
   auto stop = [&monitor, world](int i) {
     bool res = false;
-    if (monitor.emergency_occured()) {
-      std::cerr << "Processor " << world.rank() << ": After " << i << " steps an emergency stop has been received.\n";
+    if (monitor.some_event_occurred()) {
+      std::cerr << "Processor " << world.rank() << ": After " << i << " steps an event has been communicated.\n";
       res = true;
     }
     return res;
   };
 
-  // loop as long as no stop has been requested
-  int rank_to_req = 3;
+  // loop as long as no event has occurred
+  int event_rank = 3;
   for (int i = 0; i < 1000000; ++i) {
-    // request a stop on processor 3
-    if (world.rank() == rank_to_req) {
-      std::cerr << "Processor " << rank_to_req << ": Emergency stop requested.\n";
-      monitor.request_emergency_stop();
+    // report a local event on the event_rank
+    if (world.rank() == event_rank) {
+      std::cerr << "Processor " << event_rank << ": Local event reported.\n";
+      monitor.report_local_event();
     }
 
     // should we stop the loop?
     if (stop(i)) break;
   }
 
-  // check if all processes finished without an error
+  // check if all processes finished the loop
   if (world.rank() == 0) {
-    if (monitor.emergency_occured()) {
-      std::cout << "Oh no! An error occurred somewhere.\n";
+    if (monitor.some_event_occurred()) {
+      std::cout << "Oh no! An event occurred somewhere and loop has not been finished on all processes.\n";
     } else {
-      std::cout << "No worries, all processes finished without an error.\n";
+      std::cout << "No worries, all processes have finished the loop.\n";
     }
   }
 }
@@ -54,24 +54,24 @@ int main(int argc, char *argv[]) {
 Output (running with `-n 12`):
 
 ```
-Processor 3: Emergency stop requested.
-Processor 3: After 0 steps an emergency stop has been received.
-Processor 2: After 5950 steps an emergency stop has been received.
-Processor 4: After 10475 steps an emergency stop has been received.
-Processor 5: After 7379 steps an emergency stop has been received.
-Processor 6: After 8366 steps an emergency stop has been received.
-Processor 7: After 1302 steps an emergency stop has been received.
-Processor 8: After 1155 steps an emergency stop has been received.
-Processor 9: After 14445 steps an emergency stop has been received.
-Processor 11: After 9287 steps an emergency stop has been received.
-Processor 0: After 0 steps an emergency stop has been received.
-Processor 1: After 7443 steps an emergency stop has been received.
-Processor 10: After 1321 steps an emergency stop has been received.
-Oh no! An error occurred somewhere.
+Processor 3: Local event reported.
+Processor 3: After 0 steps an event has been communicated.
+Processor 4: After 8428 steps an event has been communicated.
+Processor 0: After 0 steps an event has been communicated.
+Processor 8: After 10723 steps an event has been communicated.
+Processor 5: After 10426 steps an event has been communicated.
+Processor 6: After 12172 steps an event has been communicated.
+Processor 7: After 9014 steps an event has been communicated.
+Processor 1: After 400 steps an event has been communicated.
+Processor 2: After 1646 steps an event has been communicated.
+Processor 11: After 12637 steps an event has been communicated.
+Processor 10: After 9120 steps an event has been communicated.
+Processor 9: After 1 steps an event has been communicated.
+Oh no! An event occurred somewhere and the loop has not been finished on all processes.
 ```
 
 Output (running with `-n 3`):
 
 ```
-No worries, all processes finished without an error.
+No worries, all processes have finished the loop.
 ```

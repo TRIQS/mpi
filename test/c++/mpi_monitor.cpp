@@ -16,73 +16,81 @@
 
 #include <gtest/gtest.h>
 #include <mpi/monitor.hpp>
+#include <mpi.h>
 
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 #include <vector>
 #include <unistd.h>
 
 // in micro second = 1 milli second
 const int delta_tau_sleep = 1000;
 
-// Monitor all nodes while some of them might fail.
+// Monitor all nodes while some of them might report an event.
 //
-// c: MPI communicator
-// fastest_node: rank of the fastest node
-// rank_failing: ranks of the nodes that will fail
-// iteration_failure: iteration at which the nodes will fail
-bool test(mpi::communicator c, int fastest_node, std::vector<int> rank_failing, int iteration_failure = 3) {
+// c: MPI communicator.
+// fastest_node: Rank of the fastest node.
+// rank_reporting: Ranks of the nodes that will report an event.
+// all_events: If true, the all_events_occurred() function will be used instead of some_event_occurred().
+// iteration_event: Iteration at which the nodes will report an event.
+bool test_monitor(mpi::communicator c, int fastest_node, std::vector<int> rank_reporting, bool all_events = false, int iteration_event = 3) {
   const int niter = 10;
   const int size  = c.size();
   int sleeptime   = delta_tau_sleep * (((c.rank() - fastest_node + size) % size) + 1);
-  bool will_fail  = std::any_of(rank_failing.cbegin(), rank_failing.cend(), [&c](int i) { return i == c.rank(); });
+  bool will_fail  = std::any_of(rank_reporting.cbegin(), rank_reporting.cend(), [&c](int i) { return i == c.rank(); });
   std::cerr << "Node " << c.rank() << ": sleeptime " << sleeptime << std::endl;
 
   mpi::monitor monitor{c};
+  auto events_occurred = [all_events, &monitor]() { return all_events ? monitor.all_events_occurred() : monitor.some_event_occurred(); };
 
-  for (int i = 0; (!monitor.emergency_occured()) and (i < niter); ++i) {
+  for (int i = 0; (!events_occurred()) and (i < niter); ++i) {
     usleep(sleeptime);
-    std::cerr << "Node " << c.rank() << "is in iteration " << i << std::endl;
-    if (will_fail and (i >= iteration_failure)) {
+    std::cerr << "Node " << c.rank() << " is in iteration " << i << std::endl;
+    if (will_fail and (i >= iteration_event)) {
       std::cerr << "Node " << c.rank() << " is failing" << std::endl;
-      monitor.request_emergency_stop();
-      monitor.request_emergency_stop(); // 2nd call should not resend MPI message
+      monitor.report_local_event();
+      monitor.report_local_event(); // 2nd call should not resend MPI message
     }
     if (i == niter - 1) { std::cerr << "Node " << c.rank() << " has done all tasks" << std::endl; }
   }
 
   monitor.finalize_communications();
   std::cerr << "Ending on node " << c.rank() << std::endl;
-  return not monitor.emergency_occured();
+  return not events_occurred();
 }
 
-TEST(MPI, MonitorNoFailure) {
-  // no failure
+TEST(MPI, MonitorNoEvent) {
+  // no event
   usleep(1000);
   mpi::communicator world;
   for (int i = 0; i < world.size(); ++i) {
     world.barrier();
     if (world.rank() == 0) std::cerr << "***\nNode " << i << " is the fastest" << std::endl;
-    EXPECT_TRUE(test(world, i, {}));
+    EXPECT_TRUE(test_monitor(world, i, {}));
+    world.barrier();
+    EXPECT_TRUE(test_monitor(world, i, {}, true));
     world.barrier();
   }
 }
 
-TEST(MPI, MonitorOneFailureOnRoot) {
-  // root node fails
+TEST(MPI, MonitorOneEventOnRoot) {
+  // one event on root node
   usleep(1000);
   mpi::communicator world;
   for (int i = 0; i < world.size(); ++i) {
     world.barrier();
     if (world.rank() == 0) std::cerr << "***\nNode " << i << " is the fastest" << std::endl;
-    EXPECT_EQ(test(world, i, {0}), false);
+    EXPECT_EQ(test_monitor(world, i, {0}), false);
+    world.barrier();
+    EXPECT_EQ(test_monitor(world, i, {0}, true), world.size() > 1);
     world.barrier();
   }
   usleep(1000);
 }
 
-TEST(MPI, MonitorOneFailureOnNonRoot) {
-  // one non-root node fails
+TEST(MPI, MonitorOneEventOnNonRoot) {
+  // one event on non-root node
   usleep(1000);
   mpi::communicator world;
   if (world.size() < 2) {
@@ -92,15 +100,17 @@ TEST(MPI, MonitorOneFailureOnNonRoot) {
       world.barrier();
       if (world.rank() == 0) std::cerr << "***\nNode " << i << " is the fastest" << std::endl;
       bool has_failure = (world.size() > 1 ? false : true); // No failure if only rank 0 exists
-      EXPECT_EQ(test(world, i, {1}), has_failure);
+      EXPECT_EQ(test_monitor(world, i, {1}), has_failure);
+      world.barrier();
+      EXPECT_EQ(test_monitor(world, i, {1}, true), world.size() > 1);
       world.barrier();
     }
   }
   usleep(1000);
 }
 
-TEST(MPI, MonitorTwoFailuresWithRoot) {
-  // two nodes fail including the root process
+TEST(MPI, MonitorTwoEventsWithRoot) {
+  // two events on nodes including the root process
   usleep(1000);
   mpi::communicator world;
   if (world.size() < 2) {
@@ -109,15 +119,17 @@ TEST(MPI, MonitorTwoFailuresWithRoot) {
     for (int i = 0; i < world.size(); ++i) {
       world.barrier();
       if (world.rank() == 0) std::cerr << "***\nNode " << i << " is the fastest" << std::endl;
-      EXPECT_EQ(test(world, i, {0, 1}), false);
+      EXPECT_EQ(test_monitor(world, i, {0, 1}), false);
+      world.barrier();
+      EXPECT_EQ(test_monitor(world, i, {0, 1}, true), world.size() > 2);
       world.barrier();
     }
   }
   usleep(1000);
 }
 
-TEST(MPI, MonitorTwoFailuresWithoutRoot) {
-  // two nodes fail excluding the root process
+TEST(MPI, MonitorTwoEventsWithoutRoot) {
+  // two events on nodes excluding the root process
   usleep(1000);
   mpi::communicator world;
   if (world.size() < 3) {
@@ -126,10 +138,57 @@ TEST(MPI, MonitorTwoFailuresWithoutRoot) {
     for (int i = 0; i < world.size(); ++i) {
       world.barrier();
       if (world.rank() == 0) std::cerr << "***\nNode " << i << " is the fastest" << std::endl;
-      EXPECT_EQ(test(world, i, {1, 2}), false);
+      EXPECT_EQ(test_monitor(world, i, {1, 2}), false);
+      world.barrier();
+      EXPECT_EQ(test_monitor(world, i, {1, 2}, true), world.size() > 2);
       world.barrier();
     }
   }
+  usleep(1000);
+}
+
+TEST(MPI, MonitorAllEvents) {
+  // events on all nodes
+  usleep(1000);
+  mpi::communicator world;
+  std::vector<int> rank_reporting(world.size());
+  std::iota(rank_reporting.begin(), rank_reporting.end(), 0);
+  for (int i = 0; i < world.size(); ++i) {
+    world.barrier();
+    if (world.rank() == 0) std::cerr << "***\nNode " << i << " is the fastest" << std::endl;
+    EXPECT_FALSE(test_monitor(world, i, rank_reporting));
+    world.barrier();
+    EXPECT_FALSE(test_monitor(world, i, rank_reporting, true));
+    world.barrier();
+  }
+  usleep(1000);
+}
+
+TEST(MPI, MultipleMonitors) {
+  // test multiple monitors
+  usleep(1000);
+  mpi::communicator world;
+  auto dup = world.duplicate();
+  auto dupdup = world.duplicate();
+  mpi::monitor monitor1{world};
+  mpi::monitor monitor2{dup};
+  mpi::monitor monitor3{dupdup};
+  if (world.rank() == 0) {
+    monitor3.report_local_event();
+  }
+  monitor2.report_local_event();
+  monitor1.finalize_communications();
+  monitor2.finalize_communications();
+  monitor3.finalize_communications();
+  EXPECT_FALSE(monitor1.some_event_occurred());
+  EXPECT_FALSE(monitor1.all_events_occurred());
+  EXPECT_TRUE(monitor2.some_event_occurred());
+  EXPECT_TRUE(monitor2.all_events_occurred());
+  EXPECT_TRUE(monitor3.some_event_occurred());
+  if (world.size() == 1) EXPECT_TRUE(monitor3.all_events_occurred());
+  else EXPECT_FALSE(monitor3.all_events_occurred());
+  dup.free();
+  dupdup.free();
   usleep(1000);
 }
 

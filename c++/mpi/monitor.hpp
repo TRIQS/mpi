@@ -16,8 +16,7 @@
 
 /**
  * @file
- * @brief Provides a class for monitoring and communicating exceptions and other errors of
- * individual processes.
+ * @brief Provides a class for monitoring and communicating events across multiple processes.
  */
 
 #pragma once
@@ -33,41 +32,54 @@
 namespace mpi {
 
   /**
-   * @ingroup err_handling
-   * @brief Constructed on top of an MPI communicator, this class helps to monitor and communicate
-   * exceptions and other errors of individual processes.
+   * @ingroup event_handling
+   * @brief Constructed on top of an MPI communicator, this class helps to monitor and communicate events across
+   * multiple processes.
    *
-   * @details The root process (process with rank 0) monitors all other processes. If a process encounters
-   * an error, it sends an emergeny stop request to the root process which forwards it to all the other
+   * @details The root process monitors all other processes. If a process encounters an event, it sends a message to the
+   * root process by calling monitor::report_local_event. The root process then broadcasts this information to all other
    * processes.
+   *
+   * It can be used to check
+   * - if an event has occurred on at least one process (monitor::some_event_occurred) or
+   * - if an event has occurred on all processes (monitor::all_events_occurred).
    */
   class monitor {
-    // Future struct for the non-blocking send/receive done on the root process.
+    // Future struct for non-blocking MPI communication.
     struct future {
-      // MPI request for the non-blocking receive on the root process.
+      // MPI request of the non-blocking MPI call.
       MPI_Request request{};
 
-      // 0 means that no error has occurred, 1 means that an error has occurred.
-      int node_stop = 0;
+      // 0 means that no event has occurred, 1 means that an event has occurred.
+      int event = 0;
     };
 
     // MPI communicator.
-    mpi::communicator com;
+    mpi::communicator comm;
 
-    // Future objects stored on the root process for every non-root process.
+    // Root rank.
+    int root = 0;
+
+    // Future objects stored on the root process for local events on non-root processes.
     std::vector<future> root_futures;
 
-    // MPI request for broadcasting the emergency stop to all non-root processes.
-    MPI_Request req_ibcast{};
+    // MPI request for the broadcasting done on the root process in case some event has occurred.
+    MPI_Request req_ibcast_some{};
 
-    // MPI request for sending the emergency stop request to the root process.
+    // MPI request for the broadcasting done on the root process in case an event has occurred on all processes.
+    MPI_Request req_ibcast_all{};
+
+    // MPI request for the sending done on non-root processes.
     MPI_Request req_isent{};
 
-    // Set to 1, if the process has encountered a local error and requested an emergency stop.
-    int local_stop = 0;
+    // Set to 1, if a local event has occurred on this process.
+    int local_event = 0;
 
-    // Set to 1, if the process has received an emergency stop broadcasted by the root process.
-    int global_stop = 0;
+    // Set to 1, if an event has occurred on some process.
+    int some_event = 0;
+
+    // Set to 1, if an event has occurred on all processes.
+    int all_events = 0;
 
     // Set to true, if finialize_communications() has been called.
     bool finalized = false;
@@ -76,20 +88,23 @@ namespace mpi {
     /**
      * @brief Construct a monitor on top of a given mpi::communicator.
      *
-     * @details The root process performs a non-blocking receive for every non-root process and waits for
-     * a non-root process to send an emergency stop request. Non-root processes make a non-blocking broadcast
-     * call and wait for the root process to broadcast any emergency stop request it has received.
+     * @details The root process performs a non-blocking receive for every non-root process and waits for a non-root
+     * process to send a message that an event has occurred.
+     *
+     * Non-root processes make two non-blocking broadcast calls and wait for the root process to broadcast a message in
+     * case an event has occurred on some process or on all processes.
      *
      * @param c mpi::communicator.
      */
-    monitor(mpi::communicator c) : com(c) {
-      if (com.rank() == 0) {
+    monitor(mpi::communicator c, int root = 0) : comm(c), root(root) {
+      if (comm.rank() == root) {
         root_futures.resize(c.size() - 1);
         for (int rank = 1; rank < c.size(); ++rank) {
-          MPI_Irecv(&(root_futures[rank - 1].node_stop), 1, MPI_INT, rank, 0, MPI_COMM_WORLD, &(root_futures[rank - 1].request));
+          MPI_Irecv(&(root_futures[rank - 1].event), 1, MPI_INT, rank, 0, comm.get(), &(root_futures[rank - 1].request));
         }
       } else {
-        MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast);
+        MPI_Ibcast(&some_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_some);
+        MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all);
       }
     }
 
@@ -103,106 +118,171 @@ namespace mpi {
     ~monitor() { finalize_communications(); }
 
     /**
-     * @brief Request an emergency stop.
+     * @brief Report a local event to the root process.
      *
-     * @details This function can be called on any process in case a local error has occurred. On the
-     * root process, it sets its `local_stop` and `global_stop` members to 1 and broadcasts `global_stop`
-     * to all non-root processes. On non-root processes, it sets `local_stop` to 1 and sends it to the
-     * root process.
+     * @details This function can be called on any process in case a local event has occurred.
+     *
+     * On the root process, it immediately broadcasts to all other processes that some event has occurred and further
+     * checks if all other processes have reported an event as well. If so, it additionally broadcasts to all processes
+     * that an event has occurred on all processes.
+     *
+     * On non-root processes, it sends a message to the root process that a local event has occurred.
      */
-    void request_emergency_stop() {
-      EXPECTS(!finalized);
+    void report_local_event() {
       // prevent sending multiple signals
-      if (local_stop) { return; }
+      if (local_event or finalized) { return; }
 
-      // an error has occurred
-      local_stop = 1;
-      if (com.rank() == 0) {
-        // root broadcasts the global_stop variable
-        global_stop = 1;
-        MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast);
+      // a local event has occurred
+      local_event = 1;
+      if (comm.rank() == root) {
+        // on root process, check all other nodes and perform necessary broadcasts
+        root_check_nodes_and_bcast();
       } else {
-        // non-root sends the local_stop variable to root
-        MPI_Isend(&local_stop, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &req_isent);
+        // on non-root processes, let the root process know about the local event
+        MPI_Isend(&local_event, 1, MPI_INT, 0, 0, comm.get(), &req_isent);
       }
     }
 
     /**
-     * @brief Check if an emergency stop has been requested.
+     * @brief Check if an event has occurred on some process.
      *
-     * @details This function can be called on any process to check if an emergency has occurred somewhere.
-     * It first checks, if its `local_stop` or `global_stop` members are set to 1 and returns `true` in case
-     * one of them is. Otherwise, on the root process, it calls `root_check_nodes_and_bcast()` to check if
-     * some other process has sent an emergency message and to possibly forward the received signal.
-     * On non-root processes, it checks if the root process has broadcasted an emergency stop, which it has
-     * received from some other process.
+     * @details This function can be called on any process to check if an event has occurred somewhere.
      *
-     * @return True, if an emergency stop has been requested. Otherwise, it returns false.
+     * It returns true, if
+     * - a local event has occurred or
+     * - if an event has occurred on some other process which has already been reported to the root process and
+     * broadcasted to all other processes.
+     *
+     * On the root process, it checks the status of all non-root processes and performs the necessary broadcasts in case
+     * they have not been done yet.
+     *
+     * @return True, if an event has occurred on some process.
      */
-    [[nodiscard]] bool emergency_occured() {
-      // if final_communications() has already been called, global_stop == 0 if no error has occurred, otherwise it is 1
-      if (finalized) return global_stop;
+    [[nodiscard]] bool some_event_occurred() {
+      // if final_communications() has already been called, some_event == 0 if no event has occurred, otherwise it is 1
+      if (finalized) return some_event;
 
-      // either a local error has occurred or some other process has requested an emergency stop
-      if (global_stop or local_stop) return true;
+      // if a local event has occurred, we return true
+      if (local_event) return true;
 
-      if (com.rank() == 0) {
-        // root checks if some other process has requested an emergency stop
+      // on the root process, we first check the status of all non-root processes, perform the necessary broadcasts and
+      // return true if an event has occurred
+      if (comm.rank() == root) {
         root_check_nodes_and_bcast();
+        return some_event;
       }
-      return global_stop;
+
+      // on non-root processes, we check the status of the corresponding broadcast and return true if an event has
+      // occurred
+      MPI_Status status;
+      int flag = 0;
+      MPI_Test(&req_ibcast_some, &flag, &status);
+      return flag and some_event;
+    }
+
+    /**
+     * @brief Check if an event has occurred on all processes.
+     *
+     * @details This function can be called on any process to check if an event has occurred on all processes.
+     *
+     * It returns true, if an event has occurred on all processes which has already been reported to the root process
+     * and broadcasted to all other processes.
+     *
+     * On the root process, it checks the status of all non-root processes and performs the necessary broadcasts in case
+     * it has not been done yet.
+     *
+     * @return True, if an event has occurred on all processes.
+     */
+    [[nodiscard]] bool all_events_occurred() {
+      // if final_communications() has already been called, all_events == 0 if an event has not occurred on every
+      // process, otherwise it is 1
+      if (finalized) return all_events;
+
+      // on the root process, we first check the status of all non-root processes, perform the necessary broadcasts and
+      // return true if an event has occurred
+      if (comm.rank() == root) {
+        root_check_nodes_and_bcast();
+        return all_events;
+      }
+
+      // on non-root processes, we check the status of the broadcast and return true if an event has occurred on all
+      // processes
+      MPI_Status status;
+      int flag = 0;
+      MPI_Test(&req_ibcast_all, &flag, &status);
+      return flag and all_events;
     }
 
     /**
      * @brief Finalize all pending communications.
      *
-     * @details At the end of this function, all processes have completed their work or have had a local
-     * emergency stop. The member `global_stop` is guaranteed to be the same on all processes when this
-     * function returns.
+     * @details At the end of this function, all MPI communications have been completed and the values of the member
+     * variables will not change anymore due to some member function calls.
      */
     void finalize_communications() {
+      // preven multiple calls
       if (finalized) return;
-      if (com.rank() == 0) {
-        // root just listens to the other processes and bcasts the global_stop until everyone is done
-        while (root_check_nodes_and_bcast()) { usleep(100); } // 100 us (micro seconds)
-        // all others node have finished
-        // if the root has never emitted the ibcast, we do it now
-        if (not global_stop) { MPI_Ibcast(&global_stop, 1, MPI_INT, 0, MPI_COMM_WORLD, &req_ibcast); }
+
+      if (comm.rank() == root) {
+        // on root process, wait for all non-root processes to finish their MPI_Isend calls
+        while (root_check_nodes_and_bcast()) {
+          usleep(100); // 100 us (micro seconds)
+        }
+        // and perform broadcasts in case they have not been done yet
+        if (not some_event) { MPI_Ibcast(&some_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_some); }
+        if (not all_events) { MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all); }
       } else {
-        // on non-root node: either Isend was done when local_stop was set to 1 during request_emergency_stop,
-        // or it has to happen now, i.e, work is done, and fine.
-        if (not local_stop) { MPI_Isend(&local_stop, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &req_isent); }
+        // on non-root processes, perform MPI_Isend call in case it has not been done yet
+        if (not local_event) { MPI_Isend(&local_event, 1, MPI_INT, 0, 0, comm.get(), &req_isent); }
       }
-      // all nodes wait for the ibcast of the global_stop to be complete
-      MPI_Status status;
-      MPI_Wait(&req_ibcast, &status);
+
+      // all nodes wait for the broadcasts to be completed
+      MPI_Status status_some, status_all;
+      MPI_Wait(&req_ibcast_some, &status_some);
+      MPI_Wait(&req_ibcast_all, &status_all);
       finalized = true;
     }
 
     private:
-    /**
-     * @brief Check if any non-root process has sent a stop request. If so, broadcast to all other processes
-     * in case it has not been done yet.
-     *
-     * @return True, if at least one process has not finished the `MPI_Isend` of the `local_stop` variable to
-     * the root process. Otherwise, it returns false.
-     */
+    // Root process broadcasts that some event has occurred on some process in case it has not done so yet.
+    void root_bcast_some_event() {
+      EXPECTS(!finalized);
+      EXPECTS(com.rank() == root);
+      if (not some_event) {
+        some_event = 1;
+        MPI_Ibcast(&some_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_some);
+      }
+    }
+
+    // Root process broadcasts that an event has occurred on all processes in case it has not done so yet.
+    void root_bcast_all_events() {
+      EXPECTS(!finalized);
+      EXPECTS(com.rank() == root);
+      if (not all_events) {
+        all_events = 1;
+        MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all);
+      }
+    }
+
+    // Root process checks the status of all non-root processes, performs necessary broadcasts and returns a boolean
+    // that is true if at least one non-root process has not performed its MPI_Isend call yet.
     bool root_check_nodes_and_bcast() {
       EXPECTS(!finalized);
-      EXPECTS(com.rank() == 0);
-      // loop over all non-root processes
-      bool some_nodes_are_still_running = false;
-      for (auto &[request, node_stop] : root_futures) {
-        // check for an emergency stop request
+      EXPECTS(com.rank() == root);
+      bool some     = false;
+      bool all      = true;
+      bool finished = true;
+      for (auto &[request, event] : root_futures) {
         MPI_Status status;
-        int comm_received = 0;
-        MPI_Test(&request, &comm_received, &status);
-        // for the first time an emergency stop has been requested -> root calls request_emergency_stop()
-        // to broadcast to all other processes
-        if (comm_received and (not global_stop) and node_stop) request_emergency_stop(); // the root requires the stop now. It also stops itself...
-        some_nodes_are_still_running |= (not comm_received);
+        int flag = 0;
+        MPI_Test(&request, &flag, &status);
+        some |= (flag and event);
+        all &= (flag and event);
+        finished &= flag;
       }
-      return some_nodes_are_still_running;
+      if (some or local_event) root_bcast_some_event();
+      if (all and local_event) root_bcast_all_events();
+      return not finished;
     }
   };
 

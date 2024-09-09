@@ -68,9 +68,10 @@ Most users probably won't need to use this functionality directly.
 
 We refer the interested reader to [TRIQS/nda](https://github.com/TRIQS/nda/blob/unstable/c%2B%2B/nda/mpi/reduce.hpp) for more details.
 
-## Error handling
+## Event handling
 
-@ref err_handling provides the mpi::monitor class which can be used to communicate and handle errors across multiple processes.
+@ref event_handling provides the mpi::monitor class which can be used to communicate and handle events across multiple
+processes.
 
 @ref ex2 shows a simple use case.
 

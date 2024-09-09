@@ -54,10 +54,10 @@
  */
 
 /**
- * @defgroup err_handling Error handling
- * @brief Communicate and handle errors across multiple processes.
+ * @defgroup event_handling Event handling
+ * @brief Communicate and handle events across multiple processes.
  *
- * @details A typical use case for the mpi::monitor class could be:
+ * @details A typical use case for the mpi::monitor class could be to monitor and communicate exceptions:
  *
  * @code{.cpp}
  * // initialize monitor
@@ -65,19 +65,19 @@
  * ...
  *
  * // loop as long as everything is fine
- * while (!monitor.emergency_occured()) {
+ * while (!monitor.some_event_occurred()) {
  *   try {
  *      // do some work
  *      ...
  *   } catch (my_exception const &e) {
- *     // send an emergency stop request
- *     monitor.request_emergency_stop();
+ *     // report an exception
+ *     monitor.report_local_event();
  *   }
  * }
  *
- * // finalize communications and check if the computation finished due to an error
+ * // finalize communications and check if the computation finished due to an exception
  * monitor.finalize_communications();
- * if (!monitor.emergency_occured()) {
+ * if (!monitor.some_event_occurred()) {
  *    // do some clean up and maybe stop the program
  *    ...
  * }
