@@ -86,6 +86,9 @@ namespace mpi {
      * @details Calls `MPI_Comm_split` with the given color and key arguments. See the MPI documentation for more details,
      * e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_split.3.html">open-mpi docs</a>.
      *
+     * @warning This allocates a new communicator object. Make sure to call `free` on the returned communicator when
+     * it is no longer needed.
+     *
      * @return If mpi::has_env is true, return the split `MPI_Comm` object wrapped in a new mpi::communicator, otherwise
      * return a default constructed mpi::communicator.
      */
@@ -103,6 +106,9 @@ namespace mpi {
      *
      * @details Calls `MPI_Comm_dup` to duplicate the communicator. See the MPI documentation for more details, e.g.
      * <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_dup.3.html">open-mpi docs</a>.
+     *
+     * @warning This allocates a new communicator object. Make sure to call `free` on the returned communicator when
+     * it is no longer needed.
      *
      * @return If mpi::has_env is true, return the duplicated `MPI_Comm` object wrapped in a new mpi::communicator,
      * otherwise return a default constructed mpi::communicator.
