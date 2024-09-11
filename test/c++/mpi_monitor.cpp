@@ -42,7 +42,7 @@ bool test_monitor(mpi::communicator c, int fastest_node, std::vector<int> rank_r
   std::cerr << "Node " << c.rank() << ": sleeptime " << sleeptime << std::endl;
 
   mpi::monitor monitor{c};
-  auto events_occurred = [all_events, &monitor]() { return all_events ? monitor.all_events_occurred() : monitor.some_event_occurred(); };
+  auto events_occurred = [all_events, &monitor]() { return all_events ? monitor.event_on_all_ranks() : monitor.event_on_any_rank(); };
 
   for (int i = 0; (!events_occurred()) and (i < niter); ++i) {
     usleep(sleeptime);
@@ -180,13 +180,13 @@ TEST(MPI, MultipleMonitors) {
   monitor1.finalize_communications();
   monitor2.finalize_communications();
   monitor3.finalize_communications();
-  EXPECT_FALSE(monitor1.some_event_occurred());
-  EXPECT_FALSE(monitor1.all_events_occurred());
-  EXPECT_TRUE(monitor2.some_event_occurred());
-  EXPECT_TRUE(monitor2.all_events_occurred());
-  EXPECT_TRUE(monitor3.some_event_occurred());
-  if (world.size() == 1) EXPECT_TRUE(monitor3.all_events_occurred());
-  else EXPECT_FALSE(monitor3.all_events_occurred());
+  EXPECT_FALSE(monitor1.event_on_any_rank());
+  EXPECT_FALSE(monitor1.event_on_all_ranks());
+  EXPECT_TRUE(monitor2.event_on_any_rank());
+  EXPECT_TRUE(monitor2.event_on_all_ranks());
+  EXPECT_TRUE(monitor3.event_on_any_rank());
+  if (world.size() == 1) EXPECT_TRUE(monitor3.event_on_all_ranks());
+  else EXPECT_FALSE(monitor3.event_on_all_ranks());
   dup.free();
   dupdup.free();
   usleep(1000);
