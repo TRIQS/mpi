@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   // in case an event has occurred, print some info and return true
   auto stop = [&monitor, world](int i) {
     bool res = false;
-    if (monitor.some_event_occurred()) {
+    if (monitor.event_on_any_rank()) {
       std::cerr << "Processor " << world.rank() << ": After " << i << " steps an event has been communicated.\n";
       res = true;
     }
@@ -42,8 +42,8 @@ int main(int argc, char *argv[]) {
 
   // check if all processes finished the loop
   if (world.rank() == 0) {
-    if (monitor.some_event_occurred()) {
-      std::cout << "Oh no! An event occurred somewhere and loop has not been finished on all processes.\n";
+    if (monitor.event_on_any_rank()) {
+      std::cout << "Oh no! An event occurred somewhere and the loop has not been finished on all processes.\n";
     } else {
       std::cout << "No worries, all processes have finished the loop.\n";
     }

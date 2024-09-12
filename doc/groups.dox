@@ -65,7 +65,7 @@
  * ...
  *
  * // loop as long as everything is fine
- * while (!monitor.some_event_occurred()) {
+ * while (!monitor.event_on_any_rank()) {
  *   try {
  *      // do some work
  *      ...
@@ -77,7 +77,7 @@
  *
  * // finalize communications and check if the computation finished due to an exception
  * monitor.finalize_communications();
- * if (!monitor.some_event_occurred()) {
+ * if (!monitor.event_on_any_rank()) {
  *    // do some clean up and maybe stop the program
  *    ...
  * }

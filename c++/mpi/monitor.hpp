@@ -259,13 +259,13 @@ namespace mpi {
       bool any      = false;
       bool all      = true;
       bool finished = true;
-      for (auto &[request, event] : root_futures) {
+      for (auto &[request, rank_event] : root_futures) {
         MPI_Status status;
-        int has_received = 0;
-        MPI_Test(&request, &has_received, &status);
-        any |= (has_received and event);
-        all &= (has_received and event);
-        finished &= has_received;
+        int rank_received = 0;
+        MPI_Test(&request, &rank_received, &status);
+        any |= (rank_received and rank_event);
+        all &= (rank_received and rank_event);
+        finished &= rank_received;
       }
       if (not any_event and (any or local_event)) {
         any_event = 1;
