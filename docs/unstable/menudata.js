@@ -91,7 +91,7 @@ var menudata={children:[
 {text:"reduce tag",url:"structmpi_1_1tag_1_1reduce.html"},
 {text:"scatter tag",url:"structmpi_1_1tag_1_1scatter.html"},
 {text:"is_mpi_lazy",url:"group__mpi__lazy.html#gaea1d1d296f80ece0880a0d39aa8ca6bb"}]},
-{text:"Error handling",url:"group__err__handling.html",children:[
+{text:"Event handling",url:"group__event__handling.html",children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[
 {text:"regular_t",url:"group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8"},

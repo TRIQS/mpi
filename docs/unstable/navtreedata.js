@@ -107,7 +107,7 @@ var NAVTREE =
         [ "scatter tag", "structmpi_1_1tag_1_1scatter.html", null ],
         [ "is_mpi_lazy", "group__mpi__lazy.html#gaea1d1d296f80ece0880a0d39aa8ca6bb", null ]
       ] ],
-      [ "Error handling", "group__err__handling.html", [
+      [ "Event handling", "group__event__handling.html", [
         [ "monitor", "classmpi_1_1monitor.html", null ]
       ] ],
       [ "Utilities", "group__utilities.html", [

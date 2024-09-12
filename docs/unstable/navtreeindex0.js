@@ -41,7 +41,7 @@ var NAVTREEINDEX0 =
 "group__coll__comm.html#gae123b365235e205f4a4b992ff11b9722":[4,2,6,1],
 "group__coll__comm.html#gaf697a18695e4a5344bbe76e67ae77277":[4,2,4],
 "group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e":[4,2,0],
-"group__err__handling.html":[4,4],
+"group__event__handling.html":[4,4],
 "group__mpi__essentials.html":[4,0],
 "group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1":[4,0,3],
 "group__mpi__essentials.html#gaee54f343fdd8f1712ae521bd8ee69dfc":[4,0,2],

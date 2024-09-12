@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['_7eenvironment_0',['~environment',['../structmpi_1_1environment.html#a4643b49009997a0a98a0d5bcff881a27',1,'mpi::environment']]],
-  ['_7emonitor_1',['~monitor',['../classmpi_1_1monitor.html#a6b5c78f6a21206aa432a8078d4f4249a',1,'mpi::monitor']]]
+  ['scatter_0',['scatter',['../group__coll__comm.html#ga129f32374467c9b0f74a822a7e554588',1,'mpi']]],
+  ['size_1',['size',['../classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a',1,'mpi::communicator']]],
+  ['split_2',['split',['../classmpi_1_1communicator.html#a97e3b16ff9a787f82345c0e05687608b',1,'mpi::communicator']]]
 ];

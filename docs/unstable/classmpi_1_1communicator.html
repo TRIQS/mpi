@@ -137,6 +137,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a51ed7d5a2c8c0ac3170c41811e19cc61" id="r_a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ed7d5a2c8c0ac3170c41811e19cc61">barrier</a> (long poll_msec=1)</td></tr>
 <tr class="memdesc:a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Barrier synchronization.  <br /></td></tr>
 <tr class="separator:a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85c8b810a0de94bde92f81aed854e206" id="r_a85c8b810a0de94bde92f81aed854e206"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmpi_1_1communicator.html">communicator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85c8b810a0de94bde92f81aed854e206">duplicate</a> () const</td></tr>
+<tr class="memdesc:a85c8b810a0de94bde92f81aed854e206"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duplicate the communicator.  <br /></td></tr>
+<tr class="separator:a85c8b810a0de94bde92f81aed854e206"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a899052bb4c6f8e335e7a96ec2959d3b2" id="r_a899052bb4c6f8e335e7a96ec2959d3b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a899052bb4c6f8e335e7a96ec2959d3b2">free</a> ()</td></tr>
+<tr class="memdesc:a899052bb4c6f8e335e7a96ec2959d3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free the communicator.  <br /></td></tr>
+<tr class="separator:a899052bb4c6f8e335e7a96ec2959d3b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0af4ecaeecae0ebc6c24aeef58f930e" id="r_ac0af4ecaeecae0ebc6c24aeef58f930e"><td class="memItemLeft" align="right" valign="top"><a id="ac0af4ecaeecae0ebc6c24aeef58f930e" name="ac0af4ecaeecae0ebc6c24aeef58f930e"></a>
 MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const noexcept</td></tr>
 <tr class="memdesc:ac0af4ecaeecae0ebc6c24aeef58f930e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the wrapped <code>MPI_Comm</code> object. <br /></td></tr>
@@ -214,7 +220,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00105">105</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00142">142</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -255,7 +261,70 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00133">133</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00170">170</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a85c8b810a0de94bde92f81aed854e206" name="a85c8b810a0de94bde92f81aed854e206"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85c8b810a0de94bde92f81aed854e206">&#9670;&#160;</a></span>duplicate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmpi_1_1communicator.html">communicator</a> mpi::communicator::duplicate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Duplicate the communicator. </p>
+<p>Calls <code>MPI_Comm_dup</code> to duplicate the communicator. See the MPI documentation for more details, e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_dup.3.html">open-mpi docs</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd>This allocates a new communicator object. Make sure to call <code>free</code> on the returned communicator when it is no longer needed.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, return the duplicated <code>MPI_Comm</code> object wrapped in a new <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>, otherwise return a default constructed <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00116">116</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a899052bb4c6f8e335e7a96ec2959d3b2" name="a899052bb4c6f8e335e7a96ec2959d3b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a899052bb4c6f8e335e7a96ec2959d3b2">&#9670;&#160;</a></span>free()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::communicator::free </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Free the communicator. </p>
+<p>Calls <code>MPI_Comm_free</code> to mark the communicator for deallocation. See the MPI documentation for more details, e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_free.3.html">open-mpi docs </a>.</p>
+<p>Does nothing, if <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false. </p>
+
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00134">134</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -348,9 +417,10 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 
 <p>Split the communicator into disjoint subgroups. </p>
 <p>Calls <code>MPI_Comm_split</code> with the given color and key arguments. See the MPI documentation for more details, e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_split.3.html">open-mpi docs</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd>This allocates a new communicator object. Make sure to call <code>free</code> on the returned communicator when it is no longer needed.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, return the split <code>MPI_Comm</code> object wrapped in a new <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>, otherwise return a default constructed <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00092">92</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00095">95</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>

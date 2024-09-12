@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['handling_0',['Error handling',['../group__err__handling.html',1,'']]]
+  ['handling_0',['Event handling',['../group__event__handling.html',1,'']]]
 ];

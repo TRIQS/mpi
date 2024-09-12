@@ -111,7 +111,7 @@ $(function(){initNavTree('ex2.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">Example 2: Use monitor to communicate errors</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>In this example, we show how to use the <a class="el" href="classmpi_1_1monitor.html" title="Constructed on top of an MPI communicator, this class helps to monitor and communicate exceptions and...">mpi::monitor</a> class to communicate and process errors across a communicator.</p>
+<div class="textblock"><p>In this example, we show how to use the <a class="el" href="classmpi_1_1monitor.html" title="Constructed on top of an MPI communicator, this class helps to monitor and communicate events across ...">mpi::monitor</a> class to communicate and process errors across a communicator.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="mpi_8hpp.html">mpi/mpi.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="monitor_8hpp.html">mpi/monitor.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
@@ -124,61 +124,61 @@ $(function(){initNavTree('ex2.html',''); initResizable(true); });
 <div class="line">  <span class="comment">// initialize monitor</span></div>
 <div class="line">  <a class="code hl_class" href="classmpi_1_1monitor.html">mpi::monitor</a> monitor(world);</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// in case a stop has been requested, print some info and return true</span></div>
+<div class="line">  <span class="comment">// in case an event has occurred, print some info and return true</span></div>
 <div class="line">  <span class="keyword">auto</span> stop = [&amp;monitor, world](<span class="keywordtype">int</span> i) {</div>
 <div class="line">    <span class="keywordtype">bool</span> res = <span class="keyword">false</span>;</div>
-<div class="line">    <span class="keywordflow">if</span> (monitor.emergency_occured()) {</div>
-<div class="line">      std::cerr &lt;&lt; <span class="stringliteral">&quot;Processor &quot;</span> &lt;&lt; world.<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a>() &lt;&lt; <span class="stringliteral">&quot;: After &quot;</span> &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot; steps an emergency stop has been received.\n&quot;</span>;</div>
+<div class="line">    <span class="keywordflow">if</span> (monitor.event_on_any_rank()) {</div>
+<div class="line">      std::cerr &lt;&lt; <span class="stringliteral">&quot;Processor &quot;</span> &lt;&lt; world.<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a>() &lt;&lt; <span class="stringliteral">&quot;: After &quot;</span> &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot; steps an event has been communicated.\n&quot;</span>;</div>
 <div class="line">      res = <span class="keyword">true</span>;</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> res;</div>
 <div class="line">  };</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// loop as long as no stop has been requested</span></div>
-<div class="line">  <span class="keywordtype">int</span> rank_to_req = 3;</div>
+<div class="line">  <span class="comment">// loop as long as no event has occurred</span></div>
+<div class="line">  <span class="keywordtype">int</span> event_rank = 3;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 1000000; ++i) {</div>
-<div class="line">    <span class="comment">// request a stop on processor 3</span></div>
-<div class="line">    <span class="keywordflow">if</span> (world.<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a>() == rank_to_req) {</div>
-<div class="line">      std::cerr &lt;&lt; <span class="stringliteral">&quot;Processor &quot;</span> &lt;&lt; rank_to_req &lt;&lt; <span class="stringliteral">&quot;: Emergency stop requested.\n&quot;</span>;</div>
-<div class="line">      monitor.request_emergency_stop();</div>
+<div class="line">    <span class="comment">// report a local event on the event_rank</span></div>
+<div class="line">    <span class="keywordflow">if</span> (world.<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a>() == event_rank) {</div>
+<div class="line">      std::cerr &lt;&lt; <span class="stringliteral">&quot;Processor &quot;</span> &lt;&lt; event_rank &lt;&lt; <span class="stringliteral">&quot;: Local event reported.\n&quot;</span>;</div>
+<div class="line">      monitor.report_local_event();</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// should we stop the loop?</span></div>
 <div class="line">    <span class="keywordflow">if</span> (stop(i)) <span class="keywordflow">break</span>;</div>
 <div class="line">  }</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// check if all processes finished without an error</span></div>
+<div class="line">  <span class="comment">// check if all processes finished the loop</span></div>
 <div class="line">  <span class="keywordflow">if</span> (world.<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a>() == 0) {</div>
-<div class="line">    <span class="keywordflow">if</span> (monitor.emergency_occured()) {</div>
-<div class="line">      std::cout &lt;&lt; <span class="stringliteral">&quot;Oh no! An error occurred somewhere.\n&quot;</span>;</div>
+<div class="line">    <span class="keywordflow">if</span> (monitor.event_on_any_rank()) {</div>
+<div class="line">      std::cout &lt;&lt; <span class="stringliteral">&quot;Oh no! An event occurred somewhere and the loop has not been finished on all processes.\n&quot;</span>;</div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
-<div class="line">      std::cout &lt;&lt; <span class="stringliteral">&quot;No worries, all processes finished without an error.\n&quot;</span>;</div>
+<div class="line">      std::cout &lt;&lt; <span class="stringliteral">&quot;No worries, all processes have finished the loop.\n&quot;</span>;</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
 <div class="line">}</div>
 <div class="ttc" id="aclassmpi_1_1communicator_html"><div class="ttname"><a href="classmpi_1_1communicator.html">mpi::communicator</a></div><div class="ttdoc">C++ wrapper around MPI_Comm providing various convenience functions.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00040">communicator.hpp:40</a></div></div>
 <div class="ttc" id="aclassmpi_1_1communicator_html_a784752e4df5190e553066e57551554a9"><div class="ttname"><a href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">mpi::communicator::rank</a></div><div class="ttdeci">int rank() const</div><div class="ttdoc">Get the rank of the calling process in the communicator.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00061">communicator.hpp:61</a></div></div>
-<div class="ttc" id="aclassmpi_1_1monitor_html"><div class="ttname"><a href="classmpi_1_1monitor.html">mpi::monitor</a></div><div class="ttdoc">Constructed on top of an MPI communicator, this class helps to monitor and communicate exceptions and...</div><div class="ttdef"><b>Definition</b> <a href="monitor_8hpp_source.html#l00044">monitor.hpp:44</a></div></div>
-<div class="ttc" id="amonitor_8hpp_html"><div class="ttname"><a href="monitor_8hpp.html">monitor.hpp</a></div><div class="ttdoc">Provides a class for monitoring and communicating exceptions and other errors of individual processes...</div></div>
+<div class="ttc" id="aclassmpi_1_1monitor_html"><div class="ttname"><a href="classmpi_1_1monitor.html">mpi::monitor</a></div><div class="ttdoc">Constructed on top of an MPI communicator, this class helps to monitor and communicate events across ...</div><div class="ttdef"><b>Definition</b> <a href="monitor_8hpp_source.html#l00050">monitor.hpp:50</a></div></div>
+<div class="ttc" id="amonitor_8hpp_html"><div class="ttname"><a href="monitor_8hpp.html">monitor.hpp</a></div><div class="ttdoc">Provides a class for monitoring and communicating events across multiple processes.</div></div>
 <div class="ttc" id="ampi_8hpp_html"><div class="ttname"><a href="mpi_8hpp.html">mpi.hpp</a></div><div class="ttdoc">Includes all relevant mpi headers.</div></div>
 <div class="ttc" id="astructmpi_1_1environment_html"><div class="ttname"><a href="structmpi_1_1environment.html">mpi::environment</a></div><div class="ttdoc">RAII class to initialize and finalize MPI.</div><div class="ttdef"><b>Definition</b> <a href="environment_8hpp_source.html#l00065">environment.hpp:65</a></div></div>
 </div><!-- fragment --><p>Output (running with <code>-n 12</code>):</p>
-<div class="fragment"><div class="line">Processor 3: Emergency stop requested.</div>
-<div class="line">Processor 3: After 0 steps an emergency stop has been received.</div>
-<div class="line">Processor 2: After 5950 steps an emergency stop has been received.</div>
-<div class="line">Processor 4: After 10475 steps an emergency stop has been received.</div>
-<div class="line">Processor 5: After 7379 steps an emergency stop has been received.</div>
-<div class="line">Processor 6: After 8366 steps an emergency stop has been received.</div>
-<div class="line">Processor 7: After 1302 steps an emergency stop has been received.</div>
-<div class="line">Processor 8: After 1155 steps an emergency stop has been received.</div>
-<div class="line">Processor 9: After 14445 steps an emergency stop has been received.</div>
-<div class="line">Processor 11: After 9287 steps an emergency stop has been received.</div>
-<div class="line">Processor 0: After 0 steps an emergency stop has been received.</div>
-<div class="line">Processor 1: After 7443 steps an emergency stop has been received.</div>
-<div class="line">Processor 10: After 1321 steps an emergency stop has been received.</div>
-<div class="line">Oh no! An error occurred somewhere.</div>
+<div class="fragment"><div class="line">Processor 3: Local event reported.</div>
+<div class="line">Processor 3: After 0 steps an event has been communicated.</div>
+<div class="line">Processor 4: After 8428 steps an event has been communicated.</div>
+<div class="line">Processor 0: After 0 steps an event has been communicated.</div>
+<div class="line">Processor 8: After 10723 steps an event has been communicated.</div>
+<div class="line">Processor 5: After 10426 steps an event has been communicated.</div>
+<div class="line">Processor 6: After 12172 steps an event has been communicated.</div>
+<div class="line">Processor 7: After 9014 steps an event has been communicated.</div>
+<div class="line">Processor 1: After 400 steps an event has been communicated.</div>
+<div class="line">Processor 2: After 1646 steps an event has been communicated.</div>
+<div class="line">Processor 11: After 12637 steps an event has been communicated.</div>
+<div class="line">Processor 10: After 9120 steps an event has been communicated.</div>
+<div class="line">Processor 9: After 1 steps an event has been communicated.</div>
+<div class="line">Oh no! An event occurred somewhere and the loop has not been finished on all processes.</div>
 </div><!-- fragment --><p>Output (running with <code>-n 3</code>):</p>
-<div class="fragment"><div class="line">No worries, all processes finished without an error.</div>
+<div class="fragment"><div class="line">No worries, all processes have finished the loop.</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
