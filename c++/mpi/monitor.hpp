@@ -102,7 +102,7 @@ namespace mpi {
       if (comm.rank() == 0) {
         root_futures.resize(c.size() - 1);
         for (int rank = 1; rank < c.size(); ++rank) {
-          MPI_Irecv(&(root_futures[rank - 1].event), 1, MPI_INT, rank, 0, comm.get(), &(root_futures[rank - 1].request));
+          MPI_Irecv(&(root_futures[rank - 1].event), 1, MPI_INT, rank, rank, comm.get(), &(root_futures[rank - 1].request));
         }
       } else {
         MPI_Ibcast(&any_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_any);
@@ -141,7 +141,7 @@ namespace mpi {
         root_check_nodes_and_bcast();
       } else {
         // on non-root processes, let the root process know about the local event
-        MPI_Isend(&local_event, 1, MPI_INT, 0, 0, comm.get(), &req_isent);
+        MPI_Isend(&local_event, 1, MPI_INT, 0, comm.rank(), comm.get(), &req_isent);
       }
     }
 
@@ -237,7 +237,7 @@ namespace mpi {
         if (not all_events) { MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all); }
       } else {
         // on non-root processes, perform MPI_Isend call in case it has not been done yet
-        if (not local_event) { MPI_Isend(&local_event, 1, MPI_INT, 0, 0, comm.get(), &req_isent); }
+        if (not local_event) { MPI_Isend(&local_event, 1, MPI_INT, 0, comm.rank(), comm.get(), &req_isent); }
       }
 
       // all nodes wait for the broadcasts to be completed
