@@ -168,11 +168,9 @@ TEST(MPI, MultipleMonitors) {
   // test multiple monitors
   usleep(1000);
   mpi::communicator world;
-  auto dup = world.duplicate();
-  auto dupdup = world.duplicate();
   mpi::monitor monitor1{world};
-  mpi::monitor monitor2{dup};
-  mpi::monitor monitor3{dupdup};
+  mpi::monitor monitor2{world};
+  mpi::monitor monitor3{world};
   if (world.rank() == 0) {
     monitor3.report_local_event();
   }
@@ -187,8 +185,6 @@ TEST(MPI, MultipleMonitors) {
   EXPECT_TRUE(monitor3.event_on_any_rank());
   if (world.size() == 1) EXPECT_TRUE(monitor3.event_on_all_ranks());
   else EXPECT_FALSE(monitor3.event_on_all_ranks());
-  dup.free();
-  dupdup.free();
   usleep(1000);
 }
 

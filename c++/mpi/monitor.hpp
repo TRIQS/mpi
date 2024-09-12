@@ -43,6 +43,9 @@ namespace mpi {
    * It can be used to check
    * - if an event has occurred on any process (monitor::event_on_any_rank) or
    * - if an event has occurred on all processes (monitor::event_on_all_ranks).
+   *
+   * It uses a duplicate communicator to not interfere with other MPI communications. The communicator is freed in the
+   * `finalize_communications` function (which is called in the destructor if not called before).
    */
   class monitor {
     // Future struct for non-blocking MPI communication.
@@ -85,7 +88,9 @@ namespace mpi {
     /**
      * @brief Construct a monitor on top of a given mpi::communicator.
      *
-     * @details The root process (rank == 0) performs a non-blocking receive for every non-root process and waits for a
+     * @details The communicator is duplicated to not interfere with other MPI communications.
+     *
+     * The root process (rank == 0) performs a non-blocking receive for every non-root process and waits for a
      * non-root process to send a message that an event has occurred.
      *
      * Non-root processes make two non-blocking broadcast calls and wait for the root process to broadcast a message in
@@ -93,7 +98,7 @@ namespace mpi {
      *
      * @param c mpi::communicator.
      */
-    monitor(mpi::communicator c) : comm(c) {
+    monitor(mpi::communicator c) : comm(c.duplicate()) {
       if (comm.rank() == 0) {
         root_futures.resize(c.size() - 1);
         for (int rank = 1; rank < c.size(); ++rank) {
@@ -215,6 +220,8 @@ namespace mpi {
      *
      * @details At the end of this function, all MPI communications have been completed and the values of the member
      * variables will not change anymore due to some member function calls.
+     *
+     * Furthermore, it frees the used communicator.
      */
     void finalize_communications() {
       // prevent multiple calls
@@ -237,6 +244,9 @@ namespace mpi {
       MPI_Status status_any, status_all;
       MPI_Wait(&req_ibcast_any, &status_any);
       MPI_Wait(&req_ibcast_all, &status_all);
+
+      // free the communicator
+      comm.free();
       finalized = true;
     }
 
