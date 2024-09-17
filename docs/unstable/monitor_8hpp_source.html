@@ -379,7 +379,7 @@ $(function(){initNavTree('monitor_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    <span class="comment">// that is true if at least one non-root process has not performed its MPI_Isend call yet.</span></div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keywordtype">bool</span> root_check_nodes_and_bcast() {</div>
 <div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>      <a class="code hl_define" href="macros_8hpp.html#a456e2e210ac41b1f0f4979fc58555ce6">EXPECTS</a>(!finalized);</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>      <a class="code hl_define" href="macros_8hpp.html#a456e2e210ac41b1f0f4979fc58555ce6">EXPECTS</a>(comm.rank() == root);</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>      <a class="code hl_define" href="macros_8hpp.html#a456e2e210ac41b1f0f4979fc58555ce6">EXPECTS</a>(comm.rank() == 0);</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>      <span class="keywordtype">bool</span> any      = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>      <span class="keywordtype">bool</span> all      = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>      <span class="keywordtype">bool</span> finished = <span class="keyword">true</span>;</div>
