@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
-#include <iostream>
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
@@ -40,11 +39,43 @@ namespace mpi {
    * @{
    */
 
+  namespace detail {
+
+    // Helper struct to get the regular type of a type.
+    template <typename T, typename Enable = void> struct _regular {
+      using type = T;
+    };
+
+    // Spezialization of _regular for types with a `regular_type` type alias.
+    template <typename T> struct _regular<T, std::void_t<typename T::regular_type>> {
+      using type = typename T::regular_type;
+    };
+
+    // Check if a vector is of the same size on all processes.
+    template <typename T> bool same_size(std::vector<T> const &v, communicator c) {
+      auto size     = v.size();
+      auto max_size = mpi::all_reduce(size, c, MPI_MAX);
+      auto min_size = mpi::all_reduce(size, c, MPI_MIN);
+      return min_size == max_size;
+    }
+
+  } // namespace detail
+
+  /**
+   * @ingroup utilities
+   * @brief Type trait to get the regular type of a type.
+   * @tparam T Type to check.
+   */
+  template <typename T> using regular_t = typename detail::_regular<std::decay_t<T>>::type;
+
   /**
    * @brief Implementation of an MPI broadcast for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is broadcasted using a simple `MPI_Bcast`. Otherwise,
-   * the generic mpi::broadcast is called for each element of the vector.
+   * @details If mpi::has_mpi_type<T> is true then the vector is broadcasted using a simple `MPI_Bcast`. Otherwise, the
+   * generic mpi::broadcast is called for each element of the vector.
+   *
+   * On non-root processes, the vector is always resized to match the size of the vector on the root process. If the
+   * root process is empty, no broadcast is performed.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to broadcast.
@@ -68,6 +99,8 @@ namespace mpi {
    * @details If mpi::has_mpi_type<T> is true then the vector is reduced using a simple `MPI_Reduce` or `MPI_Allreduce`.
    * Otherwise, the specialized `mpi_reduce_in_place` is called for each element of the vector.
    *
+   * It throws an exception if the vectors are not of the same size. If the vectors are empty, it does nothing.
+   *
    * @tparam T Value type of the vector.
    * @param v std::vector to reduce.
    * @param c mpi::communicator.
@@ -76,7 +109,10 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    */
   template <typename T> void mpi_reduce_in_place(std::vector<T> &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+    // check the sizes of all vectors
+    if (!detail::same_size(v, c)) throw std::runtime_error{"mpi_reduce_in_place for vectors only works with vectors of the same size\n"};
     if (v.size() == 0) return;
+
     if constexpr (has_mpi_type<T>) {
       if (!all)
         MPI_Reduce((c.rank() == root ? MPI_IN_PLACE : v.data()), v.data(), v.size(), mpi_type<T>::get(), op, root, c.get());
@@ -87,33 +123,14 @@ namespace mpi {
     }
   }
 
-  namespace detail {
-
-    // Helper struct to get the regular type of a type.
-    template <typename T, typename Enable = void> struct _regular {
-      using type = T;
-    };
-
-    // Spezialization of _regular for types with a `regular_type` type alias.
-    template <typename T> struct _regular<T, std::void_t<typename T::regular_type>> {
-      using type = typename T::regular_type;
-    };
-
-  } // namespace detail
-
-  /**
-   * @ingroup utilities
-   * @brief Type trait to get the regular type of a type.
-   * @tparam T Type to check.
-   */
-  template <typename T> using regular_t = typename detail::_regular<std::decay_t<T>>::type;
-
   /**
    * @brief Implementation of an MPI reduce for a std::vector.
    *
    * @details If mpi::has_mpi_type<T> is true then the vector is reduced using a simple `MPI_Reduce` or `MPI_Allreduce`
    * (in this case, mpi::regular_t<T> has to be the same as T). Otherwise, the generic mpi::reduce is called for each
    * element of the vector.
+   *
+   * It throws an exception if the vectors are not of the same size. If the vectors are empty, it does nothing.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to reduce.
@@ -125,21 +142,12 @@ namespace mpi {
    */
   template <typename T>
   std::vector<regular_t<T>> mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    auto s = v.size();
-
-    // check if all vectors are of the same size, otherwise abort
-    if (all) {
-      auto max_size = mpi_reduce(s, c, root, all, MPI_MAX);
-      if (s != max_size) {
-        std::cerr << "Cannot all_reduce vectors of different sizes\n";
-        std::abort();
-      }
-    }
-
-    // return an empty vector if size is 0
-    if (s == 0) return {};
+    // check the size of all vectors
+    if (!detail::same_size(v, c)) throw std::runtime_error{"mpi_reduce for vectors only works with vectors of the same size\n"};
+    if (v.size() == 0) return {};
 
     // perform the reduction for every element of the vector
+    auto s = v.size();
     if constexpr (has_mpi_type<T>) {
       static_assert(std::is_same_v<regular_t<T>, T>, "Internal error");
       std::vector<T> res(s);
@@ -159,8 +167,8 @@ namespace mpi {
   /**
    * @brief Implementation of an MPI scatter for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is scattered as evenly as possible across the processes
-   * in the communicator using a simple `MPI_Scatterv`.
+   * @details If mpi::has_mpi_type<T> is true then the vector is scattered as evenly as possible across the processes in
+   * the communicator using a simple `MPI_Scatterv`.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to scatter.
@@ -172,6 +180,7 @@ namespace mpi {
     auto s = v.size();
 
     // return an empty vector if size is 0
+    mpi::broadcast(s, c, root);
     if (s == 0) return {};
 
     // arguments for the MPI call
@@ -198,9 +207,9 @@ namespace mpi {
   /**
    * @brief Implementation of an MPI gather for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is gathered using a simple `MPI_Gatherv` or `MPI_Allgatherv`.
-   * Otherwise, each process broadcasts its elements to all other processes which implies that `all == true` is required
-   * in this case.
+   * @details If mpi::has_mpi_type<T> is true then the vector is gathered using a simple `MPI_Gatherv` or
+   * `MPI_Allgatherv`. Otherwise, each process broadcasts its elements to all other processes which implies that
+   * `all == true` is required in this case.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to gather.
@@ -210,7 +219,7 @@ namespace mpi {
    * @return std::vector containing the result of the gather operation.
    */
   template <typename T> std::vector<T> mpi_gather(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false) {
-    long s = mpi_reduce(v.size(), c, root, all);
+    long s = mpi::all_reduce(v.size(), c);
 
     // return an empty vector if size is 0
     if (s == 0) return {};

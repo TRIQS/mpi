@@ -81,4 +81,43 @@ TEST(MPI, VectorGatherScatterPair) {
   EXPECT_EQ(v, vgth);
 }
 
+TEST(MPI, VectorGatherOnlyOnRoot) {
+  // gather a vector only on root
+  mpi::communicator world;
+  std::vector<int> v = {1, 2, 3};
+  auto res           = mpi::gather(v, world);
+  if (world.rank() == 0) {
+    auto exp_res = v;
+    for (int i = 1; i < world.size(); ++i) exp_res.insert(exp_res.end(), v.begin(), v.end());
+    EXPECT_EQ(res, exp_res);
+  } else {
+    EXPECT_TRUE(res.empty());
+  }
+}
+
+TEST(MPI, VectorScatterSizeZero) {
+  // pass a vector of size 0 to scatter
+  mpi::communicator world;
+  std::vector<int> v = {1, 2, 3};
+  if (world.rank() == 0) v.clear();
+  auto res = mpi::scatter(v, world);
+  EXPECT_TRUE(res.empty());
+}
+
+TEST(MPI, VectorReduceSizeZero) {
+  // pass a vector of size 0 to reduce
+  mpi::communicator world;
+  std::vector<int> v = {1, 2, 3};
+  if (world.rank() == 0) v.clear();
+  if (world.size() > 1) { EXPECT_THROW(mpi::reduce(v, world), std::runtime_error); }
+}
+
+TEST(MPI, VectorReduceInPlaceSizeZero) {
+  // pass a vector of size 0 to reduce_in_place
+  mpi::communicator world;
+  std::vector<int> v = {1, 2, 3};
+  if (world.rank() == 0) v.clear();
+  if (world.size() > 1) { EXPECT_THROW(mpi::all_reduce_in_place(v, world), std::runtime_error); }
+}
+
 MPI_TEST_MAIN;
