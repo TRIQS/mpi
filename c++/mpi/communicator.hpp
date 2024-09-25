@@ -139,7 +139,7 @@ namespace mpi {
      * @brief If mpi::has_env is true, `MPI_Abort` is called with the given error code, otherwise std::abort is called.
      * @param error_code The error code to pass to `MPI_Abort`.
      */
-    void abort(int error_code) {
+    void abort(int error_code) const {
       if (has_env)
         MPI_Abort(_com, error_code);
       else
