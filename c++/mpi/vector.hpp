@@ -22,14 +22,10 @@
 #pragma once
 
 #include "./mpi.hpp"
-#include "./utils.hpp"
+#include "./ranges.hpp"
 
 #include <mpi.h>
 
-#include <algorithm>
-#include <cstddef>
-#include <cstdlib>
-#include <stdexcept>
 #include <type_traits>
 #include <vector>
 
@@ -64,13 +60,8 @@ namespace mpi {
   /**
    * @brief Implementation of an MPI broadcast for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is broadcasted using a simple `MPI_Bcast`. Otherwise, the
-   * generic mpi::broadcast is called for each element of the vector.
-   *
-   * On non-root processes, the vector is always resized to match the size of the vector on the root process. If the
-   * root process is empty, no broadcast is performed.
-   *
-   * It throws an exception in case a call to the MPI C library fails.
+   * @details It first broadcasts the size of the vector from the root process to all other processes, then resizes the
+   * vector on all non-root processes and calls mpi::broadcast_range with the (resized) input vector.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to broadcast.
@@ -78,24 +69,16 @@ namespace mpi {
    * @param root Rank of the root process.
    */
   template <typename T> void mpi_broadcast(std::vector<T> &v, communicator c = {}, int root = 0) {
-    auto s = v.size();
-    broadcast(s, c, root);
-    if (c.rank() != root) v.resize(s);
-    if constexpr (has_mpi_type<T>) {
-      if (s != 0) check_mpi_call(MPI_Bcast(v.data(), v.size(), mpi_type<T>::get(), root, c.get()), "MPI_Bcast");
-    } else {
-      for (auto &x : v) broadcast(x, c, root);
-    }
+    auto bsize = v.size();
+    broadcast(bsize, c, root);
+    if (c.rank() != root) v.resize(bsize);
+    broadcast_range(v, c, root);
   }
 
   /**
    * @brief Implementation of an in-place MPI reduce for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is reduced using a simple `MPI_Reduce` or `MPI_Allreduce`.
-   * Otherwise, the specialized `mpi_reduce_in_place` is called for each element of the vector.
-   *
-   * It throws an exception if the vectors are not of the same size or if an MPI call fails. If the vectors are empty,
-   * it does nothing.
+   * @details It simply calls mpi::reduce_in_place_range with the given input vector.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to reduce.
@@ -105,30 +88,13 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    */
   template <typename T> void mpi_reduce_in_place(std::vector<T> &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    // check the sizes of all vectors
-    if (!all_equal(v.size(), c)) throw std::runtime_error{"mpi_reduce_in_place for vectors only works with vectors of the same size\n"};
-    if (v.size() == 0) return;
-
-    if constexpr (has_mpi_type<T>) {
-      if (!all)
-        check_mpi_call(MPI_Reduce((c.rank() == root ? MPI_IN_PLACE : v.data()), v.data(), v.size(), mpi_type<T>::get(), op, root, c.get()),
-                       "MPI_Reduce");
-      else
-        check_mpi_call(MPI_Allreduce(MPI_IN_PLACE, v.data(), v.size(), mpi_type<T>::get(), op, c.get()), "MPI_Allreduce");
-    } else {
-      for (auto &x : v) mpi_reduce_in_place(v, c, root, all);
-    }
+    reduce_in_place_range(v, c, root, all, op);
   }
 
   /**
    * @brief Implementation of an MPI reduce for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is reduced using a simple `MPI_Reduce` or `MPI_Allreduce`
-   * (in this case, mpi::regular_t<T> has to be the same as T). Otherwise, the generic mpi::reduce is called for each
-   * element of the vector.
-   *
-   * It throws an exception if the vectors are not of the same size or if an MPI call fails. If the vectors are empty,
-   * it does nothing.
+   * @details It simply calls mpi::reduce_range with the given input vector and an empty vector of the same size.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to reduce.
@@ -140,35 +106,16 @@ namespace mpi {
    */
   template <typename T>
   std::vector<regular_t<T>> mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    // check the size of all vectors
-    if (!all_equal(v.size(), c)) throw std::runtime_error{"mpi_reduce for vectors only works with vectors of the same size\n"};
-    if (v.size() == 0) return {};
-
-    // perform the reduction for every element of the vector
-    auto s = v.size();
-    if constexpr (has_mpi_type<T>) {
-      static_assert(std::is_same_v<regular_t<T>, T>, "Internal error");
-      std::vector<T> res(s);
-      if (!all)
-        check_mpi_call(MPI_Reduce((void *)v.data(), res.data(), s, mpi_type<T>::get(), op, root, c.get()), "MPI_Reduce");
-      else
-        check_mpi_call(MPI_Allreduce((void *)v.data(), res.data(), s, mpi_type<T>::get(), op, c.get()), "MPI_Allreduce");
-      return res;
-    } else {
-      std::vector<regular_t<T>> r;
-      r.reserve(s);
-      for (size_t i = 0; i < s; ++i) r.push_back(reduce(v[i], c, root, all, op));
-      return r;
-    }
+    std::vector<regular_t<T>> res(c.rank() == root || all ? v.size() : 0);
+    reduce_range(v, res, c, root, all, op);
+    return res;
   }
 
   /**
    * @brief Implementation of an MPI scatter for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is scattered as evenly as possible across the processes in
-   * the communicator using a simple `MPI_Scatterv`.
-   *
-   * It throws an exception in case a call to the MPI C library fails.
+   * @details It first broadcasts the size of the vector from the root process to all other processes and then calls
+   * mpi::scatter_range.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to scatter.
@@ -177,91 +124,29 @@ namespace mpi {
    * @return std::vector containing the result of the scatter operation.
    */
   template <typename T> std::vector<T> mpi_scatter(std::vector<T> const &v, communicator c = {}, int root = 0) {
-    auto s = v.size();
-
-    // return an empty vector if size is 0
-    mpi::broadcast(s, c, root);
-    if (s == 0) return {};
-
-    // arguments for the MPI call
-    auto sendcounts = std::vector<int>(c.size());          // number of elements sent to each process
-    auto displs     = std::vector<int>(c.size() + 1, 0);   // displacements given in number of elements not in bytes
-    int recvcount   = chunk_length(s, c.size(), c.rank()); // number of elements received by the calling process
-    for (int r = 0; r < c.size(); ++r) {
-      sendcounts[r] = chunk_length(s, c.size(), r);
-      displs[r + 1] = sendcounts[r] + displs[r];
-    }
-
-    // do the scattering
-    std::vector<T> res(recvcount);
-    if constexpr (has_mpi_type<T>) {
-      check_mpi_call(MPI_Scatterv((void *)v.data(), &sendcounts[0], &displs[0], mpi_type<T>::get(), (void *)res.data(), recvcount, mpi_type<T>::get(),
-                                  root, c.get()),
-                     "MPI_Scatterv");
-    } else {
-      std::copy(cbegin(v) + displs[c.rank()], cbegin(v) + displs[c.rank() + 1], begin(res));
-    }
-
+    auto bsize = v.size();
+    broadcast(bsize, c, root);
+    std::vector<T> res(chunk_length(bsize, c.size(), c.rank()));
+    scatter_range(v, res, bsize, c, root);
     return res;
   }
 
   /**
    * @brief Implementation of an MPI gather for a std::vector.
    *
-   * @details If mpi::has_mpi_type<T> is true then the vector is gathered using a simple `MPI_Gatherv` or
-   * `MPI_Allgatherv`. Otherwise, each process broadcasts its elements to all other processes which implies that
-   * `all == true` is required in this case.
-   *
-   * It throws an exception in case a call to the MPI C library fails.
+   * @details It first all-reduces the sizes of the input vectors from all processes and then calls mpi::gather_range.
    *
    * @tparam T Value type of the vector.
    * @param v std::vector to gather.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
-   * @param all Should all processes receive the result of the reduction.
+   * @param all Should all processes receive the result.
    * @return std::vector containing the result of the gather operation.
    */
   template <typename T> std::vector<T> mpi_gather(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false) {
-    long s = mpi::all_reduce(v.size(), c);
-
-    // return an empty vector if size is 0
-    if (s == 0) return {};
-
-    // arguments for the MPI call
-    auto mpi_ty     = mpi_type<int>::get();
-    auto recvcounts = std::vector<int>(c.size());        // number of elements received from each process
-    auto displs     = std::vector<int>(c.size() + 1, 0); // displacements given in number of elements not in bytes
-    int sendcount   = v.size();                          // number of elements sent by the calling process
-    if (!all)
-      check_mpi_call(MPI_Gather(&sendcount, 1, mpi_ty, &recvcounts[0], 1, mpi_ty, root, c.get()), "MPI_Gather");
-    else
-      check_mpi_call(MPI_Allgather(&sendcount, 1, mpi_ty, &recvcounts[0], 1, mpi_ty, c.get()), "MPI_Allgather");
-
-    for (int r = 0; r < c.size(); ++r) displs[r + 1] = recvcounts[r] + displs[r];
-
-    // do the gathering
-    std::vector<T> res((all || (c.rank() == root) ? s : 0));
-    if constexpr (has_mpi_type<T>) {
-      if (!all)
-        check_mpi_call(MPI_Gatherv((void *)v.data(), sendcount, mpi_type<T>::get(), (void *)res.data(), &recvcounts[0], &displs[0],
-                                   mpi_type<T>::get(), root, c.get()),
-                       "MPI_Gatherv");
-      else
-        check_mpi_call(MPI_Allgatherv((void *)v.data(), sendcount, mpi_type<T>::get(), (void *)res.data(), &recvcounts[0], &displs[0],
-                                      mpi_type<T>::get(), c.get()),
-                       "MPI_Allgatherv");
-    } else {
-      if (!all)
-        throw std::runtime_error{"mpi_gather for custom types only implemented with 'all = true'\n"};
-      else {
-        for (int r = 0; r < c.size(); ++r) {
-          for (auto i = displs[r]; i < displs[r + 1]; ++i) {
-            if (c.rank() == r) res[i] = v[i - displs[r]];
-            mpi::broadcast(res[i], c, r);
-          }
-        }
-      }
-    }
+    long bsize = mpi::all_reduce(v.size(), c);
+    std::vector<T> res(c.rank() == root || all ? bsize : 0);
+    gather_range(v, res, bsize, c, root, all);
     return res;
   }
 
