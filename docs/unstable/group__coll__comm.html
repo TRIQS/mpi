@@ -565,6 +565,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an MPI broadcast for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is broadcasted using a simple <code>MPI_Bcast</code>. Otherwise, the generic <a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> is called for each element of the vector.</p>
+<p>On non-root processes, the vector is always resized to match the size of the vector on the root process. If the root process is empty, no broadcast is performed.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -580,7 +581,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00054">54</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00085">85</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -685,7 +686,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of the gather operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00212">212</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00221">221</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -792,6 +793,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an MPI reduce for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code> (in this case, <a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8" title="Type trait to get the regular type of a type.">mpi::regular_t&lt;T&gt;</a> has to be the same as T). Otherwise, the generic <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a> is called for each element of the vector.</p>
+<p>It throws an exception if the vectors are not of the same size. If the vectors are empty, it does nothing.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -810,7 +812,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of each individual reduction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00127">127</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00144">144</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -916,6 +918,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an in-place MPI reduce for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code>. Otherwise, the specialized <code>mpi_reduce_in_place</code> is called for each element of the vector.</p>
+<p>It throws an exception if the vectors are not of the same size. If the vectors are empty, it does nothing.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -933,7 +936,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00078">78</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00111">111</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -1044,7 +1047,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of the scatter operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00171">171</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00179">179</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>

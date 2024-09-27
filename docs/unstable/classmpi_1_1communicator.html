@@ -131,9 +131,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a214a657312177d663305eb0642c7f8fc" id="r_a214a657312177d663305eb0642c7f8fc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a214a657312177d663305eb0642c7f8fc">communicator</a> (MPI_Comm c)</td></tr>
 <tr class="memdesc:a214a657312177d663305eb0642c7f8fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a communicator with a given <code>MPI_Comm</code> object.  <br /></td></tr>
 <tr class="separator:a214a657312177d663305eb0642c7f8fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcc71012b26ba9406022bcc9d9678e41" id="r_abcc71012b26ba9406022bcc9d9678e41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcc71012b26ba9406022bcc9d9678e41">abort</a> (int error_code)</td></tr>
-<tr class="memdesc:abcc71012b26ba9406022bcc9d9678e41"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, <code>MPI_Abort</code> is called with the given error code, otherwise std::abort is called.  <br /></td></tr>
-<tr class="separator:abcc71012b26ba9406022bcc9d9678e41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af92c258a41120dbb609706d5b404f8cc" id="r_af92c258a41120dbb609706d5b404f8cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af92c258a41120dbb609706d5b404f8cc">abort</a> (int error_code) const</td></tr>
+<tr class="memdesc:af92c258a41120dbb609706d5b404f8cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, <code>MPI_Abort</code> is called with the given error code, otherwise std::abort is called.  <br /></td></tr>
+<tr class="separator:af92c258a41120dbb609706d5b404f8cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51ed7d5a2c8c0ac3170c41811e19cc61" id="r_a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ed7d5a2c8c0ac3170c41811e19cc61">barrier</a> (long poll_msec=1)</td></tr>
 <tr class="memdesc:a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Barrier synchronization.  <br /></td></tr>
 <tr class="separator:a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,8 +189,8 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="abcc71012b26ba9406022bcc9d9678e41" name="abcc71012b26ba9406022bcc9d9678e41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcc71012b26ba9406022bcc9d9678e41">&#9670;&#160;</a></span>abort()</h2>
+<a id="af92c258a41120dbb609706d5b404f8cc" name="af92c258a41120dbb609706d5b404f8cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af92c258a41120dbb609706d5b404f8cc">&#9670;&#160;</a></span>abort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +202,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
           <td class="memname">void mpi::communicator::abort </td>
           <td>(</td>
           <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>error_code</em></span></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
