@@ -45,23 +45,6 @@ template <> struct mpi::mpi_type<custom_cplx> : mpi::mpi_type_from_tie<custom_cp
 // stand-alone add function (the same as the operator+ above)
 custom_cplx add(custom_cplx const &x, custom_cplx const &y) { return x + y; }
 
-// needs to be in the mpi namespace for ADL to work
-namespace mpi {
-
-  // specialize mpi_reduce for std::array
-  template <typename T, size_t N>
-  std::array<T, N> mpi_reduce(std::array<T, N> const &arr, mpi::communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    std::array<T, N> res{};
-    if (all) {
-      MPI_Allreduce(arr.data(), res.data(), N, mpi::mpi_type<T>::get(), op, c.get());
-    } else {
-      MPI_Reduce(arr.data(), res.data(), N, mpi::mpi_type<T>::get(), op, root, c.get());
-    }
-    return res;
-  }
-
-}
-
 TEST(MPI, CustomTypeMapAdd) {
   mpi::communicator world;
   int rank = world.rank();

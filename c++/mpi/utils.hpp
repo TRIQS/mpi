@@ -33,6 +33,27 @@ namespace mpi {
    * @{
    */
 
+  namespace detail {
+
+    // Helper struct to get the regular type of a type.
+    template <typename T, typename Enable = void> struct _regular {
+      using type = T;
+    };
+
+    // Spezialization of _regular for types with a `regular_type` type alias.
+    template <typename T> struct _regular<T, std::void_t<typename T::regular_type>> {
+      using type = typename T::regular_type;
+    };
+
+  } // namespace detail
+
+  /**
+   * @ingroup utilities
+   * @brief Type trait to get the regular type of a type.
+   * @tparam T Type to check.
+   */
+  template <typename T> using regular_t = typename detail::_regular<std::decay_t<T>>::type;
+
   /**
    * @brief Check the success of an MPI call.
    * @details It checks if the given error code returned by an MPI routine is equal to `MPI_SUCCESS`. If it isn't, it

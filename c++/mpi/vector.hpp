@@ -23,10 +23,10 @@
 
 #include "./mpi.hpp"
 #include "./ranges.hpp"
+#include "./utils.hpp"
 
 #include <mpi.h>
 
-#include <type_traits>
 #include <vector>
 
 namespace mpi {
@@ -35,27 +35,6 @@ namespace mpi {
    * @addtogroup coll_comm
    * @{
    */
-
-  namespace detail {
-
-    // Helper struct to get the regular type of a type.
-    template <typename T, typename Enable = void> struct _regular {
-      using type = T;
-    };
-
-    // Spezialization of _regular for types with a `regular_type` type alias.
-    template <typename T> struct _regular<T, std::void_t<typename T::regular_type>> {
-      using type = typename T::regular_type;
-    };
-
-  } // namespace detail
-
-  /**
-   * @ingroup utilities
-   * @brief Type trait to get the regular type of a type.
-   * @tparam T Type to check.
-   */
-  template <typename T> using regular_t = typename detail::_regular<std::decay_t<T>>::type;
 
   /**
    * @brief Implementation of an MPI broadcast for a std::vector.

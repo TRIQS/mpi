@@ -62,7 +62,7 @@ TEST(MPI, VectorReduceInPlaceMPIType) {
   else
     for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i], i);
 
-  // in-place allreduce a range with an MPI type
+  // in-place allreduce a vector with an MPI type
   std::iota(vec.begin(), vec.end(), 0);
   mpi::all_reduce_in_place(vec, world);
   for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i], i * world.size());
