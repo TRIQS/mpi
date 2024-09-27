@@ -22,9 +22,7 @@
 #pragma once
 
 #include "./mpi.hpp"
-#include "./utils.hpp"
-
-#include <mpi.h>
+#include "./ranges.hpp"
 
 #include <string>
 
@@ -34,9 +32,8 @@ namespace mpi {
    * @ingroup coll_comm
    * @brief Implementation of an MPI broadcast for a std::string.
    *
-   * @details Simply calls `MPI_Bcast` for the underlying C-string.
-   *
-   * It throws an exception in case a call to the MPI C library fails.
+   * @details It first broadcasts the size of the string from the root process to all other processes, then resizes the
+   * string on all non-root processes and calls mpi::broadcast_range with the (resized) input string.
    *
    * @param s std::string to broadcast.
    * @param c mpi::communicator.
@@ -46,7 +43,26 @@ namespace mpi {
     size_t len = s.size();
     broadcast(len, c, root);
     if (c.rank() != root) s.resize(len);
-    if (len != 0) check_mpi_call(MPI_Bcast((void *)s.c_str(), static_cast<int>(s.size()), mpi_type<char>::get(), root, c.get()), "MPI_Bcast");
+    broadcast_range(s, c, root);
+  }
+
+  /**
+   * @brief Implementation of an MPI gather for a std::string.
+   *
+   * @details It first all-reduces the sizes of the input string from all processes and then calls mpi::gather_range.
+   *
+   * @param s std::string to gather.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   * @param all Should all processes receive the result.
+   * @return std::string containing the result of the gather operation.
+   */
+  inline std::string mpi_gather(std::string const &s, communicator c = {}, int root = 0, bool all = false) {
+    long len = static_cast<long>(all_reduce(s.size(), c));
+    std::string res{};
+    if (c.rank() == root || all) res.resize(len);
+    gather_range(s, res, len, c, root, all);
+    return res;
   }
 
 } // namespace mpi

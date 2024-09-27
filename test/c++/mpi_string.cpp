@@ -31,4 +31,25 @@ TEST(MPI, StringBroadcast) {
   EXPECT_EQ(s, std::string{"Hello World"});
 }
 
+TEST(MPI, StringGather) {
+  // gather a string
+  mpi::communicator world;
+  std::string s{}, exp_s{};
+  for (int i = 0; i < world.size(); ++i) {
+    for (int j = 0; j < i + 1; ++j) exp_s += "a";
+    exp_s += std::to_string(i);
+  }
+  for (int i = 0; i < world.rank() + 1; ++i) s += "a";
+  s += std::to_string(world.rank());
+
+  // gather only on root
+  auto s_gathered = mpi::gather(s);
+  if (world.rank() == 0) EXPECT_EQ(s_gathered, exp_s);
+  else EXPECT_TRUE(s_gathered.empty());
+
+  // gather on all processes
+  auto s_gathered_all = mpi::all_gather(s);
+  EXPECT_EQ(s_gathered_all, exp_s);
+}
+
 MPI_TEST_MAIN;
