@@ -85,7 +85,7 @@ namespace mpi {
    * @return std::vector containing the result of each individual reduction.
    */
   template <typename T>
-  std::vector<regular_t<T>> mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  auto mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     std::vector<regular_t<T>> res(c.rank() == root || all ? v.size() : 0);
     reduce_range(v, res, c, root, all, op);
     return res;
@@ -103,7 +103,7 @@ namespace mpi {
    * @param root Rank of the root process.
    * @return std::vector containing the result of the scatter operation.
    */
-  template <typename T> std::vector<T> mpi_scatter(std::vector<T> const &v, communicator c = {}, int root = 0) {
+  template <typename T> auto mpi_scatter(std::vector<T> const &v, communicator c = {}, int root = 0) {
     auto bsize = v.size();
     broadcast(bsize, c, root);
     std::vector<T> res(chunk_length(bsize, c.size(), c.rank()));
@@ -123,7 +123,7 @@ namespace mpi {
    * @param all Should all processes receive the result.
    * @return std::vector containing the result of the gather operation.
    */
-  template <typename T> std::vector<T> mpi_gather(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false) {
+  template <typename T> auto mpi_gather(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false) {
     long bsize = mpi::all_reduce(v.size(), c);
     std::vector<T> res(c.rank() == root || all ? bsize : 0);
     gather_range(v, res, bsize, c, root, all);

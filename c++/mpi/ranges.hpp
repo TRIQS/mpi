@@ -40,11 +40,9 @@
 namespace mpi {
 
   /**
-   * @brief A concept that checks if a range type is contiguous and sized.
-   * @tparam R Range type.
+   * @addtogroup coll_comm
+   * @{
    */
-  template <typename R>
-  concept contiguous_sized_range = std::ranges::contiguous_range<R> && std::ranges::sized_range<R>;
 
   /**
    * @brief Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.
@@ -463,5 +461,7 @@ namespace mpi {
       }
     }
   }
+
+  /** @} */
 
 } // namespace mpi

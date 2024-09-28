@@ -27,8 +27,6 @@
       <tab type="usergroup" url="@ref mpi_essentials" title="MPI essentials">
         <tab type="user" url="@ref mpi::communicator" title="communicator"/>
         <tab type="user" url="@ref mpi::environment" title="environment"/>
-        <tab type="user" url="@ref mpi::is_initialized" title="is_initialized"/>
-        <tab type="user" url="@ref mpi::has_env" title="has_env"/>
       </tab>
       <tab type="usergroup" url="@ref mpi_types_ops" title="MPI datatypes and operations">
         <tab type="usergroup" url="@ref mpi::mpi_type" title="mpi_type">
@@ -45,54 +43,19 @@
           <tab type="user" url="@ref mpi::mpi_type< unsigned long long >" title="mpi_type<unsigned long long>"/>
           <tab type="user" url="@ref mpi::mpi_type< std::tuple< Ts... > >" title="mpi_type<std::tuple>"/>
         </tab>
-        <tab type="user" url="@ref mpi::mpi_type_from_tie" title="mpi_type_from_tie"/>
-        <tab type="user" url="@ref mpi::get_mpi_type" title="get_mpi_type"/>
-        <tab type="user" url="@ref mpi::has_mpi_type" title="has_mpi_type"/>
-        <tab type="user" url="@ref mpi::map_C_function" title="map_C_function"/>
-        <tab type="user" url="@ref mpi::map_add" title="map_add"/>
       </tab>
-      <tab type="usergroup" url="@ref coll_comm" title="Collective MPI communication">
-      <tab type="user" url="@ref mpi::all_equal" title="all_equal"/>
-        <tab type="user" url="@ref mpi::all_gather" title="all_gather"/>
-        <tab type="user" url="@ref mpi::all_reduce" title="all_reduce"/>
-        <tab type="user" url="@ref mpi::all_reduce_in_place" title="all_reduce_in_place"/>
-        <tab type="usergroup" url="@ref mpi::broadcast" title="broadcast">
-          <tab type="user" url="@ref mpi::mpi_broadcast" title="mpi_broadcast"/>
-          <tab type="user" url="@ref mpi::mpi_broadcast(std::pair< T1, T2 >&amp;, mpi::communicator, int)" title="mpi_broadcast for std::pair"/>
-          <tab type="user" url="@ref mpi::mpi_broadcast(std::string&amp;, mpi::communicator, int)" title="mpi_broadcast for std::string"/>
-          <tab type="user" url="@ref mpi::mpi_broadcast(std::vector< T >&amp;, mpi::communicator, int)" title="mpi_broadcast for std::vector"/>
-        </tab>
-        <tab type="usergroup" url="@ref mpi::gather" title="gather">
-          <tab type="user" url="@ref mpi::mpi_gather" title="mpi_gather for std::vector"/>
-        </tab>
-        <tab type="usergroup" url="@ref mpi::reduce" title="reduce">
-          <tab type="user" url="@ref mpi::mpi_reduce" title="mpi_reduce"/>
-          <tab type="user" url="@ref mpi::mpi_reduce(std::pair< T1, T2 > const &amp;, mpi::communicator, int, bool, MPI_Op)" title="mpi_reduce for std::pair"/>
-          <tab type="user" url="@ref mpi::mpi_reduce(std::vector< T > const &amp;, mpi::communicator, int, bool, MPI_Op)" title="mpi_reduce for std::vector"/>
-        </tab>
-        <tab type="usergroup" url="@ref mpi::reduce_in_place" title="reduce_in_place">
-          <tab type="user" url="@ref mpi::mpi_reduce_in_place" title="mpi_reduce_in_place"/>
-          <tab type="user" url="@ref mpi::mpi_reduce_in_place(std::vector< T >&amp;, mpi::communicator, int, bool, MPI_Op)" title="mpi_reduce_in_place for std::vector"/>
-        </tab>
-        <tab type="usergroup" url="@ref mpi::scatter" title="scatter">
-          <tab type="user" url="@ref mpi::mpi_scatter" title="mpi_scatter"/>
-        </tab>
-      </tab>
+      <tab type="user" url="@ref coll_comm" title="Collective MPI communication"/>
       <tab type="usergroup" url="@ref mpi_lazy" title="Lazy MPI communication">
         <tab type="user" url="@ref mpi::lazy" title="lazy"/>
         <tab type="user" url="@ref mpi::tag::gather" title="gather tag"/>
         <tab type="user" url="@ref mpi::tag::reduce" title="reduce tag"/>
         <tab type="user" url="@ref mpi::tag::scatter" title="scatter tag"/>
-        <tab type="user" url="@ref mpi::is_mpi_lazy" title="is_mpi_lazy"/>
       </tab>
       <tab type="usergroup" url="@ref event_handling" title="Event handling">
         <tab type="user" url="@ref mpi::monitor" title="monitor"/>
       </tab>
       <tab type="usergroup" url="@ref utilities" title="Utilities">
-        <tab type="user" url="@ref mpi::regular_t" title="regular_t"/>
-        <tab type="user" url="@ref mpi::check_mpi_call" title="check_mpi_call"/>
-        <tab type="user" url="@ref mpi::chunk" title="chunk"/>
-        <tab type="user" url="@ref mpi::chunk_length" title="chunk_length"/>
+        <tab type="user" url="@ref mpi::contiguous_sized_range" title="contiguous_sized_range"/>
       </tab>
       <tab type="filelist" visible="yes" title="" intro=""/>
     </tab>

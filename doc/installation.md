@@ -5,8 +5,8 @@
 **mpi** is a header only library and installation is not necessary.
 However, it still supports the usual installation procedure using CMake.
 
-If you want to skip the installation step, you can go directly to @ref integration to see how you can integrate
-**mpi** into your own C++ project.
+If you want to skip the installation step, you can go directly to @ref integration to see how you can integrate **mpi**
+into your own C++ project.
 
 > **Note:** To guarantee reproducibility in scientific calculations, we strongly recommend the use of a stable
 > [release version](https://github.com/TRIQS/mpi/releases).
@@ -63,7 +63,7 @@ $ cd mpi.src && git tag
 Checkout the version of the code that you want:
 
 ```console
-$ git checkout 1.2.0
+$ git checkout 1.3.0
 ```
 
 and follow steps 2 to 4 above to compile the code.

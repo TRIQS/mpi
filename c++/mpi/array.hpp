@@ -83,7 +83,7 @@ namespace mpi {
    * @return std::array containing the result of each individual reduction.
    */
   template <typename T, std::size_t N>
-  std::array<regular_t<T>, N> mpi_reduce(std::array<T, N> const &arr, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  auto mpi_reduce(std::array<T, N> const &arr, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     std::array<regular_t<T>, N> res{};
     reduce_range(arr, res, c, root, all, op);
     return res;

@@ -28,10 +28,11 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-**mpi** is a minimal C++ wrapper around the MPI C library and provides only a small subset of the functionality defined in the MPI standard.
+**mpi** is a minimal C++ wrapper around the MPI C library and provides only a small subset of the functionality defined
+in the MPI standard.
 
-The main purpose of the library is to simplify the most common tasks like initializing/finalizing the MPI execution environment or performing
-non-blocking collective communications.
+The main purpose of the library is to simplify the most common tasks like initializing/finalizing the MPI execution
+environment or performing non-blocking collective communications.
 
 For more advanced tasks, the user can always resort to the underlying MPI C-implementation.
 

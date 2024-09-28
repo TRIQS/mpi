@@ -73,6 +73,13 @@ namespace mpi {
     if (errcode != MPI_SUCCESS) throw std::runtime_error("MPI error " + std::to_string(errcode) + " in MPI routine " + mpi_routine);
   }
 
+  /**
+   * @brief A concept that checks if a range type is contiguous and sized.
+   * @tparam R Range type.
+   */
+  template <typename R>
+  concept contiguous_sized_range = std::ranges::contiguous_range<R> && std::ranges::sized_range<R>;
+
   /** @} */
 
 } // namespace mpi

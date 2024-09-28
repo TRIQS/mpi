@@ -30,7 +30,11 @@
 namespace mpi {
 
   /**
-   * @ingroup coll_comm
+   * @addtogroup coll_comm
+   * @{
+   */
+
+  /**
    * @brief Implementation of an MPI broadcast for a std::string.
    *
    * @details It first broadcasts the size of the string from the root process to all other processes, then resizes the
@@ -65,5 +69,7 @@ namespace mpi {
     gather_range(s, res, len, c, root, all);
     return res;
   }
+
+  /** @} */
 
 } // namespace mpi

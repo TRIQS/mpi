@@ -32,25 +32,44 @@
 
 /**
  * @defgroup mpi_types_ops MPI datatypes and operations
- * @brief Specify supported MPI datatypes and provide tools to simplify the creation of user-defined MPI types and operations.
+ * @brief Specify supported MPI datatypes and provide tools to simplify the creation of user-defined MPI types and
+ * operations.
  *
- * @details See @ref ex3 for a detailed example.
+ * @details The following functionality is provided:
+ *
+ * - mpi::mpi_type and its specializations let **mpi** know that a certain type `T` can be used in MPI communications.
+ * The user is allowed to implement their own MPI compatible types and provide a specializtion of mpi::mpi_type.
+ * - mpi::get_mpi_type maps a given C++ type to its corresponding MPI datatype and mpi::has_mpi_type checks if a given
+ * type has a corresponding MPI datatype.
+ * - mpi::map_add and mpi::map_C_function can help the user to implement custom MPI operations.
+ *
+ * See @ref ex3 for a detailed example.
  */
 
 /**
  * @defgroup coll_comm Collective MPI communication
- * @brief Generic and specialized implementations for a subset of collective MPI communications (broadcast, reduce, gather, scatter).
+ * @brief Generic and specialized implementations for a subset of collective MPI communications (broadcast, reduce,
+ * gather, scatter).
  *
- * @details The generic functions (mpi::broadcast, mpi::reduce, mpi::scatter, ...) call their more specialized counterparts
- * (e.g. mpi::mpi_broadcast, mpi::mpi_reduce, mpi::mpi_scatter, ...).
+ * @details The generic functions (mpi::broadcast, mpi::reduce, mpi::scatter, ...) call their more specialized
+ * counterparts (e.g. mpi::mpi_broadcast, mpi::mpi_reduce, mpi::mpi_scatter, ...).
+ *
+ * **mpi** provides (some) implementations for
+ * - scalar types that have a corresponding mpi::mpi_type,
+ * - `std::vector` and `std::array` types with MPI compatible value types,
+ * - `std::string` and
+ * - `std::pair`.
+ *
+ * Furthermore, there are several functions to simplify communicating generic, contiguous ranges: mpi::broadcast_range,
+ * mpi::gather_range, mpi::reduce_in_place_range, mpi::reduce_range and mpi::scatter_range.
  */
 
 /**
  * @defgroup mpi_lazy Lazy MPI communication
  * @brief Allow specific types to use lazy MPI communication.
  *
- * @details See for example the [lazy reduce](https://github.com/TRIQS/nda/blob/unstable/c%2B%2B/nda/mpi/reduce.hpp)
- * in the [nda library](https://github.com/TRIQS/nda) for a reduce operation on a multi-dimensional array.
+ * @details Please look at the MPI interface in the [nda library](https://triqs.github.io/nda/latest/group__av__mpi.html)
+ * for more details.
  */
 
 /**
