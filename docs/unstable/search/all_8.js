@@ -10,6 +10,6 @@ var searchData=
   ['example_201_3a_20hello_20world_7',['Example 1: Hello world!',['../ex1.html',1,'']]],
   ['example_202_3a_20use_20monitor_20to_20communicate_20errors_8',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
   ['example_203_3a_20custom_20type_20and_20operator_9',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
-  ['examples_10',['Compiling the examples',['../examples.html#compiling',1,'']]],
-  ['examples_11',['Examples',['../examples.html',1,'']]]
+  ['examples_10',['Examples',['../examples.html',1,'']]],
+  ['examples_11',['Compiling the examples',['../examples.html#compiling',1,'']]]
 ];
