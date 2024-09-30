@@ -118,9 +118,10 @@ $(function(){initNavTree('classmpi_1_1communicator.html',''); initResizable(true
 <p><code>#include &lt;<a class="el" href="communicator_8hpp_source.html">mpi/communicator.hpp</a>&gt;</code></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>C++ wrapper around <code>MPI_Comm</code> providing various convenience functions. </p>
-<p>It stores an <code>MPI_Comm</code> object as its only member which by default is set to <code>MPI_COMM_WORLD</code>. Note that copying the communicator simply copies the <code>MPI_Comm</code> object, without calling <code>MPI_Comm_dup</code>. </p>
+<p>It stores an <code>MPI_Comm</code> object as its only member which by default is set to <code>MPI_COMM_WORLD</code>. Note that copying the communicator simply copies the <code>MPI_Comm</code> object, without calling <code>MPI_Comm_dup</code>.</p>
+<p>All functions that make direct calls to the MPI C library throw an exception in case the call fails. </p>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00040">40</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00043">43</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -134,9 +135,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af92c258a41120dbb609706d5b404f8cc" id="r_af92c258a41120dbb609706d5b404f8cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af92c258a41120dbb609706d5b404f8cc">abort</a> (int error_code) const</td></tr>
 <tr class="memdesc:af92c258a41120dbb609706d5b404f8cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, <code>MPI_Abort</code> is called with the given error code, otherwise std::abort is called.  <br /></td></tr>
 <tr class="separator:af92c258a41120dbb609706d5b404f8cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51ed7d5a2c8c0ac3170c41811e19cc61" id="r_a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ed7d5a2c8c0ac3170c41811e19cc61">barrier</a> (long poll_msec=1)</td></tr>
-<tr class="memdesc:a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Barrier synchronization.  <br /></td></tr>
-<tr class="separator:a51ed7d5a2c8c0ac3170c41811e19cc61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9c1661acfbfb707a3f4182834fc56c1" id="r_ad9c1661acfbfb707a3f4182834fc56c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9c1661acfbfb707a3f4182834fc56c1">barrier</a> (long poll_msec=1) const</td></tr>
+<tr class="memdesc:ad9c1661acfbfb707a3f4182834fc56c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Barrier synchronization.  <br /></td></tr>
+<tr class="separator:ad9c1661acfbfb707a3f4182834fc56c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85c8b810a0de94bde92f81aed854e206" id="r_a85c8b810a0de94bde92f81aed854e206"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmpi_1_1communicator.html">communicator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85c8b810a0de94bde92f81aed854e206">duplicate</a> () const</td></tr>
 <tr class="memdesc:a85c8b810a0de94bde92f81aed854e206"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duplicate the communicator.  <br /></td></tr>
 <tr class="separator:a85c8b810a0de94bde92f81aed854e206"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,7 +185,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 <p>Construct a communicator with a given <code>MPI_Comm</code> object. </p>
 <p>The <code>MPI_Comm</code> object is copied without calling <code>MPI_Comm_dup</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00052">52</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00055">55</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -220,12 +221,12 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00142">142</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00145">145</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
-<a id="a51ed7d5a2c8c0ac3170c41811e19cc61" name="a51ed7d5a2c8c0ac3170c41811e19cc61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51ed7d5a2c8c0ac3170c41811e19cc61">&#9670;&#160;</a></span>barrier()</h2>
+<a id="ad9c1661acfbfb707a3f4182834fc56c1" name="ad9c1661acfbfb707a3f4182834fc56c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9c1661acfbfb707a3f4182834fc56c1">&#9670;&#160;</a></span>barrier()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +238,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
           <td class="memname">void mpi::communicator::barrier </td>
           <td>(</td>
           <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>poll_msec</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1</span></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -261,7 +262,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00170">170</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00173">173</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -293,7 +294,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 <dl class="section warning"><dt>Warning</dt><dd>This allocates a new communicator object. Make sure to call <code>free</code> on the returned communicator when it is no longer needed.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, return the duplicated <code>MPI_Comm</code> object wrapped in a new <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>, otherwise return a default constructed <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00116">116</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00119">119</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -324,7 +325,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 <p>Calls <code>MPI_Comm_free</code> to mark the communicator for deallocation. See the MPI documentation for more details, e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_free.3.html">open-mpi docs </a>.</p>
 <p>Does nothing, if <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false. </p>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00134">134</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00137">137</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +355,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 <p>Get the rank of the calling process in the communicator. </p>
 <dl class="section return"><dt>Returns</dt><dd>The result of <code>MPI_Comm_rank</code> if <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, otherwise 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00061">61</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00064">64</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -384,7 +385,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 <p>Get the size of the communicator. </p>
 <dl class="section return"><dt>Returns</dt><dd>The result of <code>MPI_Comm_size</code> if <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, otherwise 1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00074">74</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00077">77</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>
@@ -420,7 +421,7 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> () const 
 <dl class="section warning"><dt>Warning</dt><dd>This allocates a new communicator object. Make sure to call <code>free</code> on the returned communicator when it is no longer needed.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is true, return the split <code>MPI_Comm</code> object wrapped in a new <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>, otherwise return a default constructed <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00095">95</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="communicator_8hpp_source.html#l00098">98</a> of file <a class="el" href="communicator_8hpp_source.html">communicator.hpp</a>.</p>
 
 </div>
 </div>

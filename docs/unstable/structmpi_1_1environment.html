@@ -118,9 +118,10 @@ $(function(){initNavTree('structmpi_1_1environment.html',''); initResizable(true
 <p><code>#include &lt;<a class="el" href="environment_8hpp_source.html">mpi/environment.hpp</a>&gt;</code></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>RAII class to initialize and finalize MPI. </p>
-<p>Calls <code>MPI_Init</code> upon construction and <code>MPI_Finalize</code> upon destruction i.e. when the environment object goes out of scope. If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false, this struct does nothing. </p>
+<p>Calls <code>MPI_Init</code> upon construction and <code>MPI_Finalize</code> upon destruction i.e. when the environment object goes out of scope. If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false, this struct does nothing.</p>
+<p>All functions that make direct calls to the MPI C library throw an exception in case the call fails. </p>
 
-<p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00065">65</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00070">70</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -169,7 +170,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00075">75</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00080">80</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
 
 </div>
 </div>
@@ -199,7 +200,7 @@ Public Member Functions</h2></td></tr>
 <p>Destroy the mpi environment object by calling <code>MPI_Finalize</code>. </p>
 <p>Checks first if the program is run with an MPI runtime environment. Called automatically when the environment object goes out of scope. </p>
 
-<p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00085">85</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00090">90</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
 
 </div>
 </div>

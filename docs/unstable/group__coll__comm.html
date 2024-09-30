@@ -119,6 +119,10 @@ $(function(){initNavTree('group__coll__comm.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gab8f3ffa97540c8e5dc5922d1c777b9e2" id="r_gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gab8f3ffa97540c8e5dc5922d1c777b9e2">mpi::all_equal</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
+<tr class="memdesc:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given object is equal across all ranks in the given communicator.  <br /></td></tr>
+<tr class="separator:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafae74e49ad6ee44f66cf1211ba8cf54e" id="r_gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gafae74e49ad6ee44f66cf1211ba8cf54e">mpi::all_gather</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
 <tr class="memdesc:gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI all-gather.  <br /></td></tr>
@@ -199,6 +203,52 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="separator:ga129f32374467c9b0f74a822a7e554588"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="gab8f3ffa97540c8e5dc5922d1c777b9e2" name="gab8f3ffa97540c8e5dc5922d1c777b9e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab8f3ffa97540c8e5dc5922d1c777b9e2">&#9670;&#160;</a></span>all_equal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mpi::all_equal </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="generic__communication_8hpp.html">mpi/generic_communication.hpp</a>&gt;</code></p>
+
+<p>Checks if a given object is equal across all ranks in the given communicator. </p>
+<p>It requires that there is a specialized <code>mpi_reduce</code> for the given type <code>T</code> and that it is equality comparable as well as default constructible.</p>
+<p>It makes two calls to simplemc::mpi::all_reduce, one with <code>MPI_MIN</code> and the other with <code>MPI_MAX</code>, and compares their results.</p>
+<dl class="section note"><dt>Note</dt><dd><code>MPI_MIN</code> and <code>MPI_MAX</code> need to make sense for the given type <code>T</code>.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type to be checked. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>Object to be equality compared. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>If the given object is equal on all ranks, it returns true. Otherwise, it returns false. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00288">288</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+
+</div>
+</div>
 <a id="gafae74e49ad6ee44f66cf1211ba8cf54e" name="gafae74e49ad6ee44f66cf1211ba8cf54e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gafae74e49ad6ee44f66cf1211ba8cf54e">&#9670;&#160;</a></span>all_gather()</h2>
 
@@ -233,7 +283,7 @@ template&lt;typename T &gt; </div>
 <p>Generic MPI all-gather. </p>
 <p>It simply calls <a class="el" href="#gaf697a18695e4a5344bbe76e67ae77277" title="Generic MPI gather.">mpi::gather</a> with <code>all = true</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00200">200</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00202">202</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -276,7 +326,7 @@ template&lt;typename T &gt; </div>
 <p>Generic MPI all-reduce. </p>
 <p>It simply calls <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a> with <code>all = true</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00184">184</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00186">186</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -319,7 +369,7 @@ template&lt;typename T &gt; </div>
 <p>Generic MPI all-reduce in-place. </p>
 <p>It simply calls <a class="el" href="#ga78f3e1fa0d66c5e4d4bfa1b12a75365f" title="Generic in-place MPI reduce.">mpi::reduce_in_place</a> with <code>all = true</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00192">192</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00194">194</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -368,7 +418,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00074">74</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00076">76</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -432,7 +482,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the specialized <code>mpi_gather</code> call. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00167">167</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00169">169</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -522,6 +572,7 @@ template&lt;typename T1 , typename T2 &gt; </div>
 
 <p>Implementation of an MPI broadcast for a std::string. </p>
 <p>Simply calls <code>MPI_Bcast</code> for the underlying C-string.</p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">s</td><td>std::string to broadcast. </td></tr>
@@ -531,7 +582,7 @@ template&lt;typename T1 , typename T2 &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00042">42</a> of file <a class="el" href="string_8hpp_source.html">string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00045">45</a> of file <a class="el" href="string_8hpp_source.html">string.hpp</a>.</p>
 
 </div>
 </div>
@@ -566,6 +617,7 @@ template&lt;typename T &gt; </div>
 <p>Implementation of an MPI broadcast for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is broadcasted using a simple <code>MPI_Bcast</code>. Otherwise, the generic <a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> is called for each element of the vector.</p>
 <p>On non-root processes, the vector is always resized to match the size of the vector on the root process. If the root process is empty, no broadcast is performed.</p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -581,7 +633,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00085">85</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00080">80</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -615,6 +667,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <p><code>#include &lt;<a class="el" href="generic__communication_8hpp.html">mpi/generic_communication.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI broadcast for types that have a corresponding MPI datatype, i.e. for which a specialization of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been defined. </p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type to be broadcasted. </td></tr>
@@ -630,7 +683,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00215">215</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00219">219</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -669,6 +722,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an MPI gather for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is gathered using a simple <code>MPI_Gatherv</code> or <code>MPI_Allgatherv</code>. Otherwise, each process broadcasts its elements to all other processes which implies that <code>all == true</code> is required in this case.</p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -686,7 +740,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of the gather operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00221">221</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00224">224</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -793,7 +847,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an MPI reduce for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code> (in this case, <a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8" title="Type trait to get the regular type of a type.">mpi::regular_t&lt;T&gt;</a> has to be the same as T). Otherwise, the generic <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a> is called for each element of the vector.</p>
-<p>It throws an exception if the vectors are not of the same size. If the vectors are empty, it does nothing.</p>
+<p>It throws an exception if the vectors are not of the same size or if an MPI call fails. If the vectors are empty, it does nothing.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -812,7 +866,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of each individual reduction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00144">144</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00142">142</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -856,6 +910,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <p><code>#include &lt;<a class="el" href="generic__communication_8hpp.html">mpi/generic_communication.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI reduce for types that have a corresponding MPI datatype, i.e. for which a specialization of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been defined. </p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type to be reduced. </td></tr>
@@ -874,7 +929,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the reduction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00233">233</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00239">239</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -918,7 +973,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an in-place MPI reduce for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code>. Otherwise, the specialized <code>mpi_reduce_in_place</code> is called for each element of the vector.</p>
-<p>It throws an exception if the vectors are not of the same size. If the vectors are empty, it does nothing.</p>
+<p>It throws an exception if the vectors are not of the same size or if an MPI call fails. If the vectors are empty, it does nothing.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -936,7 +991,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00111">111</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00107">107</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -980,6 +1035,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <p><code>#include &lt;<a class="el" href="generic__communication_8hpp.html">mpi/generic_communication.hpp</a>&gt;</code></p>
 
 <p>Implementation of an in-place MPI reduce for types that have a corresponding MPI datatype, i.e. for which a specialization of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been defined. </p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type to be reduced. </td></tr>
@@ -997,7 +1053,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00257">257</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00265">265</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -1031,6 +1087,7 @@ template&lt;typename T &gt; </div>
 
 <p>Implementation of an MPI scatter for a std::vector. </p>
 <p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is scattered as evenly as possible across the processes in the communicator using a simple <code>MPI_Scatterv</code>.</p>
+<p>It throws an exception in case a call to the MPI C library fails.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -1117,7 +1174,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the specialized <code>mpi_reduce</code> call. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00095">95</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00097">97</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -1186,7 +1243,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00122">122</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00124">124</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
@@ -1244,7 +1301,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the specialized <code>mpi_scatter</code> call. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00140">140</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00142">142</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>

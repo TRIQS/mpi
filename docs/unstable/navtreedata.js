@@ -75,6 +75,7 @@ var NAVTREE =
         [ "map_add", "group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0", null ]
       ] ],
       [ "Collective MPI communication", "group__coll__comm.html", [
+        [ "all_equal", "group__coll__comm.html#gab8f3ffa97540c8e5dc5922d1c777b9e2", null ],
         [ "all_gather", "group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e", null ],
         [ "all_reduce", "group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca", null ],
         [ "all_reduce_in_place", "group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77", null ],
@@ -112,6 +113,7 @@ var NAVTREE =
       ] ],
       [ "Utilities", "group__utilities.html", [
         [ "regular_t", "group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8", null ],
+        [ "check_mpi_call", "group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec", null ],
         [ "chunk", "group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4", null ],
         [ "chunk_length", "group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95", null ]
       ] ],

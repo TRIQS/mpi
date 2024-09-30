@@ -138,6 +138,7 @@ MPI datatypes and operations</h2>
 Collective MPI communication</h2>
 <p>The following generic collective communications are defined in <a class="el" href="group__coll__comm.html">Collective MPI communication</a>:</p>
 <ul>
+<li><a class="el" href="group__coll__comm.html#gab8f3ffa97540c8e5dc5922d1c777b9e2">all_equal</a></li>
 <li><a class="el" href="group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e">all_gather</a></li>
 <li><a class="el" href="group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca">all_reduce</a></li>
 <li><a class="el" href="group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77">all_reduce_in_place</a></li>
@@ -149,7 +150,7 @@ Collective MPI communication</h2>
 </ul>
 <p>They offer a much simpler interface than their MPI C library analogs. For example, the following broadcasts a <code>std::vector&lt;double&gt;</code> from the process with rank 0 to all others:</p>
 <div class="fragment"><div class="line"><a class="code hl_function" href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b">mpi::broadcast</a>(vec);</div>
-<div class="ttc" id="agroup__coll__comm_html_ga26c2a2de93ecfb78c235edada3b5f57b"><div class="ttname"><a href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b">mpi::broadcast</a></div><div class="ttdeci">void broadcast(T &amp;x, communicator c={}, int root=0)</div><div class="ttdoc">Generic MPI broadcast.</div><div class="ttdef"><b>Definition</b> <a href="generic__communication_8hpp_source.html#l00074">generic_communication.hpp:74</a></div></div>
+<div class="ttc" id="agroup__coll__comm_html_ga26c2a2de93ecfb78c235edada3b5f57b"><div class="ttname"><a href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b">mpi::broadcast</a></div><div class="ttdeci">void broadcast(T &amp;x, communicator c={}, int root=0)</div><div class="ttdoc">Generic MPI broadcast.</div><div class="ttdef"><b>Definition</b> <a href="generic__communication_8hpp_source.html#l00076">generic_communication.hpp:76</a></div></div>
 </div><!-- fragment --><p>Compare this with the call to the C library:</p>
 <div class="fragment"><div class="line">MPI_Bcast(vec.data(), <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(vec.size()), MPI_DOUBLE, 0, MPI_COMM_WORLD);</div>
 </div><!-- fragment --><p>Under the hood, the generic <a class="el" href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> implementation calls the specialized <a class="el" href="group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb">mpi::mpi_broadcast(std::vector&lt; T &gt;&amp;, mpi::communicator, int)</a>. The other generic functions are implement in the same way. See the "Functions" section in <a class="el" href="group__coll__comm.html">Collective MPI communication</a> to check which datatypes are supported out of the box.</p>
@@ -168,6 +169,7 @@ Utilities</h2>
 <p>The following utilities are defined in <b>mpi</b>:</p>
 <ul>
 <li><a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">regular_t</a></li>
+<li><a class="el" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a></li>
 <li><a class="el" href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">chunk</a></li>
 <li><a class="el" href="group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95">chunk_length</a> </li>
 </ul>

@@ -12,5 +12,6 @@ var dir_671877b97d006ed14109ce92ec0cdea9 =
     [ "operators.hpp", "operators_8hpp.html", "operators_8hpp" ],
     [ "pair.hpp", "pair_8hpp.html", "pair_8hpp" ],
     [ "string.hpp", "string_8hpp.html", "string_8hpp" ],
+    [ "utils.hpp", "utils_8hpp.html", "utils_8hpp" ],
     [ "vector.hpp", "vector_8hpp.html", "vector_8hpp" ]
 ];

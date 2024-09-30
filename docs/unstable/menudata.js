@@ -66,6 +66,7 @@ var menudata={children:[
 {text:"map_C_function",url:"group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9"},
 {text:"map_add",url:"group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0"}]},
 {text:"Collective MPI communication",url:"group__coll__comm.html",children:[
+{text:"all_equal",url:"group__coll__comm.html#gab8f3ffa97540c8e5dc5922d1c777b9e2"},
 {text:"all_gather",url:"group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e"},
 {text:"all_reduce",url:"group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca"},
 {text:"all_reduce_in_place",url:"group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77"},
@@ -95,6 +96,7 @@ var menudata={children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[
 {text:"regular_t",url:"group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8"},
+{text:"check_mpi_call",url:"group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec"},
 {text:"chunk",url:"group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4"},
 {text:"chunk_length",url:"group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95"}]},
 {text:"File List",url:"files.html"}]},

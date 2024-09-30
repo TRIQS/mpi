@@ -115,6 +115,7 @@ $(function(){initNavTree('generic__communication_8hpp.html',''); initResizable(t
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="datatypes_8hpp_source.html">./datatypes.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="lazy_8hpp_source.html">./lazy.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="utils_8hpp_source.html">./utils.hpp</a>&quot;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
@@ -129,6 +130,10 @@ $(function(){initNavTree('generic__communication_8hpp.html',''); initResizable(t
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gab8f3ffa97540c8e5dc5922d1c777b9e2" id="r_gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gab8f3ffa97540c8e5dc5922d1c777b9e2">mpi::all_equal</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
+<tr class="memdesc:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given object is equal across all ranks in the given communicator.  <br /></td></tr>
+<tr class="separator:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafae74e49ad6ee44f66cf1211ba8cf54e" id="r_gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e">mpi::all_gather</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
 <tr class="memdesc:gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI all-gather.  <br /></td></tr>

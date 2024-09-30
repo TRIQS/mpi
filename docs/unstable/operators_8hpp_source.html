@@ -134,55 +134,60 @@ $(function(){initNavTree('operators_8hpp_source.html',''); initResizable(true); 
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#</span><span class="preprocessor">pragma</span> <span class="preprocessor">once</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">mpi</span><span class="preprocessor">.</span><span class="preprocessor">h</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&quot;./utils.hpp&quot;</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">namespace</span> mpi {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">mpi</span><span class="preprocessor">.</span><span class="preprocessor">h</span><span class="preprocessor">&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   29</span><span class="comment">   * @addtogroup mpi_types_ops</span></div>
-<div class="line"><span class="lineno">   30</span><span class="comment">   * @{</span></div>
-<div class="line"><span class="lineno">   31</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   34</span><span class="comment">   * @brief Create a new `MPI_Op` from a given binary function by calling `MPI_Op_create`.</span></div>
-<div class="line"><span class="lineno">   35</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   36</span><span class="comment">   * @details The binary function must have the following signature `(T const&amp;, T const&amp;) -&gt; T`.</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">namespace</span> mpi {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   31</span><span class="comment">   * @addtogroup mpi_types_ops</span></div>
+<div class="line"><span class="lineno">   32</span><span class="comment">   * @{</span></div>
+<div class="line"><span class="lineno">   33</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   36</span><span class="comment">   * @brief Create a new `MPI_Op` from a given binary function by calling `MPI_Op_create`.</span></div>
 <div class="line"><span class="lineno">   37</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   38</span><span class="comment">   * @tparam T Type on which the binary function operates.</span></div>
-<div class="line"><span class="lineno">   39</span><span class="comment">   * @tparam F Binary function pointer to be mapped.</span></div>
-<div class="line"><span class="lineno">   40</span><span class="comment">   * @return `MPI_Op` created from the binary function.</span></div>
-<div class="line"><span class="lineno">   41</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00042" data-start="{" data-end="}">
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9">   42</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T (*F)(T <span class="keyword">const</span> &amp;, T <span class="keyword">const</span> &amp;)&gt; MPI_Op <a class="code hl_function" href="group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9">map_C_function</a>() {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    MPI_Op myOp{};</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    MPI_User_function *map_function = +[](<span class="keywordtype">void</span> *in, <span class="keywordtype">void</span> *inout, <span class="keywordtype">int</span> *len, MPI_Datatype *) { <span class="comment">// NOLINT (MPI_Op_create needs a non-const pointer)</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      <span class="keyword">auto</span> *inT    = <span class="keyword">static_cast</span>&lt;T *&gt;(in);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      <span class="keyword">auto</span> *inoutT = <span class="keyword">static_cast</span>&lt;T *&gt;(inout);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; *len; ++i, ++inT, ++inoutT) { *inoutT = F(*inoutT, *inT); }</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    };</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    MPI_Op_create(map_function, <span class="keyword">true</span>, &amp;myOp);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> myOp;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  }</div>
+<div class="line"><span class="lineno">   38</span><span class="comment">   * @details The binary function must have the following signature `(T const&amp;, T const&amp;) -&gt; T`.</span></div>
+<div class="line"><span class="lineno">   39</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   40</span><span class="comment">   * It throws an exception in case a call to the MPI C library fails.</span></div>
+<div class="line"><span class="lineno">   41</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   42</span><span class="comment">   * @tparam T Type on which the binary function operates.</span></div>
+<div class="line"><span class="lineno">   43</span><span class="comment">   * @tparam F Binary function pointer to be mapped.</span></div>
+<div class="line"><span class="lineno">   44</span><span class="comment">   * @return `MPI_Op` created from the binary function.</span></div>
+<div class="line"><span class="lineno">   45</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9">   46</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, T (*F)(T <span class="keyword">const</span> &amp;, T <span class="keyword">const</span> &amp;)&gt; MPI_Op <a class="code hl_function" href="group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9">map_C_function</a>() {</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    MPI_Op myOp{};</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    MPI_User_function *map_function = +[](<span class="keywordtype">void</span> *in, <span class="keywordtype">void</span> *inout, <span class="keywordtype">int</span> *len, MPI_Datatype *) { <span class="comment">// NOLINT (MPI_Op_create needs a non-const pointer)</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>      <span class="keyword">auto</span> *inT    = <span class="keyword">static_cast</span>&lt;T *&gt;(in);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      <span class="keyword">auto</span> *inoutT = <span class="keyword">static_cast</span>&lt;T *&gt;(inout);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; *len; ++i, ++inT, ++inoutT) { *inoutT = F(*inoutT, *inT); }</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    };</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a><a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">(</a>MPI_Op_create(map_function, <span class="keyword">true</span>, &amp;myOp)<a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">,</a> <span class="stringliteral">&quot;MPI_Op_create&quot;</span><a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">)</a>;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">return</span> myOp;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  }</div>
 </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="keyword">namespace</span> detail {</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="comment">// Generic addition. FIXME Convert to lambda, requires gcc 13.2+</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; T generic_add(T <span class="keyword">const</span> &amp;lhs, T <span class="keyword">const</span> &amp;rhs) { <span class="keywordflow">return</span> lhs + rhs; }</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  } <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   59</span><span class="comment">   * @brief Create a new `MPI_Op` for a generic addition by calling `MPI_Op_create`.</span></div>
-<div class="line"><span class="lineno">   60</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   61</span><span class="comment">   * @details The type is required to have an overloaded `operator+(const T&amp; lhs, const T&amp; rhs) -&gt; T`.</span></div>
-<div class="line"><span class="lineno">   62</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   63</span><span class="comment">   * @tparam T Type used for the addition.</span></div>
-<div class="line"><span class="lineno">   64</span><span class="comment">   * @return `MPI_Op` for the generic addition of the given type.</span></div>
-<div class="line"><span class="lineno">   65</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0">   66</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; MPI_Op <a class="code hl_function" href="group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0">map_add</a>() { <span class="keywordflow">return</span> map_C_function&lt;T, detail::generic_add&gt;(); }</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>} <span class="comment">// namespace mpi</span></div>
-<div class="ttc" id="agroup__mpi__types__ops_html_gab81d56ee147c1034fea1bf001c1856e0"><div class="ttname"><a href="group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0">mpi::map_add</a></div><div class="ttdeci">MPI_Op map_add()</div><div class="ttdoc">Create a new MPI_Op for a generic addition by calling MPI_Op_create.</div><div class="ttdef"><b>Definition</b> <a href="#l00066">operators.hpp:66</a></div></div>
-<div class="ttc" id="agroup__mpi__types__ops_html_gae8618c4b71923a982ab66f1bf62549c9"><div class="ttname"><a href="group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9">mpi::map_C_function</a></div><div class="ttdeci">MPI_Op map_C_function()</div><div class="ttdoc">Create a new MPI_Op from a given binary function by calling MPI_Op_create.</div><div class="ttdef"><b>Definition</b> <a href="#l00042">operators.hpp:42</a></div></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keyword">namespace</span> detail {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="comment">// Generic addition. FIXME Convert to lambda, requires gcc 13.2+</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; T generic_add(T <span class="keyword">const</span> &amp;lhs, T <span class="keyword">const</span> &amp;rhs) { <span class="keywordflow">return</span> lhs + rhs; }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  } <span class="comment">// namespace detail</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   63</span><span class="comment">   * @brief Create a new `MPI_Op` for a generic addition by calling `MPI_Op_create`.</span></div>
+<div class="line"><span class="lineno">   64</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   65</span><span class="comment">   * @details The type is required to have an overloaded `operator+(const T&amp; lhs, const T&amp; rhs) -&gt; T`.</span></div>
+<div class="line"><span class="lineno">   66</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   67</span><span class="comment">   * @tparam T Type used for the addition.</span></div>
+<div class="line"><span class="lineno">   68</span><span class="comment">   * @return `MPI_Op` for the generic addition of the given type.</span></div>
+<div class="line"><span class="lineno">   69</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0">   70</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; MPI_Op <a class="code hl_function" href="group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0">map_add</a>() { <span class="keywordflow">return</span> map_C_function&lt;T, detail::generic_add&gt;(); }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>} <span class="comment">// namespace mpi</span></div>
+<div class="ttc" id="agroup__mpi__types__ops_html_gab81d56ee147c1034fea1bf001c1856e0"><div class="ttname"><a href="group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0">mpi::map_add</a></div><div class="ttdeci">MPI_Op map_add()</div><div class="ttdoc">Create a new MPI_Op for a generic addition by calling MPI_Op_create.</div><div class="ttdef"><b>Definition</b> <a href="#l00070">operators.hpp:70</a></div></div>
+<div class="ttc" id="agroup__mpi__types__ops_html_gae8618c4b71923a982ab66f1bf62549c9"><div class="ttname"><a href="group__mpi__types__ops.html#gae8618c4b71923a982ab66f1bf62549c9">mpi::map_C_function</a></div><div class="ttdeci">MPI_Op map_C_function()</div><div class="ttdoc">Create a new MPI_Op from a given binary function by calling MPI_Op_create.</div><div class="ttdef"><b>Definition</b> <a href="#l00046">operators.hpp:46</a></div></div>
+<div class="ttc" id="agroup__utilities_html_gaee34d136ff5a6107c23f96092b8e20ec"><div class="ttname"><a href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">mpi::check_mpi_call</a></div><div class="ttdeci">void check_mpi_call(int errcode, const std::string &amp;mpi_routine)</div><div class="ttdoc">Check the success of an MPI call.</div><div class="ttdef"><b>Definition</b> <a href="utils_8hpp_source.html#l00051">utils.hpp:51</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
