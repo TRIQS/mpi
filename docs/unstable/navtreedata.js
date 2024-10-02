@@ -75,7 +75,7 @@ var NAVTREE =
         [ "map_add", "group__mpi__types__ops.html#gab81d56ee147c1034fea1bf001c1856e0", null ]
       ] ],
       [ "Collective MPI communication", "group__coll__comm.html", [
-        [ "all_equal", "group__coll__comm.html#gab8f3ffa97540c8e5dc5922d1c777b9e2", null ],
+        [ "all_equal", "group__coll__comm.html#gab3c6e0cd093b0848221627ce14e03802", null ],
         [ "all_gather", "group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e", null ],
         [ "all_reduce", "group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca", null ],
         [ "all_reduce_in_place", "group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77", null ],

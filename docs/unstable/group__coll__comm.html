@@ -119,10 +119,10 @@ $(function(){initNavTree('group__coll__comm.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gab8f3ffa97540c8e5dc5922d1c777b9e2" id="r_gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gab8f3ffa97540c8e5dc5922d1c777b9e2">mpi::all_equal</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
-<tr class="memdesc:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given object is equal across all ranks in the given communicator.  <br /></td></tr>
-<tr class="separator:gab8f3ffa97540c8e5dc5922d1c777b9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab3c6e0cd093b0848221627ce14e03802" id="r_gab3c6e0cd093b0848221627ce14e03802"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:gab3c6e0cd093b0848221627ce14e03802"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gab3c6e0cd093b0848221627ce14e03802">mpi::all_equal</a> (T const &amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
+<tr class="memdesc:gab3c6e0cd093b0848221627ce14e03802"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given object is equal across all ranks in the given communicator.  <br /></td></tr>
+<tr class="separator:gab3c6e0cd093b0848221627ce14e03802"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafae74e49ad6ee44f66cf1211ba8cf54e" id="r_gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gafae74e49ad6ee44f66cf1211ba8cf54e">mpi::all_gather</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={})</td></tr>
 <tr class="memdesc:gafae74e49ad6ee44f66cf1211ba8cf54e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI all-gather.  <br /></td></tr>
@@ -203,8 +203,8 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="separator:ga129f32374467c9b0f74a822a7e554588"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gab8f3ffa97540c8e5dc5922d1c777b9e2" name="gab8f3ffa97540c8e5dc5922d1c777b9e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab8f3ffa97540c8e5dc5922d1c777b9e2">&#9670;&#160;</a></span>all_equal()</h2>
+<a id="gab3c6e0cd093b0848221627ce14e03802" name="gab3c6e0cd093b0848221627ce14e03802"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab3c6e0cd093b0848221627ce14e03802">&#9670;&#160;</a></span>all_equal()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,7 +214,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">bool mpi::all_equal </td>
           <td>(</td>
-          <td class="paramtype">T &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+          <td class="paramtype">T const &amp;</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -228,7 +228,7 @@ template&lt;typename T &gt; </div>
 
 <p>Checks if a given object is equal across all ranks in the given communicator. </p>
 <p>It requires that there is a specialized <code>mpi_reduce</code> for the given type <code>T</code> and that it is equality comparable as well as default constructible.</p>
-<p>It makes two calls to simplemc::mpi::all_reduce, one with <code>MPI_MIN</code> and the other with <code>MPI_MAX</code>, and compares their results.</p>
+<p>It makes two calls to <a class="el" href="#gabda7358ee96ff22cfdc37b73630406ca" title="Generic MPI all-reduce.">mpi::all_reduce</a>, one with <code>MPI_MIN</code> and the other with <code>MPI_MAX</code>, and compares their results.</p>
 <dl class="section note"><dt>Note</dt><dd><code>MPI_MIN</code> and <code>MPI_MAX</code> need to make sense for the given type <code>T</code>.</dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -245,7 +245,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If the given object is equal on all ranks, it returns true. Otherwise, it returns false. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00288">288</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00287">287</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
 
 </div>
 </div>
