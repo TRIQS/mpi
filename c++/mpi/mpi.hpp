@@ -21,14 +21,20 @@
 
 #pragma once
 
+#include "./array.hpp"
 #include "./chunk.hpp"
 #include "./communicator.hpp"
 #include "./datatypes.hpp"
 #include "./environment.hpp"
 #include "./generic_communication.hpp"
 #include "./lazy.hpp"
+#include "./monitor.hpp"
 #include "./operators.hpp"
+#include "./pair.hpp"
+#include "./ranges.hpp"
+#include "./string.hpp"
 #include "./utils.hpp"
+#include "./vector.hpp"
 
 namespace mpi {
 

@@ -21,8 +21,8 @@
 
 #pragma once
 
+#include "./communicator.hpp"
 #include "./macros.hpp"
-#include "./mpi.hpp"
 #include "./utils.hpp"
 
 #include <mpi.h>

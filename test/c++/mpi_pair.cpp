@@ -15,8 +15,7 @@
 // Authors: Thomas Hahn, Nils Wentzell
 
 #include <gtest/gtest.h>
-#include <mpi/pair.hpp>
-#include <mpi/string.hpp>
+#include <mpi/mpi.hpp>
 
 #include <complex>
 #include <string>

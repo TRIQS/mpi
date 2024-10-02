@@ -21,10 +21,16 @@
 
 #pragma once
 
+#include "./chunk.hpp"
+#include "./communicator.hpp"
+#include "./datatypes.hpp"
+#include "./environment.hpp"
+#include "./generic_communication.hpp"
 #include "./macros.hpp"
-#include "./mpi.hpp"
+#include "./utils.hpp"
 
 #include <itertools/itertools.hpp>
+#include <mpi.h>
 
 #include <algorithm>
 #include <ranges>

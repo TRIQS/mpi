@@ -17,7 +17,6 @@
 
 #include <gtest/gtest.h>
 #include <mpi/mpi.hpp>
-#include <mpi/vector.hpp>
 
 TEST(MPI, AllEqual) {
   // check if a value is equal on all ranks

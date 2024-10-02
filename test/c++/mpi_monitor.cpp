@@ -15,7 +15,7 @@
 // Authors: Philipp Dumitrescu, Thomas Hahn, Olivier Parcollet
 
 #include <gtest/gtest.h>
-#include <mpi/monitor.hpp>
+#include <mpi/mpi.hpp>
 #include <mpi.h>
 
 #include <algorithm>

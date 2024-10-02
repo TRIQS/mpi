@@ -18,9 +18,7 @@
 
 #include <gtest/gtest.h>
 #include <itertools/itertools.hpp>
-#include <mpi/pair.hpp>
-#include <mpi/string.hpp>
-#include <mpi/vector.hpp>
+#include <mpi/mpi.hpp>
 
 #include <complex>
 #include <numeric>

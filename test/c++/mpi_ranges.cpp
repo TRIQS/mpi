@@ -18,8 +18,7 @@
 #include "./non_mpi_t.hpp"
 
 #include <gtest/gtest.h>
-#include <mpi/ranges.hpp>
-#include <mpi/vector.hpp>
+#include <mpi/mpi.hpp>
 
 #include <array>
 #include <numeric>
