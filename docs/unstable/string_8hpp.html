@@ -113,9 +113,9 @@ $(function(){initNavTree('string_8hpp.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">string.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="mpi_8hpp_source.html">./mpi.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="utils_8hpp_source.html">./utils.hpp</a>&quot;</code><br />
-<code>#include &lt;mpi.h&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="communicator_8hpp_source.html">./communicator.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="generic__communication_8hpp_source.html">./generic_communication.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ranges_8hpp_source.html">./ranges.hpp</a>&quot;</code><br />
 <code>#include &lt;string&gt;</code><br />
 </div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides an MPI broadcast for std::string. </p>
@@ -129,6 +129,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gabcb8e2f22f68900179f4edd9ea175eab" id="r_gabcb8e2f22f68900179f4edd9ea175eab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gabcb8e2f22f68900179f4edd9ea175eab">mpi::mpi_broadcast</a> (std::string &amp;s, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c, int root)</td></tr>
 <tr class="memdesc:gabcb8e2f22f68900179f4edd9ea175eab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a std::string.  <br /></td></tr>
 <tr class="separator:gabcb8e2f22f68900179f4edd9ea175eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad6941616d17f9c61be3984212a27a047" id="r_gad6941616d17f9c61be3984212a27a047"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gad6941616d17f9c61be3984212a27a047">mpi::mpi_gather</a> (std::string const &amp;s, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
+<tr class="memdesc:gad6941616d17f9c61be3984212a27a047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a std::string.  <br /></td></tr>
+<tr class="separator:gad6941616d17f9c61be3984212a27a047"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

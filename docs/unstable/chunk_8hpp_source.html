@@ -139,51 +139,60 @@ $(function(){initNavTree('chunk_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">itertools</span><span class="preprocessor">/</span><span class="preprocessor">itertools</span><span class="preprocessor">.</span><span class="preprocessor">hpp</span><span class="preprocessor">&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">iterator</span><span class="preprocessor">&gt;</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">utility</span><span class="preprocessor">&gt;</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">namespace</span> mpi {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   34</span><span class="comment">   * @ingroup utilities</span></div>
-<div class="line"><span class="lineno">   35</span><span class="comment">   * @brief Get the length of the i&lt;sup&gt;th&lt;/sup&gt; subrange after splitting the integer range `[0, end)` evenly across n subranges.</span></div>
-<div class="line"><span class="lineno">   36</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   37</span><span class="comment">   * @param end End of the integer range `[0, end)`.</span></div>
-<div class="line"><span class="lineno">   38</span><span class="comment">   * @param n Number of subranges.</span></div>
-<div class="line"><span class="lineno">   39</span><span class="comment">   * @param i Index of the subrange of interest.</span></div>
-<div class="line"><span class="lineno">   40</span><span class="comment">   * @return Length of the i&lt;sup&gt;th&lt;/sup&gt; subrange.</span></div>
-<div class="line"><span class="lineno">   41</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00042" data-start="{" data-end="}">
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95">   42</a></span>  [[nodiscard]] <span class="keyword">inline</span> <span class="keywordtype">long</span> <a class="code hl_function" href="group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95">chunk_length</a>(<span class="keywordtype">long</span> end, <span class="keywordtype">int</span> n, <span class="keywordtype">int</span> i) {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">auto</span> [node_begin, node_end] = itertools::chunk_range(0, end, n, i);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">return</span> node_end - node_begin;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  }</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">stdexcept</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">utility</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">namespace</span> mpi {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   35</span><span class="comment">   * @ingroup utilities</span></div>
+<div class="line"><span class="lineno">   36</span><span class="comment">   * @brief Get the length of the i&lt;sup&gt;th&lt;/sup&gt; subrange after splitting the integer range `[0, end)` as evenly as</span></div>
+<div class="line"><span class="lineno">   37</span><span class="comment">   * possible across `n` subranges.</span></div>
+<div class="line"><span class="lineno">   38</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   39</span><span class="comment">   * @details The optional parameter `min_size` can be used to first divide the range into equal parts of size</span></div>
+<div class="line"><span class="lineno">   40</span><span class="comment">   * `min_size` before distributing them as evenly as possible across the number of specified subranges.</span></div>
+<div class="line"><span class="lineno">   41</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   42</span><span class="comment">   * It throws an exception if `min_size &lt; 1` or if it is not a divisor of `end`.</span></div>
+<div class="line"><span class="lineno">   43</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   44</span><span class="comment">   * @param end End of the integer range `[0, end)`.</span></div>
+<div class="line"><span class="lineno">   45</span><span class="comment">   * @param nranges Number of subranges.</span></div>
+<div class="line"><span class="lineno">   46</span><span class="comment">   * @param i Index of the subrange of interest.</span></div>
+<div class="line"><span class="lineno">   47</span><span class="comment">   * @param min_size Minimum size of the subranges.</span></div>
+<div class="line"><span class="lineno">   48</span><span class="comment">   * @return Length of the i&lt;sup&gt;th&lt;/sup&gt; subrange.</span></div>
+<div class="line"><span class="lineno">   49</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="}">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="group__utilities.html#ga6c4a796ead2a7fe817b93239da1f7663">   50</a></span>  [[nodiscard]] <span class="keyword">inline</span> <span class="keywordtype">long</span> <a class="code hl_function" href="group__utilities.html#ga6c4a796ead2a7fe817b93239da1f7663">chunk_length</a>(<span class="keywordtype">long</span> end, <span class="keywordtype">int</span> nranges, <span class="keywordtype">int</span> i, <span class="keywordtype">long</span> min_size = 1) {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">if</span> (min_size &lt; 1 || end % min_size != 0) <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Error in mpi::chunk_length: min_size must be a divisor of end&quot;</span>);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">auto</span> [node_begin, node_end] = itertools::chunk_range(0, end / min_size, nranges, i);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordflow">return</span> (node_end - node_begin) * min_size;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  }</div>
 </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   48</span><span class="comment">   * @ingroup utilities</span></div>
-<div class="line"><span class="lineno">   49</span><span class="comment">   * @brief Divide a given range as evenly as possible across the MPI processes in a communicator and get the subrange</span></div>
-<div class="line"><span class="lineno">   50</span><span class="comment">   * assigned to the calling process.</span></div>
-<div class="line"><span class="lineno">   51</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   52</span><span class="comment">   * @tparam R Range type.</span></div>
-<div class="line"><span class="lineno">   53</span><span class="comment">   * @param rg Range to divide.</span></div>
-<div class="line"><span class="lineno">   54</span><span class="comment">   * @param c mpi::communicator.</span></div>
-<div class="line"><span class="lineno">   55</span><span class="comment">   * @return An itertools::sliced range assigned to the calling process.</span></div>
-<div class="line"><span class="lineno">   56</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">   57</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; [[nodiscard]] <span class="keyword">auto</span> <a class="code hl_function" href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">chunk</a>(R &amp;&amp;rg, <a class="code hl_class" href="classmpi_1_1communicator.html">communicator</a> c <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">=</a> <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">{</a><a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">}</a>) {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keyword">auto</span> total_size           = itertools::distance(std::cbegin(rg), std::cend(rg));</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">auto</span> [start_idx, end_idx] = itertools::chunk_range(0, total_size, c<a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">.</a><a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">size</a><a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">(</a><a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">)</a>, c<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">.</a><a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a><a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">(</a><a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">)</a>);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">return</span> itertools::slice(std::forward&lt;R&gt;(rg), start_idx, end_idx);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   57</span><span class="comment">   * @ingroup utilities</span></div>
+<div class="line"><span class="lineno">   58</span><span class="comment">   * @brief Divide a given range as evenly as possible across the MPI processes in a communicator and get the subrange</span></div>
+<div class="line"><span class="lineno">   59</span><span class="comment">   * assigned to the calling process.</span></div>
+<div class="line"><span class="lineno">   60</span><span class="comment">   *</span></div>
+<div class="line"><span class="lineno">   61</span><span class="comment">   * @tparam R Range type.</span></div>
+<div class="line"><span class="lineno">   62</span><span class="comment">   * @param rg Range to divide.</span></div>
+<div class="line"><span class="lineno">   63</span><span class="comment">   * @param c mpi::communicator.</span></div>
+<div class="line"><span class="lineno">   64</span><span class="comment">   * @return An itertools::sliced range assigned to the calling process.</span></div>
+<div class="line"><span class="lineno">   65</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00066" data-start="{" data-end="}">
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">   66</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; [[nodiscard]] <span class="keyword">auto</span> <a class="code hl_function" href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">chunk</a>(R &amp;&amp;rg, <a class="code hl_class" href="classmpi_1_1communicator.html">communicator</a> c <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">=</a> <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">{</a><a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">}</a>) {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">auto</span> total_size           = itertools::distance(std::cbegin(rg), std::cend(rg));</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keyword">auto</span> [start_idx, end_idx] = itertools::chunk_range(0, total_size, c<a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">.</a><a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">size</a><a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">(</a><a class="code hl_function" href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">)</a>, c<a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">.</a><a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">rank</a><a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">(</a><a class="code hl_function" href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">)</a>);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">return</span> itertools::slice(std::forward&lt;R&gt;(rg), start_idx, end_idx);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  }</div>
 </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>} <span class="comment">// namespace mpi</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>} <span class="comment">// namespace mpi</span></div>
 <div class="ttc" id="aclassmpi_1_1communicator_html"><div class="ttname"><a href="classmpi_1_1communicator.html">mpi::communicator</a></div><div class="ttdoc">C++ wrapper around MPI_Comm providing various convenience functions.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00043">communicator.hpp:43</a></div></div>
 <div class="ttc" id="aclassmpi_1_1communicator_html_a0304120e7238d181b8d2668114ea465a"><div class="ttname"><a href="classmpi_1_1communicator.html#a0304120e7238d181b8d2668114ea465a">mpi::communicator::size</a></div><div class="ttdeci">int size() const</div><div class="ttdoc">Get the size of the communicator.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00077">communicator.hpp:77</a></div></div>
 <div class="ttc" id="aclassmpi_1_1communicator_html_a784752e4df5190e553066e57551554a9"><div class="ttname"><a href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">mpi::communicator::rank</a></div><div class="ttdeci">int rank() const</div><div class="ttdoc">Get the rank of the calling process in the communicator.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00064">communicator.hpp:64</a></div></div>
 <div class="ttc" id="aclassmpi_1_1communicator_html_affa6334fe09385303e648a2ba4691844"><div class="ttname"><a href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">mpi::communicator::communicator</a></div><div class="ttdeci">communicator()=default</div><div class="ttdoc">Construct a communicator with MPI_COMM_WORLD.</div></div>
-<div class="ttc" id="agroup__utilities_html_ga72cff436e2418ebdf5c905f1bb489d95"><div class="ttname"><a href="group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95">mpi::chunk_length</a></div><div class="ttdeci">long chunk_length(long end, int n, int i)</div><div class="ttdoc">Get the length of the ith subrange after splitting the integer range [0, end) evenly across n subrang...</div><div class="ttdef"><b>Definition</b> <a href="#l00042">chunk.hpp:42</a></div></div>
-<div class="ttc" id="agroup__utilities_html_gae690fbc2d13c3ef957dad296412f4df4"><div class="ttname"><a href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">mpi::chunk</a></div><div class="ttdeci">auto chunk(R &amp;&amp;rg, communicator c={})</div><div class="ttdoc">Divide a given range as evenly as possible across the MPI processes in a communicator and get the sub...</div><div class="ttdef"><b>Definition</b> <a href="#l00057">chunk.hpp:57</a></div></div>
+<div class="ttc" id="agroup__utilities_html_ga6c4a796ead2a7fe817b93239da1f7663"><div class="ttname"><a href="group__utilities.html#ga6c4a796ead2a7fe817b93239da1f7663">mpi::chunk_length</a></div><div class="ttdeci">long chunk_length(long end, int nranges, int i, long min_size=1)</div><div class="ttdoc">Get the length of the ith subrange after splitting the integer range [0, end) as evenly as possible a...</div><div class="ttdef"><b>Definition</b> <a href="#l00050">chunk.hpp:50</a></div></div>
+<div class="ttc" id="agroup__utilities_html_gae690fbc2d13c3ef957dad296412f4df4"><div class="ttname"><a href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">mpi::chunk</a></div><div class="ttdeci">auto chunk(R &amp;&amp;rg, communicator c={})</div><div class="ttdoc">Divide a given range as evenly as possible across the MPI processes in a communicator and get the sub...</div><div class="ttdef"><b>Definition</b> <a href="#l00066">chunk.hpp:66</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

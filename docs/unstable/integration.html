@@ -132,7 +132,8 @@ $(function(){initNavTree('integration.html',''); initResizable(true); });
   </li>
 </ul>
 </div>
-<div class="textblock"><p><b>mpi</b> is a header only library. To use it in your own <code>C++</code> code, you simply have to include the relevant header files and tell your compiler/build system where it can find the necessary files. For example:</p>
+<div class="textblock"><p><b>mpi</b> is a header only library. To use it in your own <code>C++</code> code, you simply have to include the relevant header files and tell your compiler/build system where it can find the necessary files.</p>
+<p>For example:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="mpi_8hpp.html">mpi/mpi.hpp</a>&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// use mpi</span></div>
@@ -151,7 +152,7 @@ FetchContent</h2>
 <div class="line">FetchContent_Declare(</div>
 <div class="line">  mpi</div>
 <div class="line">  GIT_REPOSITORY https://github.com/TRIQS/mpi.git</div>
-<div class="line">  GIT_TAG        1.2.x</div>
+<div class="line">  GIT_TAG        1.3.x</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(mpi)</div>
 <div class="line"> </div>

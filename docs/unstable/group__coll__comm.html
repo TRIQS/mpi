@@ -115,7 +115,14 @@ $(function(){initNavTree('group__coll__comm.html',''); initResizable(true); });
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Generic and specialized implementations for a subset of collective MPI communications (broadcast, reduce, gather, scatter). </p>
-<p>The generic functions (<a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a>, <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a>, <a class="el" href="#ga129f32374467c9b0f74a822a7e554588" title="Generic MPI scatter.">mpi::scatter</a>, ...) call their more specialized counterparts (e.g. <a class="el" href="#ga7b441294b27fb668e3876294ba7fdc03" title="Implementation of an MPI broadcast for types that have a corresponding MPI datatype,...">mpi::mpi_broadcast</a>, <a class="el" href="#gab133dac60af76a9b16bc0d6983601a1f" title="Implementation of an MPI reduce for types that have a corresponding MPI datatype, i....">mpi::mpi_reduce</a>, <a class="el" href="#gad6813475336c8758f11e666476d57aab" title="Implementation of an MPI scatter for a std::vector.">mpi::mpi_scatter</a>, ...).</p>
+<p>The generic functions (<a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a>, <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a>, <a class="el" href="#ga129f32374467c9b0f74a822a7e554588" title="Generic MPI scatter.">mpi::scatter</a>, ...) call their more specialized counterparts (e.g. <a class="el" href="#gaad92b65d7516582a284fac742c4f430e" title="Implementation of an MPI broadcast for a std::arr.">mpi::mpi_broadcast</a>, <a class="el" href="#ga2f4b9c71fd7e8d418c69a25bc1eb267b" title="Implementation of an MPI reduce for a std::array.">mpi::mpi_reduce</a>, <a class="el" href="#gaaa70951052bcbc3c57354a4d49cbb267" title="Implementation of an MPI scatter for a std::vector.">mpi::mpi_scatter</a>, ...).</p>
+<p><b>mpi</b> provides (some) implementations for</p><ul>
+<li>scalar types that have a corresponding <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a>,</li>
+<li><code>std::vector</code> and <code>std::array</code> types with MPI compatible value types,</li>
+<li><code>std::string</code> and</li>
+<li><code>std::pair</code>.</li>
+</ul>
+<p>Furthermore, there are several functions to simplify communicating generic, contiguous ranges: <a class="el" href="#ga91ae5f78ffc7222e5565b092b5dd2700" title="Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.">mpi::broadcast_range</a>, <a class="el" href="#gaa880186aea80cf1611a38ba3feeb7301" title="Implementation of an MPI gather for an mpi::contiguous_sized_range.">mpi::gather_range</a>, <a class="el" href="#ga2a00b30a9c1c601f5df8ad48a6c0875a" title="Implementation of an in-place MPI reduce for an mpi::contiguous_sized_range object.">mpi::reduce_in_place_range</a>, <a class="el" href="#ga7545bbaec8b5f14ec3919ce6c3400807" title="Implementation of an MPI reduce for an mpi::contiguous_sized_range.">mpi::reduce_range</a> and <a class="el" href="#ga781fd7448a64aa11baa9a8dd3173a23c" title="Implementation of an MPI scatter for an mpi::contiguous_sized_range.">mpi::scatter_range</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -139,10 +146,22 @@ Functions</h2></td></tr>
 <tr class="memitem:ga26c2a2de93ecfb78c235edada3b5f57b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b">mpi::broadcast</a> (T &amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:ga26c2a2de93ecfb78c235edada3b5f57b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI broadcast.  <br /></td></tr>
 <tr class="separator:ga26c2a2de93ecfb78c235edada3b5f57b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga91ae5f78ffc7222e5565b092b5dd2700" id="r_ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R&gt; </td></tr>
+<tr class="memitem:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga91ae5f78ffc7222e5565b092b5dd2700">mpi::broadcast_range</a> (R &amp;&amp;rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
+<tr class="memdesc:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> object.  <br /></td></tr>
+<tr class="separator:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf697a18695e4a5344bbe76e67ae77277" id="r_gaf697a18695e4a5344bbe76e67ae77277"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:gaf697a18695e4a5344bbe76e67ae77277"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gaf697a18695e4a5344bbe76e67ae77277">mpi::gather</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">mpi::communicator</a> c={}, int root=0, bool all=false)</td></tr>
 <tr class="memdesc:gaf697a18695e4a5344bbe76e67ae77277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI gather.  <br /></td></tr>
 <tr class="separator:gaf697a18695e4a5344bbe76e67ae77277"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa880186aea80cf1611a38ba3feeb7301" id="r_gaa880186aea80cf1611a38ba3feeb7301"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; </td></tr>
+<tr class="memitem:gaa880186aea80cf1611a38ba3feeb7301"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gaa880186aea80cf1611a38ba3feeb7301">mpi::gather_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long out_size, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
+<tr class="memdesc:gaa880186aea80cf1611a38ba3feeb7301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>.  <br /></td></tr>
+<tr class="separator:gaa880186aea80cf1611a38ba3feeb7301"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaad92b65d7516582a284fac742c4f430e" id="r_gaad92b65d7516582a284fac742c4f430e"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:gaad92b65d7516582a284fac742c4f430e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gaad92b65d7516582a284fac742c4f430e">mpi::mpi_broadcast</a> (std::array&lt; T, N &gt; &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
+<tr class="memdesc:gaad92b65d7516582a284fac742c4f430e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a std::arr.  <br /></td></tr>
+<tr class="separator:gaad92b65d7516582a284fac742c4f430e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab331d0f1361f69228665b60f3262588a" id="r_gab331d0f1361f69228665b60f3262588a"><td class="memTemplParams" colspan="2">template&lt;typename T1 , typename T2 &gt; </td></tr>
 <tr class="memitem:gab331d0f1361f69228665b60f3262588a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gab331d0f1361f69228665b60f3262588a">mpi::mpi_broadcast</a> (std::pair&lt; T1, T2 &gt; &amp;p, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:gab331d0f1361f69228665b60f3262588a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a std::pair.  <br /></td></tr>
@@ -159,23 +178,34 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="memitem:ga7b441294b27fb668e3876294ba7fdc03"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga7b441294b27fb668e3876294ba7fdc03">mpi::mpi_broadcast</a> (T &amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:ga7b441294b27fb668e3876294ba7fdc03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for types that have a corresponding MPI datatype, i.e. for which a specialization of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been defined.  <br /></td></tr>
 <tr class="separator:ga7b441294b27fb668e3876294ba7fdc03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga45186badcc4923ea5458a5c87b1cf01f" id="r_ga45186badcc4923ea5458a5c87b1cf01f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ga45186badcc4923ea5458a5c87b1cf01f"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga45186badcc4923ea5458a5c87b1cf01f">mpi::mpi_gather</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
-<tr class="memdesc:ga45186badcc4923ea5458a5c87b1cf01f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a std::vector.  <br /></td></tr>
-<tr class="separator:ga45186badcc4923ea5458a5c87b1cf01f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad6941616d17f9c61be3984212a27a047" id="r_gad6941616d17f9c61be3984212a27a047"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad6941616d17f9c61be3984212a27a047">mpi::mpi_gather</a> (std::string const &amp;s, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
+<tr class="memdesc:gad6941616d17f9c61be3984212a27a047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a std::string.  <br /></td></tr>
+<tr class="separator:gad6941616d17f9c61be3984212a27a047"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1c04a9783361b9c6eec689971aed2922" id="r_ga1c04a9783361b9c6eec689971aed2922"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga1c04a9783361b9c6eec689971aed2922"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga1c04a9783361b9c6eec689971aed2922">mpi::mpi_gather</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
+<tr class="memdesc:ga1c04a9783361b9c6eec689971aed2922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a std::vector.  <br /></td></tr>
+<tr class="separator:ga1c04a9783361b9c6eec689971aed2922"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2f4b9c71fd7e8d418c69a25bc1eb267b" id="r_ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga2f4b9c71fd7e8d418c69a25bc1eb267b">mpi::mpi_reduce</a> (std::array&lt; T, N &gt; const &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::array.  <br /></td></tr>
+<tr class="separator:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga596d7bf8804da7049839279e1670fcff" id="r_ga596d7bf8804da7049839279e1670fcff"><td class="memTemplParams" colspan="2">template&lt;typename T1 , typename T2 &gt; </td></tr>
 <tr class="memitem:ga596d7bf8804da7049839279e1670fcff"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga596d7bf8804da7049839279e1670fcff">mpi::mpi_reduce</a> (std::pair&lt; T1, T2 &gt; const &amp;p, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga596d7bf8804da7049839279e1670fcff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::pair.  <br /></td></tr>
 <tr class="separator:ga596d7bf8804da7049839279e1670fcff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga358e88080562398983adeb6bfd584477" id="r_ga358e88080562398983adeb6bfd584477"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ga358e88080562398983adeb6bfd584477"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">regular_t</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga358e88080562398983adeb6bfd584477">mpi::mpi_reduce</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga358e88080562398983adeb6bfd584477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::vector.  <br /></td></tr>
-<tr class="separator:ga358e88080562398983adeb6bfd584477"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6f289495a232fb35118cb9ed26c5ae31" id="r_ga6f289495a232fb35118cb9ed26c5ae31"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga6f289495a232fb35118cb9ed26c5ae31"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga6f289495a232fb35118cb9ed26c5ae31">mpi::mpi_reduce</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga6f289495a232fb35118cb9ed26c5ae31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::vector.  <br /></td></tr>
+<tr class="separator:ga6f289495a232fb35118cb9ed26c5ae31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab133dac60af76a9b16bc0d6983601a1f" id="r_gab133dac60af76a9b16bc0d6983601a1f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; <br />
 requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type</a>&lt;T&gt;)</td></tr>
 <tr class="memitem:gab133dac60af76a9b16bc0d6983601a1f"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gab133dac60af76a9b16bc0d6983601a1f">mpi::mpi_reduce</a> (T const &amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:gab133dac60af76a9b16bc0d6983601a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for types that have a corresponding MPI datatype, i.e. for which a specialization of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been defined.  <br /></td></tr>
 <tr class="separator:gab133dac60af76a9b16bc0d6983601a1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafcfb06d458e048df449859a6a4b54cd7" id="r_gafcfb06d458e048df449859a6a4b54cd7"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:gafcfb06d458e048df449859a6a4b54cd7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gafcfb06d458e048df449859a6a4b54cd7">mpi::mpi_reduce_in_place</a> (std::array&lt; T, N &gt; &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:gafcfb06d458e048df449859a6a4b54cd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for a std::array.  <br /></td></tr>
+<tr class="separator:gafcfb06d458e048df449859a6a4b54cd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae123b365235e205f4a4b992ff11b9722" id="r_gae123b365235e205f4a4b992ff11b9722"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:gae123b365235e205f4a4b992ff11b9722"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gae123b365235e205f4a4b992ff11b9722">mpi::mpi_reduce_in_place</a> (std::vector&lt; T &gt; &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:gae123b365235e205f4a4b992ff11b9722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for a std::vector.  <br /></td></tr>
@@ -185,10 +215,10 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="memitem:ga3f37de03067953c6038ce322e81df7e6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga3f37de03067953c6038ce322e81df7e6">mpi::mpi_reduce_in_place</a> (T &amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga3f37de03067953c6038ce322e81df7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for types that have a corresponding MPI datatype, i.e. for which a specialization of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been defined.  <br /></td></tr>
 <tr class="separator:ga3f37de03067953c6038ce322e81df7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad6813475336c8758f11e666476d57aab" id="r_gad6813475336c8758f11e666476d57aab"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:gad6813475336c8758f11e666476d57aab"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gad6813475336c8758f11e666476d57aab">mpi::mpi_scatter</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
-<tr class="memdesc:gad6813475336c8758f11e666476d57aab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for a std::vector.  <br /></td></tr>
-<tr class="separator:gad6813475336c8758f11e666476d57aab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaaa70951052bcbc3c57354a4d49cbb267" id="r_gaaa70951052bcbc3c57354a4d49cbb267"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:gaaa70951052bcbc3c57354a4d49cbb267"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gaaa70951052bcbc3c57354a4d49cbb267">mpi::mpi_scatter</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
+<tr class="memdesc:gaaa70951052bcbc3c57354a4d49cbb267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for a std::vector.  <br /></td></tr>
+<tr class="separator:gaaa70951052bcbc3c57354a4d49cbb267"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8eaee05122bf70f15de0731b889e3949" id="r_ga8eaee05122bf70f15de0731b889e3949"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ga8eaee05122bf70f15de0731b889e3949"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga8eaee05122bf70f15de0731b889e3949">mpi::reduce</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga8eaee05122bf70f15de0731b889e3949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI reduce.  <br /></td></tr>
@@ -197,10 +227,23 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="memitem:ga78f3e1fa0d66c5e4d4bfa1b12a75365f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga78f3e1fa0d66c5e4d4bfa1b12a75365f">mpi::reduce_in_place</a> (T &amp;x, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga78f3e1fa0d66c5e4d4bfa1b12a75365f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic in-place MPI reduce.  <br /></td></tr>
 <tr class="separator:ga78f3e1fa0d66c5e4d4bfa1b12a75365f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2a00b30a9c1c601f5df8ad48a6c0875a" id="r_ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R&gt; </td></tr>
+<tr class="memitem:ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga2a00b30a9c1c601f5df8ad48a6c0875a">mpi::reduce_in_place_range</a> (R &amp;&amp;rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> object.  <br /></td></tr>
+<tr class="separator:ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7545bbaec8b5f14ec3919ce6c3400807" id="r_ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; </td></tr>
+<tr class="memitem:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga7545bbaec8b5f14ec3919ce6c3400807">mpi::reduce_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>.  <br /></td></tr>
+<tr class="separator:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga129f32374467c9b0f74a822a7e554588" id="r_ga129f32374467c9b0f74a822a7e554588"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ga129f32374467c9b0f74a822a7e554588"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga129f32374467c9b0f74a822a7e554588">mpi::scatter</a> (T &amp;&amp;x, <a class="el" href="classmpi_1_1communicator.html">mpi::communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:ga129f32374467c9b0f74a822a7e554588"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic MPI scatter.  <br /></td></tr>
 <tr class="separator:ga129f32374467c9b0f74a822a7e554588"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga781fd7448a64aa11baa9a8dd3173a23c" id="r_ga781fd7448a64aa11baa9a8dd3173a23c"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; <br />
+requires (std::same_as&lt;std::ranges::range_value_t&lt;R1&gt;, std::ranges::range_value_t&lt;R2&gt;&gt;)</td></tr>
+<tr class="memitem:ga781fd7448a64aa11baa9a8dd3173a23c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga781fd7448a64aa11baa9a8dd3173a23c">mpi::scatter_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long in_size, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, long chunk_size=1)</td></tr>
+<tr class="memdesc:ga781fd7448a64aa11baa9a8dd3173a23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>.  <br /></td></tr>
+<tr class="separator:ga781fd7448a64aa11baa9a8dd3173a23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="gab3c6e0cd093b0848221627ce14e03802" name="gab3c6e0cd093b0848221627ce14e03802"></a>
@@ -422,6 +465,79 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ga91ae5f78ffc7222e5565b092b5dd2700" name="ga91ae5f78ffc7222e5565b092b5dd2700"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga91ae5f78ffc7222e5565b092b5dd2700">&#9670;&#160;</a></span>broadcast_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;contiguous_sized_range R&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::broadcast_range </td>
+          <td>(</td>
+          <td class="paramtype">R &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="ranges_8hpp.html">mpi/ranges.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI broadcast for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> object. </p>
+<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type</a> is true for the value type of the range, then the range is broadcasted using a simple <code>MPI_Bcast</code>. Otherwise, the generic <a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> is called for each element of the range.</p>
+<p>It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the ranges are equal across all processes.</p>
+<p>If the ranges are empty or if <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false or if the communicator size is &lt; 2, it does nothing.</p>
+<dl class="section note"><dt>Note</dt><dd>It is recommended to use the generic <a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> for supported types, e.g. <code>std::vector</code>, <code>std::array</code> or <code>std::string</code>. It is the user's responsibility to ensure that ranges have the correct sizes.</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// create a vector on all ranks</span></div>
+<div class="line"><span class="keyword">auto</span> vec = std::vector&lt;int&gt;(5);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordflow">if</span> (comm.rank() == 0) {</div>
+<div class="line">  <span class="comment">// on rank 0, initialize the vector and broadcast the first 3 elements</span></div>
+<div class="line">  vec = {1, 2, 3, 0, 0};</div>
+<div class="line">  <a class="code hl_function" href="#ga91ae5f78ffc7222e5565b092b5dd2700">mpi::broadcast_range</a>(std::span{vec.data(), 3}, comm);</div>
+<div class="line">} <span class="keywordflow">else</span> {</div>
+<div class="line">  <span class="comment">// on other ranks, broadcast to the last 3 elements of the vector</span></div>
+<div class="line">  <a class="code hl_function" href="#ga91ae5f78ffc7222e5565b092b5dd2700">mpi::broadcast_range</a>(std::span{vec.data() + 2, 3}, comm);</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// output result</span></div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> x : vec) std::cout &lt;&lt; x &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line">std::cout &lt;&lt; std::endl;</div>
+<div class="ttc" id="agroup__coll__comm_html_ga91ae5f78ffc7222e5565b092b5dd2700"><div class="ttname"><a href="#ga91ae5f78ffc7222e5565b092b5dd2700">mpi::broadcast_range</a></div><div class="ttdeci">void broadcast_range(R &amp;&amp;rg, communicator c={}, int root=0)</div><div class="ttdoc">Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.</div><div class="ttdef"><b>Definition</b> <a href="ranges_8hpp_source.html#l00093">ranges.hpp:93</a></div></div>
+</div><!-- fragment --><p>Output (with 4 processes):</p>
+<div class="fragment"><div class="line">1 2 3 0 0</div>
+<div class="line">0 0 1 2 3</div>
+<div class="line">0 0 1 2 3</div>
+<div class="line">0 0 1 2 3</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">R</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rg</td><td>Range to broadcast. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ranges_8hpp_source.html#l00093">93</a> of file <a class="el" href="ranges_8hpp_source.html">ranges.hpp</a>.</p>
+
+</div>
+</div>
 <a id="gaf697a18695e4a5344bbe76e67ae77277" name="gaf697a18695e4a5344bbe76e67ae77277"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaf697a18695e4a5344bbe76e67ae77277">&#9670;&#160;</a></span>gather()</h2>
 
@@ -486,8 +602,145 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="gaa880186aea80cf1611a38ba3feeb7301" name="gaa880186aea80cf1611a38ba3feeb7301"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa880186aea80cf1611a38ba3feeb7301">&#9670;&#160;</a></span>gather_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::gather_range </td>
+          <td>(</td>
+          <td class="paramtype">R1 &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>in_rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">R2 &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>out_rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>out_size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="ranges_8hpp.html">mpi/ranges.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI gather for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>. </p>
+<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type</a> is true for the value type of the input ranges, then the ranges are gathered using a simple <code>MPI_Gatherv</code> or <code>MPI_Allgatherv</code>. Otherwise, each process broadcasts its elements to all other processes which implies that <code>all == true</code> is required in this case.</p>
+<p>It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the input ranges add up to the given size of the output range and that the output ranges have the correct size on receiving processes.</p>
+<p>If the input ranges are all empty, it does nothing. If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false or if the communicator size is &lt; 2, it simply copies the input range to the output range.</p>
+<dl class="section note"><dt>Note</dt><dd>It is recommended to use the generic <a class="el" href="#gaf697a18695e4a5344bbe76e67ae77277" title="Generic MPI gather.">mpi::gather</a> for supported types, e.g. <code>std::vector</code> and <code>std::string</code>. It is the user's responsibility to ensure that the ranges have the correct sizes.</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// create input and output vectors on all ranks</span></div>
+<div class="line"><span class="keyword">auto</span> in_vec  = std::vector&lt;int&gt;{0, 1, 2, 3, 4};</div>
+<div class="line"><span class="keyword">auto</span> out_vec = std::vector&lt;int&gt;(3 * comm.size(), 0);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// gather the middle elements of the input vectors from all ranks on rank 0</span></div>
+<div class="line"><a class="code hl_function" href="#gaa880186aea80cf1611a38ba3feeb7301">mpi::gather_range</a>(std::span{in_vec.data() + 1, 3}, out_vec, 3 * comm.size(), comm);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// output result</span></div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> x : out_vec) std::cout &lt;&lt; x &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line">std::cout &lt;&lt; std::endl;</div>
+<div class="ttc" id="agroup__coll__comm_html_gaa880186aea80cf1611a38ba3feeb7301"><div class="ttname"><a href="#gaa880186aea80cf1611a38ba3feeb7301">mpi::gather_range</a></div><div class="ttdeci">void gather_range(R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long out_size, communicator c={}, int root=0, bool all=false)</div><div class="ttdoc">Implementation of an MPI gather for an mpi::contiguous_sized_range.</div><div class="ttdef"><b>Definition</b> <a href="ranges_8hpp_source.html#l00408">ranges.hpp:408</a></div></div>
+</div><!-- fragment --><p>Output (with 2 processes):</p>
+<div class="fragment"><div class="line">0 0 0 0 0 0 0 0 0 0 0 0</div>
+<div class="line">0 0 0 0 0 0 0 0 0 0 0 0</div>
+<div class="line">0 0 0 0 0 0 0 0 0 0 0 0</div>
+<div class="line">1 2 3 1 2 3 1 2 3 1 2 3</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">R1</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+    <tr><td class="paramname">R2</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_rg</td><td>Range to gather. </td></tr>
+    <tr><td class="paramname">out_rg</td><td>Range to gather into. </td></tr>
+    <tr><td class="paramname">out_size</td><td>Size of the output range on receiving processes (must also be given on non-receiving ranks). </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ranges_8hpp_source.html#l00408">408</a> of file <a class="el" href="ranges_8hpp_source.html">ranges.hpp</a>.</p>
+
+</div>
+</div>
+<a id="gaad92b65d7516582a284fac742c4f430e" name="gaad92b65d7516582a284fac742c4f430e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaad92b65d7516582a284fac742c4f430e">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[1/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , std::size_t N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::mpi_broadcast </td>
+          <td>(</td>
+          <td class="paramtype">std::array&lt; T, N &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>arr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="array_8hpp.html">mpi/array.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI broadcast for a std::arr. </p>
+<p>It simply calls <a class="el" href="#ga91ae5f78ffc7222e5565b092b5dd2700" title="Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.">mpi::broadcast_range</a> with the input array.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Value type of the array. </td></tr>
+    <tr><td class="paramname">N</td><td>Size of the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arr</td><td>std::array to broadcast. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="array_8hpp_source.html#l00051">51</a> of file <a class="el" href="array_8hpp_source.html">array.hpp</a>.</p>
+
+</div>
+</div>
 <a id="gab331d0f1361f69228665b60f3262588a" name="gab331d0f1361f69228665b60f3262588a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab331d0f1361f69228665b60f3262588a">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gab331d0f1361f69228665b60f3262588a">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -537,7 +790,7 @@ template&lt;typename T1 , typename T2 &gt; </div>
 </div>
 </div>
 <a id="gabcb8e2f22f68900179f4edd9ea175eab" name="gabcb8e2f22f68900179f4edd9ea175eab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabcb8e2f22f68900179f4edd9ea175eab">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gabcb8e2f22f68900179f4edd9ea175eab">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -571,8 +824,7 @@ template&lt;typename T1 , typename T2 &gt; </div>
 <p><code>#include &lt;<a class="el" href="string_8hpp.html">mpi/string.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI broadcast for a std::string. </p>
-<p>Simply calls <code>MPI_Bcast</code> for the underlying C-string.</p>
-<p>It throws an exception in case a call to the MPI C library fails.</p>
+<p>It first broadcasts the size of the string from the root process to all other processes, then resizes the string on all non-root processes and calls <a class="el" href="#ga91ae5f78ffc7222e5565b092b5dd2700" title="Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.">mpi::broadcast_range</a> with the (resized) input string.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">s</td><td>std::string to broadcast. </td></tr>
@@ -582,12 +834,12 @@ template&lt;typename T1 , typename T2 &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00045">45</a> of file <a class="el" href="string_8hpp_source.html">string.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00047">47</a> of file <a class="el" href="string_8hpp_source.html">string.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ga452e85429efcccd36141a49b2c7012cb" name="ga452e85429efcccd36141a49b2c7012cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga452e85429efcccd36141a49b2c7012cb">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga452e85429efcccd36141a49b2c7012cb">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -615,9 +867,7 @@ template&lt;typename T &gt; </div>
 <p><code>#include &lt;<a class="el" href="vector_8hpp.html">mpi/vector.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI broadcast for a std::vector. </p>
-<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is broadcasted using a simple <code>MPI_Bcast</code>. Otherwise, the generic <a class="el" href="#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> is called for each element of the vector.</p>
-<p>On non-root processes, the vector is always resized to match the size of the vector on the root process. If the root process is empty, no broadcast is performed.</p>
-<p>It throws an exception in case a call to the MPI C library fails.</p>
+<p>It first broadcasts the size of the vector from the root process to all other processes, then resizes the vector on all non-root processes and calls <a class="el" href="#ga91ae5f78ffc7222e5565b092b5dd2700" title="Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.">mpi::broadcast_range</a> with the (resized) input vector.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -633,12 +883,12 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00080">80</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00051">51</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ga7b441294b27fb668e3876294ba7fdc03" name="ga7b441294b27fb668e3876294ba7fdc03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7b441294b27fb668e3876294ba7fdc03">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b441294b27fb668e3876294ba7fdc03">&#9670;&#160;</a></span>mpi_broadcast() <span class="overload">[5/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -687,8 +937,64 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 
 </div>
 </div>
-<a id="ga45186badcc4923ea5458a5c87b1cf01f" name="ga45186badcc4923ea5458a5c87b1cf01f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga45186badcc4923ea5458a5c87b1cf01f">&#9670;&#160;</a></span>mpi_gather()</h2>
+<a id="gad6941616d17f9c61be3984212a27a047" name="gad6941616d17f9c61be3984212a27a047"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad6941616d17f9c61be3984212a27a047">&#9670;&#160;</a></span>mpi_gather() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mpi::mpi_gather </td>
+          <td>(</td>
+          <td class="paramtype">std::string const &amp;</td>          <td class="paramname"><span class="paramname"><em>s</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="string_8hpp.html">mpi/string.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI gather for a std::string. </p>
+<p>It first all-reduces the sizes of the input string from all processes and then calls <a class="el" href="#gaa880186aea80cf1611a38ba3feeb7301" title="Implementation of an MPI gather for an mpi::contiguous_sized_range.">mpi::gather_range</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>std::string to gather. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>std::string containing the result of the gather operation. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="string_8hpp_source.html#l00065">65</a> of file <a class="el" href="string_8hpp_source.html">string.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ga1c04a9783361b9c6eec689971aed2922" name="ga1c04a9783361b9c6eec689971aed2922"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1c04a9783361b9c6eec689971aed2922">&#9670;&#160;</a></span>mpi_gather() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -696,7 +1002,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; T &gt; mpi::mpi_gather </td>
+          <td class="memname">auto mpi::mpi_gather </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; T &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>, </td>
         </tr>
@@ -721,8 +1027,7 @@ template&lt;typename T &gt; </div>
 <p><code>#include &lt;<a class="el" href="vector_8hpp.html">mpi/vector.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI gather for a std::vector. </p>
-<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is gathered using a simple <code>MPI_Gatherv</code> or <code>MPI_Allgatherv</code>. Otherwise, each process broadcasts its elements to all other processes which implies that <code>all == true</code> is required in this case.</p>
-<p>It throws an exception in case a call to the MPI C library fails.</p>
+<p>It first all-reduces the sizes of the input vectors from all processes and then calls <a class="el" href="#gaa880186aea80cf1611a38ba3feeb7301" title="Implementation of an MPI gather for an mpi::contiguous_sized_range.">mpi::gather_range</a>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -734,18 +1039,81 @@ template&lt;typename T &gt; </div>
     <tr><td class="paramname">v</td><td>std::vector to gather. </td></tr>
     <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
     <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
-    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of the gather operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00224">224</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00126">126</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ga2f4b9c71fd7e8d418c69a25bc1eb267b" name="ga2f4b9c71fd7e8d418c69a25bc1eb267b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2f4b9c71fd7e8d418c69a25bc1eb267b">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , std::size_t N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto mpi::mpi_reduce </td>
+          <td>(</td>
+          <td class="paramtype">std::array&lt; T, N &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>arr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MPI_Op</td>          <td class="paramname"><span class="paramname"><em>op</em></span><span class="paramdefsep"> = </span><span class="paramdefval">MPI_SUM</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="array_8hpp.html">mpi/array.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI reduce for a std::array. </p>
+<p>It simply calls <a class="el" href="#ga7545bbaec8b5f14ec3919ce6c3400807" title="Implementation of an MPI reduce for an mpi::contiguous_sized_range.">mpi::reduce_range</a> with the given input array and an empty array of the same size.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Value type of the array. </td></tr>
+    <tr><td class="paramname">N</td><td>Size of the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arr</td><td>std::array to reduce. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
+    <tr><td class="paramname">op</td><td><code>MPI_Op</code> used in the reduction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>std::array containing the result of each individual reduction. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="array_8hpp_source.html#l00086">86</a> of file <a class="el" href="array_8hpp_source.html">array.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ga596d7bf8804da7049839279e1670fcff" name="ga596d7bf8804da7049839279e1670fcff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga596d7bf8804da7049839279e1670fcff">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga596d7bf8804da7049839279e1670fcff">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -807,8 +1175,8 @@ template&lt;typename T1 , typename T2 &gt; </div>
 
 </div>
 </div>
-<a id="ga358e88080562398983adeb6bfd584477" name="ga358e88080562398983adeb6bfd584477"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga358e88080562398983adeb6bfd584477">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[2/3]</span></h2>
+<a id="ga6f289495a232fb35118cb9ed26c5ae31" name="ga6f289495a232fb35118cb9ed26c5ae31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f289495a232fb35118cb9ed26c5ae31">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -816,7 +1184,7 @@ template&lt;typename T1 , typename T2 &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">regular_t</a>&lt; T &gt; &gt; mpi::mpi_reduce </td>
+          <td class="memname">auto mpi::mpi_reduce </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; T &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>, </td>
         </tr>
@@ -846,8 +1214,7 @@ template&lt;typename T &gt; </div>
 <p><code>#include &lt;<a class="el" href="vector_8hpp.html">mpi/vector.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI reduce for a std::vector. </p>
-<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code> (in this case, <a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8" title="Type trait to get the regular type of a type.">mpi::regular_t&lt;T&gt;</a> has to be the same as T). Otherwise, the generic <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a> is called for each element of the vector.</p>
-<p>It throws an exception if the vectors are not of the same size or if an MPI call fails. If the vectors are empty, it does nothing.</p>
+<p>It simply calls <a class="el" href="#ga7545bbaec8b5f14ec3919ce6c3400807" title="Implementation of an MPI reduce for an mpi::contiguous_sized_range.">mpi::reduce_range</a> with the given input vector and an empty vector of the same size.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -866,12 +1233,12 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of each individual reduction. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00142">142</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00088">88</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
 <a id="gab133dac60af76a9b16bc0d6983601a1f" name="gab133dac60af76a9b16bc0d6983601a1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab133dac60af76a9b16bc0d6983601a1f">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gab133dac60af76a9b16bc0d6983601a1f">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -933,8 +1300,70 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 
 </div>
 </div>
+<a id="gafcfb06d458e048df449859a6a4b54cd7" name="gafcfb06d458e048df449859a6a4b54cd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafcfb06d458e048df449859a6a4b54cd7">&#9670;&#160;</a></span>mpi_reduce_in_place() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , std::size_t N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::mpi_reduce_in_place </td>
+          <td>(</td>
+          <td class="paramtype">std::array&lt; T, N &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>arr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MPI_Op</td>          <td class="paramname"><span class="paramname"><em>op</em></span><span class="paramdefsep"> = </span><span class="paramdefval">MPI_SUM</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="array_8hpp.html">mpi/array.hpp</a>&gt;</code></p>
+
+<p>Implementation of an in-place MPI reduce for a std::array. </p>
+<p>It simply calls <a class="el" href="#ga2a00b30a9c1c601f5df8ad48a6c0875a" title="Implementation of an in-place MPI reduce for an mpi::contiguous_sized_range object.">mpi::reduce_in_place_range</a> with the given input array.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Value type of the array. </td></tr>
+    <tr><td class="paramname">N</td><td>Size of the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arr</td><td>std::array to reduce. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
+    <tr><td class="paramname">op</td><td><code>MPI_Op</code> used in the reduction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="array_8hpp_source.html#l00067">67</a> of file <a class="el" href="array_8hpp_source.html">array.hpp</a>.</p>
+
+</div>
+</div>
 <a id="gae123b365235e205f4a4b992ff11b9722" name="gae123b365235e205f4a4b992ff11b9722"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae123b365235e205f4a4b992ff11b9722">&#9670;&#160;</a></span>mpi_reduce_in_place() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gae123b365235e205f4a4b992ff11b9722">&#9670;&#160;</a></span>mpi_reduce_in_place() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -972,8 +1401,7 @@ template&lt;typename T &gt; </div>
 <p><code>#include &lt;<a class="el" href="vector_8hpp.html">mpi/vector.hpp</a>&gt;</code></p>
 
 <p>Implementation of an in-place MPI reduce for a std::vector. </p>
-<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code>. Otherwise, the specialized <code>mpi_reduce_in_place</code> is called for each element of the vector.</p>
-<p>It throws an exception if the vectors are not of the same size or if an MPI call fails. If the vectors are empty, it does nothing.</p>
+<p>It simply calls <a class="el" href="#ga2a00b30a9c1c601f5df8ad48a6c0875a" title="Implementation of an in-place MPI reduce for an mpi::contiguous_sized_range object.">mpi::reduce_in_place_range</a> with the given input vector.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -991,12 +1419,12 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00107">107</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00070">70</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
 <a id="ga3f37de03067953c6038ce322e81df7e6" name="ga3f37de03067953c6038ce322e81df7e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3f37de03067953c6038ce322e81df7e6">&#9670;&#160;</a></span>mpi_reduce_in_place() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3f37de03067953c6038ce322e81df7e6">&#9670;&#160;</a></span>mpi_reduce_in_place() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1057,8 +1485,8 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 
 </div>
 </div>
-<a id="gad6813475336c8758f11e666476d57aab" name="gad6813475336c8758f11e666476d57aab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad6813475336c8758f11e666476d57aab">&#9670;&#160;</a></span>mpi_scatter()</h2>
+<a id="gaaa70951052bcbc3c57354a4d49cbb267" name="gaaa70951052bcbc3c57354a4d49cbb267"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaaa70951052bcbc3c57354a4d49cbb267">&#9670;&#160;</a></span>mpi_scatter()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1066,7 +1494,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; T &gt; mpi::mpi_scatter </td>
+          <td class="memname">auto mpi::mpi_scatter </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; T &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>, </td>
         </tr>
@@ -1086,8 +1514,7 @@ template&lt;typename T &gt; </div>
 <p><code>#include &lt;<a class="el" href="vector_8hpp.html">mpi/vector.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI scatter for a std::vector. </p>
-<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type&lt;T&gt;</a> is true then the vector is scattered as evenly as possible across the processes in the communicator using a simple <code>MPI_Scatterv</code>.</p>
-<p>It throws an exception in case a call to the MPI C library fails.</p>
+<p>It first broadcasts the size of the vector from the root process to all other processes and then calls <a class="el" href="#ga781fd7448a64aa11baa9a8dd3173a23c" title="Implementation of an MPI scatter for an mpi::contiguous_sized_range.">mpi::scatter_range</a>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Value type of the vector. </td></tr>
@@ -1104,7 +1531,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::vector containing the result of the scatter operation. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00179">179</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vector_8hpp_source.html#l00106">106</a> of file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 
 </div>
 </div>
@@ -1247,6 +1674,172 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ga2a00b30a9c1c601f5df8ad48a6c0875a" name="ga2a00b30a9c1c601f5df8ad48a6c0875a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2a00b30a9c1c601f5df8ad48a6c0875a">&#9670;&#160;</a></span>reduce_in_place_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;contiguous_sized_range R&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::reduce_in_place_range </td>
+          <td>(</td>
+          <td class="paramtype">R &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MPI_Op</td>          <td class="paramname"><span class="paramname"><em>op</em></span><span class="paramdefsep"> = </span><span class="paramdefval">MPI_SUM</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="ranges_8hpp.html">mpi/ranges.hpp</a>&gt;</code></p>
+
+<p>Implementation of an in-place MPI reduce for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> object. </p>
+<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type</a> is true for the value type of the range, then the range is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code> with <code>MPI_IN_PLACE</code>. Otherwise, the specialized <code>mpi_reduce_in_place</code> is called for each element in the range.</p>
+<p>It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the ranges are equal across all processes.</p>
+<p>If the ranges are empty or if <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false or if the communicator size is &lt; 2, it does nothing.</p>
+<dl class="section note"><dt>Note</dt><dd>It is recommended to use the generic <a class="el" href="#ga78f3e1fa0d66c5e4d4bfa1b12a75365f" title="Generic in-place MPI reduce.">mpi::reduce_in_place</a> and <a class="el" href="#ga85d54c696e3628d4c4cb00144b21af77" title="Generic MPI all-reduce in-place.">mpi::all_reduce_in_place</a> for supported types, e.g. <code>std::vector</code> or <code>std::array</code>. It is the user's responsibility to ensure that ranges have the correct sizes.</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// create a vector on all ranks</span></div>
+<div class="line"><span class="keyword">auto</span> vec = std::vector&lt;int&gt;{0, 1, 2, 3, 4};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// in-place reduce the middle elements only on rank 0</span></div>
+<div class="line"><a class="code hl_function" href="#ga2a00b30a9c1c601f5df8ad48a6c0875a">mpi::reduce_in_place_range</a>(std::span{vec.data() + 1, 3}, comm);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// output result</span></div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> x : vec) std::cout &lt;&lt; x &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line">std::cout &lt;&lt; std::endl;</div>
+<div class="ttc" id="agroup__coll__comm_html_ga2a00b30a9c1c601f5df8ad48a6c0875a"><div class="ttname"><a href="#ga2a00b30a9c1c601f5df8ad48a6c0875a">mpi::reduce_in_place_range</a></div><div class="ttdeci">void reduce_in_place_range(R &amp;&amp;rg, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</div><div class="ttdoc">Implementation of an in-place MPI reduce for an mpi::contiguous_sized_range object.</div><div class="ttdef"><b>Definition</b> <a href="ranges_8hpp_source.html#l00154">ranges.hpp:154</a></div></div>
+</div><!-- fragment --><p>Output (with 4 processes):</p>
+<div class="fragment"><div class="line">0 1 2 3 4</div>
+<div class="line">0 1 2 3 4</div>
+<div class="line">0 1 2 3 4</div>
+<div class="line">0 4 8 12 4</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">R</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rg</td><td>Range to reduce. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
+    <tr><td class="paramname">op</td><td><code>MPI_Op</code> used in the reduction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ranges_8hpp_source.html#l00154">154</a> of file <a class="el" href="ranges_8hpp_source.html">ranges.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ga7545bbaec8b5f14ec3919ce6c3400807" name="ga7545bbaec8b5f14ec3919ce6c3400807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7545bbaec8b5f14ec3919ce6c3400807">&#9670;&#160;</a></span>reduce_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::reduce_range </td>
+          <td>(</td>
+          <td class="paramtype">R1 &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>in_rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">R2 &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>out_rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MPI_Op</td>          <td class="paramname"><span class="paramname"><em>op</em></span><span class="paramdefsep"> = </span><span class="paramdefval">MPI_SUM</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="ranges_8hpp.html">mpi/ranges.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI reduce for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>. </p>
+<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type</a> is true for the value type of the range, then the range is reduced using a simple <code>MPI_Reduce</code> or <code>MPI_Allreduce</code>. Otherwise, the specialized <code>mpi_reduce</code> is called for each element in the range.</p>
+<p>It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the input ranges are equal across all processes and that they are equal to the size of the output range on receiving processes.</p>
+<p>If the input ranges are empty, it does nothing. If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false or if the communicator size is &lt; 2, it simply copies the input range to the output range.</p>
+<dl class="section note"><dt>Note</dt><dd>It is recommended to use the generic <a class="el" href="#ga8eaee05122bf70f15de0731b889e3949" title="Generic MPI reduce.">mpi::reduce</a> and <a class="el" href="#gabda7358ee96ff22cfdc37b73630406ca" title="Generic MPI all-reduce.">mpi::all_reduce</a> for supported types, e.g. <code>std::vector</code> or <code>std::array</code>. It is the user's responsibility to ensure that ranges have the correct sizes.</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// create input and output vectors on all ranks</span></div>
+<div class="line"><span class="keyword">auto</span> in_vec = std::vector&lt;int&gt;{0, 1, 2, 3, 4};</div>
+<div class="line"><span class="keyword">auto</span> out_vec = std::vector&lt;int&gt;(in_vec.size(), 0);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// allreduce the middle elements of the input vector to the last elements of the output vector</span></div>
+<div class="line"><a class="code hl_function" href="#ga7545bbaec8b5f14ec3919ce6c3400807">mpi::reduce_range</a>(std::span{in_vec.data() + 1, 3}, std::span{out_vec.data() + 2, 3}, comm, 0, <span class="keyword">true</span>);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// output result</span></div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> x : out_vec) std::cout &lt;&lt; x &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line">std::cout &lt;&lt; std::endl;</div>
+<div class="ttc" id="agroup__coll__comm_html_ga7545bbaec8b5f14ec3919ce6c3400807"><div class="ttname"><a href="#ga7545bbaec8b5f14ec3919ce6c3400807">mpi::reduce_range</a></div><div class="ttdeci">void reduce_range(R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</div><div class="ttdoc">Implementation of an MPI reduce for an mpi::contiguous_sized_range.</div><div class="ttdef"><b>Definition</b> <a href="ranges_8hpp_source.html#l00224">ranges.hpp:224</a></div></div>
+</div><!-- fragment --><p>Output (with 4 processes):</p>
+<div class="fragment"><div class="line">0 0 4 8 12</div>
+<div class="line">0 0 4 8 12</div>
+<div class="line">0 0 4 8 12</div>
+<div class="line">0 0 4 8 12</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">R1</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+    <tr><td class="paramname">R2</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_rg</td><td>Range to reduce. </td></tr>
+    <tr><td class="paramname">out_rg</td><td>Range to reduce into. </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
+    <tr><td class="paramname">op</td><td><code>MPI_Op</code> used in the reduction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ranges_8hpp_source.html#l00224">224</a> of file <a class="el" href="ranges_8hpp_source.html">ranges.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ga129f32374467c9b0f74a822a7e554588" name="ga129f32374467c9b0f74a822a7e554588"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga129f32374467c9b0f74a822a7e554588">&#9670;&#160;</a></span>scatter()</h2>
 
@@ -1302,6 +1895,95 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The result of the specialized <code>mpi_scatter</code> call. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="generic__communication_8hpp_source.html#l00142">142</a> of file <a class="el" href="generic__communication_8hpp_source.html">generic_communication.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ga781fd7448a64aa11baa9a8dd3173a23c" name="ga781fd7448a64aa11baa9a8dd3173a23c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga781fd7448a64aa11baa9a8dd3173a23c">&#9670;&#160;</a></span>scatter_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; <br />
+requires (std::same_as&lt;std::ranges::range_value_t&lt;R1&gt;, std::ranges::range_value_t&lt;R2&gt;&gt;)</div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void mpi::scatter_range </td>
+          <td>(</td>
+          <td class="paramtype">R1 &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>in_rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">R2 &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>out_rg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>in_size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>chunk_size</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;<a class="el" href="ranges_8hpp.html">mpi/ranges.hpp</a>&gt;</code></p>
+
+<p>Implementation of an MPI scatter for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>. </p>
+<p>If <a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type</a> is true for the value type of the range, then the range is scattered as evenly as possible across the processes in the communicator using a simple <code>MPI_Scatterv</code>. Otherwise an exception is thrown.</p>
+<p>The user can specify a chunk size which is used to divide the input range into chunks of the specified size. The number of chunks are then distributed evenly across the processes in the communicator. The size of the input range is required to be a multiple of the given chunk size, otherwise an exception is thrown.</p>
+<p>It throws an exception in case a call to the MPI C library fails and it expects that the output ranges have the correct size and that they add up to the size of the input range on the root process.</p>
+<p>If the input range is empty on root, it does nothing. If <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a> is false or if the communicator size is &lt; 2, it simply copies the input range to the output range.</p>
+<dl class="section note"><dt>Note</dt><dd>It is recommended to use the generic <a class="el" href="#ga129f32374467c9b0f74a822a7e554588" title="Generic MPI scatter.">mpi::scatter</a> for supported types, e.g. <code>std::vector</code>. It is the user's responsibility to ensure that the ranges have the correct sizes (<a class="el" href="group__utilities.html#ga6c4a796ead2a7fe817b93239da1f7663" title="Get the length of the ith subrange after splitting the integer range [0, end) as evenly as possible a...">mpi::chunk_length</a> can be useful to do that).</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// create input and output vectors on all ranks</span></div>
+<div class="line"><span class="keyword">auto</span> in_vec = std::vector&lt;int&gt;{};</div>
+<div class="line"><span class="keywordflow">if</span> (comm.rank() == 0) in_vec = {0, 1, 2, 3, 4, 5, 6, 7};</div>
+<div class="line"><span class="keyword">auto</span> out_vec = std::vector&lt;int&gt;(<a class="code hl_function" href="group__utilities.html#ga6c4a796ead2a7fe817b93239da1f7663">mpi::chunk_length</a>(5, comm.size(), comm.rank()), 0);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// scatter the middle elements of the input vector from rank 0 to all ranks</span></div>
+<div class="line"><a class="code hl_function" href="#ga781fd7448a64aa11baa9a8dd3173a23c">mpi::scatter_range</a>(std::span{in_vec.data() + 1, 5}, out_vec, 5, comm);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// output result</span></div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> x : out_vec) std::cout &lt;&lt; x &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line">std::cout &lt;&lt; std::endl;</div>
+<div class="ttc" id="agroup__coll__comm_html_ga781fd7448a64aa11baa9a8dd3173a23c"><div class="ttname"><a href="#ga781fd7448a64aa11baa9a8dd3173a23c">mpi::scatter_range</a></div><div class="ttdeci">void scatter_range(R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long in_size, communicator c={}, int root=0, long chunk_size=1)</div><div class="ttdoc">Implementation of an MPI scatter for an mpi::contiguous_sized_range.</div><div class="ttdef"><b>Definition</b> <a href="ranges_8hpp_source.html#l00314">ranges.hpp:314</a></div></div>
+<div class="ttc" id="agroup__utilities_html_ga6c4a796ead2a7fe817b93239da1f7663"><div class="ttname"><a href="group__utilities.html#ga6c4a796ead2a7fe817b93239da1f7663">mpi::chunk_length</a></div><div class="ttdeci">long chunk_length(long end, int nranges, int i, long min_size=1)</div><div class="ttdoc">Get the length of the ith subrange after splitting the integer range [0, end) as evenly as possible a...</div><div class="ttdef"><b>Definition</b> <a href="chunk_8hpp_source.html#l00050">chunk.hpp:50</a></div></div>
+</div><!-- fragment --><p>Output (with 2 processes):</p>
+<div class="fragment"><div class="line">4 5</div>
+<div class="line">1 2 3</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">R1</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+    <tr><td class="paramname">R2</td><td><a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_rg</td><td>Range to scatter. </td></tr>
+    <tr><td class="paramname">out_rg</td><td>Range to scatter into. </td></tr>
+    <tr><td class="paramname">in_size</td><td>Size of the input range on root (must also be given on non-root ranks). </td></tr>
+    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
+    <tr><td class="paramname">chunk_size</td><td>Size of the chunks to scatter. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ranges_8hpp_source.html#l00314">314</a> of file <a class="el" href="ranges_8hpp_source.html">ranges.hpp</a>.</p>
 
 </div>
 </div>

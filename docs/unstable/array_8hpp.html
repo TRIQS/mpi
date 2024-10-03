@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TRIQS/mpi: mpi/vector.hpp File Reference</title>
+<title>TRIQS/mpi: mpi/array.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -82,7 +82,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('vector_8hpp.html',''); initResizable(true); });
+$(function(){initNavTree('array_8hpp.html',''); initResizable(true); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -110,51 +110,43 @@ $(function(){initNavTree('vector_8hpp.html',''); initResizable(true); });
 <div class="header">
   <div class="summary">
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">vector.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">array.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="communicator_8hpp_source.html">./communicator.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="generic__communication_8hpp_source.html">./generic_communication.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ranges_8hpp_source.html">./ranges.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="utils_8hpp_source.html">./utils.hpp</a>&quot;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
-<code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
 </div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides an MPI broadcast, reduce, scatter and gather for std::vector. </p>
 
-<p class="definition">Definition in file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
+<p class="definition">Definition in file <a class="el" href="array_8hpp_source.html">array.hpp</a>.</p>
 </div>
-<p><a href="vector_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="array_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga452e85429efcccd36141a49b2c7012cb" id="r_ga452e85429efcccd36141a49b2c7012cb"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ga452e85429efcccd36141a49b2c7012cb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb">mpi::mpi_broadcast</a> (std::vector&lt; T &gt; &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
-<tr class="memdesc:ga452e85429efcccd36141a49b2c7012cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a std::vector.  <br /></td></tr>
-<tr class="separator:ga452e85429efcccd36141a49b2c7012cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1c04a9783361b9c6eec689971aed2922" id="r_ga1c04a9783361b9c6eec689971aed2922"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ga1c04a9783361b9c6eec689971aed2922"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga1c04a9783361b9c6eec689971aed2922">mpi::mpi_gather</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
-<tr class="memdesc:ga1c04a9783361b9c6eec689971aed2922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a std::vector.  <br /></td></tr>
-<tr class="separator:ga1c04a9783361b9c6eec689971aed2922"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6f289495a232fb35118cb9ed26c5ae31" id="r_ga6f289495a232fb35118cb9ed26c5ae31"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ga6f289495a232fb35118cb9ed26c5ae31"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga6f289495a232fb35118cb9ed26c5ae31">mpi::mpi_reduce</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga6f289495a232fb35118cb9ed26c5ae31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::vector.  <br /></td></tr>
-<tr class="separator:ga6f289495a232fb35118cb9ed26c5ae31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae123b365235e205f4a4b992ff11b9722" id="r_gae123b365235e205f4a4b992ff11b9722"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:gae123b365235e205f4a4b992ff11b9722"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gae123b365235e205f4a4b992ff11b9722">mpi::mpi_reduce_in_place</a> (std::vector&lt; T &gt; &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:gae123b365235e205f4a4b992ff11b9722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for a std::vector.  <br /></td></tr>
-<tr class="separator:gae123b365235e205f4a4b992ff11b9722"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaa70951052bcbc3c57354a4d49cbb267" id="r_gaaa70951052bcbc3c57354a4d49cbb267"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:gaaa70951052bcbc3c57354a4d49cbb267"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gaaa70951052bcbc3c57354a4d49cbb267">mpi::mpi_scatter</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
-<tr class="memdesc:gaaa70951052bcbc3c57354a4d49cbb267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for a std::vector.  <br /></td></tr>
-<tr class="separator:gaaa70951052bcbc3c57354a4d49cbb267"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaad92b65d7516582a284fac742c4f430e" id="r_gaad92b65d7516582a284fac742c4f430e"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:gaad92b65d7516582a284fac742c4f430e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gaad92b65d7516582a284fac742c4f430e">mpi::mpi_broadcast</a> (std::array&lt; T, N &gt; &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
+<tr class="memdesc:gaad92b65d7516582a284fac742c4f430e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a std::arr.  <br /></td></tr>
+<tr class="separator:gaad92b65d7516582a284fac742c4f430e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2f4b9c71fd7e8d418c69a25bc1eb267b" id="r_ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga2f4b9c71fd7e8d418c69a25bc1eb267b">mpi::mpi_reduce</a> (std::array&lt; T, N &gt; const &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::array.  <br /></td></tr>
+<tr class="separator:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafcfb06d458e048df449859a6a4b54cd7" id="r_gafcfb06d458e048df449859a6a4b54cd7"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:gafcfb06d458e048df449859a6a4b54cd7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gafcfb06d458e048df449859a6a4b54cd7">mpi::mpi_reduce_in_place</a> (std::array&lt; T, N &gt; &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:gafcfb06d458e048df449859a6a4b54cd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for a std::array.  <br /></td></tr>
+<tr class="separator:gafcfb06d458e048df449859a6a4b54cd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_671877b97d006ed14109ce92ec0cdea9.html">mpi</a></li><li class="navelem"><a class="el" href="vector_8hpp.html">vector.hpp</a></li>
+    <li class="navelem"><a class="el" href="dir_671877b97d006ed14109ce92ec0cdea9.html">mpi</a></li><li class="navelem"><a class="el" href="array_8hpp.html">array.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>

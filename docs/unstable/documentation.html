@@ -147,6 +147,7 @@ MPI essentials</h2>
 <li>The <a class="el" href="structmpi_1_1environment.html" title="RAII class to initialize and finalize MPI.">mpi::environment</a> class is used to initialize and finialize the MPI execution environment. It calls <code>MPI_Init</code> in its constructor and <code>MPI_Finalize</code> in its destructor. There should be at most one instance in every program and it is usually created at the very beginning of the <code>main</code> function.</li>
 <li>The <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a> class is a simple wrapper around an <code>MPI_Comm</code> object. Besides storing the <code>MPI_Comm</code> object, it also provides some convient functions for getting the size of the communicator, the rank of the current process or for splitting an existing communicator.</li>
 </ul>
+<p>It further contains the convenient function <a class="el" href="group__mpi__essentials.html#gaee54f343fdd8f1712ae521bd8ee69dfc" title="Check if MPI has been initialized.">mpi::is_initialized</a> and the static boolean <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a>.</p>
 <h2><a class="anchor" id="autotoc_md14"></a>
 MPI datatypes and operations</h2>
 <p><a class="el" href="group__mpi__types__ops.html">MPI datatypes and operations</a> map various C++ datatypes to MPI datatypes and help the user with registering their own datatypes to be used in MPI communications. Furthermore, it offers tools to simplify the creation of custom MPI operations usually required in <code>MPI_Reduce</code> or <code>MPI_Accumulate</code> functions.</p>
@@ -154,7 +155,6 @@ MPI datatypes and operations</h2>
 Collective MPI communication</h2>
 <p>The following generic collective communications are defined in <a class="el" href="group__coll__comm.html">Collective MPI communication</a>:</p>
 <ul>
-<li><a class="el" href="group__coll__comm.html#gab3c6e0cd093b0848221627ce14e03802">all_equal</a></li>
 <li><a class="el" href="group__coll__comm.html#gafae74e49ad6ee44f66cf1211ba8cf54e">all_gather</a></li>
 <li><a class="el" href="group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca">all_reduce</a></li>
 <li><a class="el" href="group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77">all_reduce_in_place</a></li>
@@ -169,26 +169,27 @@ Collective MPI communication</h2>
 <div class="ttc" id="agroup__coll__comm_html_ga26c2a2de93ecfb78c235edada3b5f57b"><div class="ttname"><a href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b">mpi::broadcast</a></div><div class="ttdeci">void broadcast(T &amp;x, communicator c={}, int root=0)</div><div class="ttdoc">Generic MPI broadcast.</div><div class="ttdef"><b>Definition</b> <a href="generic__communication_8hpp_source.html#l00076">generic_communication.hpp:76</a></div></div>
 </div><!-- fragment --><p>Compare this with the call to the C library:</p>
 <div class="fragment"><div class="line">MPI_Bcast(vec.data(), <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(vec.size()), MPI_DOUBLE, 0, MPI_COMM_WORLD);</div>
-</div><!-- fragment --><p>Under the hood, the generic <a class="el" href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> implementation calls the specialized <a class="el" href="group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb">mpi::mpi_broadcast(std::vector&lt; T &gt;&amp;, mpi::communicator, int)</a>. The other generic functions are implement in the same way. See the "Functions" section in <a class="el" href="group__coll__comm.html">Collective MPI communication</a> to check which datatypes are supported out of the box.</p>
+</div><!-- fragment --><p>Under the hood, the generic <a class="el" href="group__coll__comm.html#ga26c2a2de93ecfb78c235edada3b5f57b" title="Generic MPI broadcast.">mpi::broadcast</a> implementation calls the specialized <a class="el" href="group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb">mpi::mpi_broadcast(std::vector&lt; T &gt;&amp;, mpi::communicator, int)</a>. The other generic functions are implemented in the same way. See the "Functions" section in <a class="el" href="group__coll__comm.html">Collective MPI communication</a> to check which datatypes are supported out of the box.</p>
 <p>In case your datatype is not supported, you are free to provide your own specialization.</p>
+<p>Furthermore, there are several functions to simplify communicating generic, contiguous ranges:</p><ul>
+<li><a class="el" href="group__coll__comm.html#ga91ae5f78ffc7222e5565b092b5dd2700" title="Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.">mpi::broadcast_range</a>,</li>
+<li><a class="el" href="group__coll__comm.html#gaa880186aea80cf1611a38ba3feeb7301" title="Implementation of an MPI gather for an mpi::contiguous_sized_range.">mpi::gather_range</a>,</li>
+<li><a class="el" href="group__coll__comm.html#ga2a00b30a9c1c601f5df8ad48a6c0875a" title="Implementation of an in-place MPI reduce for an mpi::contiguous_sized_range object.">mpi::reduce_in_place_range</a>,</li>
+<li><a class="el" href="group__coll__comm.html#ga7545bbaec8b5f14ec3919ce6c3400807" title="Implementation of an MPI reduce for an mpi::contiguous_sized_range.">mpi::reduce_range</a> and</li>
+<li><a class="el" href="group__coll__comm.html#ga781fd7448a64aa11baa9a8dd3173a23c" title="Implementation of an MPI scatter for an mpi::contiguous_sized_range.">mpi::scatter_range</a>.</li>
+</ul>
 <h2><a class="anchor" id="autotoc_md16"></a>
 Lazy MPI communication</h2>
 <p><a class="el" href="group__mpi__lazy.html">Lazy MPI communication</a> can be used to provied collective MPI communication for lazy expression types. Most users probably won't need to use this functionality directly.</p>
-<p>We refer the interested reader to <a href="https://github.com/TRIQS/nda/blob/unstable/c%2B%2B/nda/mpi/reduce.hpp">TRIQS/nda</a> for more details.</p>
+<p>We refer the interested reader to <a href="https://triqs.github.io/nda/latest/group__av__mpi.html">TRIQS/nda</a> for more details.</p>
 <h2><a class="anchor" id="autotoc_md17"></a>
 Event handling</h2>
 <p><a class="el" href="group__event__handling.html">Event handling</a> provides the <a class="el" href="classmpi_1_1monitor.html" title="Constructed on top of an MPI communicator, this class helps to monitor and communicate events across ...">mpi::monitor</a> class which can be used to communicate and handle events across multiple processes.</p>
 <p><a class="el" href="ex2.html">Example 2: Use monitor to communicate errors</a> shows a simple use case.</p>
 <h2><a class="anchor" id="autotoc_md18"></a>
 Utilities</h2>
-<p><a class="el" href="group__utilities.html">Utilities</a> is a collection of various other tools which do not fit into any other category above.</p>
-<p>The following utilities are defined in <b>mpi</b>:</p>
-<ul>
-<li><a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">regular_t</a></li>
-<li><a class="el" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a></li>
-<li><a class="el" href="group__utilities.html#gae690fbc2d13c3ef957dad296412f4df4">chunk</a></li>
-<li><a class="el" href="group__utilities.html#ga72cff436e2418ebdf5c905f1bb489d95">chunk_length</a> </li>
-</ul>
+<p><a class="el" href="group__utilities.html">Utilities</a> is a collection of various other tools in <b>mpi</b> which do not fit into any other category above.</p>
+<p>For users, the most useful of them is probably <a class="el" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec" title="Check the success of an MPI call.">mpi::check_mpi_call</a>. A wrapper function that checks the error code returned by MPI C library routines and throws an exception in case the code is <code>!= MPI_SUCCESS</code>. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

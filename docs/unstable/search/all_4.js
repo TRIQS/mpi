@@ -9,5 +9,6 @@ var searchData=
   ['all_5freduce_5fin_5fplace_6',['all_reduce_in_place',['../group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77',1,'mpi']]],
   ['and_20operations_7',['and operations',['../group__mpi__types__ops.html',1,'MPI datatypes and operations'],['../documentation.html#autotoc_md14',1,'MPI datatypes and operations']]],
   ['and_20operator_8',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
-  ['api_20documentation_9',['API Documentation',['../documentation.html',1,'']]]
+  ['api_20documentation_9',['API Documentation',['../documentation.html',1,'']]],
+  ['array_2ehpp_10',['array.hpp',['../array_8hpp.html',1,'']]]
 ];

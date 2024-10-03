@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lazy_2ehpp_0',['lazy.hpp',['../lazy_8hpp.html',1,'']]]
+  ['generic_5fcommunication_2ehpp_0',['generic_communication.hpp',['../generic__communication_8hpp.html',1,'']]]
 ];

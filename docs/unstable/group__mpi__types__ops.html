@@ -117,6 +117,12 @@ $(function(){initNavTree('group__mpi__types__ops.html',''); initResizable(true);
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Specify supported MPI datatypes and provide tools to simplify the creation of user-defined MPI types and operations. </p>
+<p>The following functionality is provided:</p>
+<ul>
+<li><a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> and its specializations let <b>mpi</b> know that a certain type <code>T</code> can be used in MPI communications. The user is allowed to implement their own MPI compatible types and provide a specializtion of <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a>.</li>
+<li><a class="el" href="#ga03e748f7909f1e38c43019570c78657d" title="Create a new MPI_Datatype from a tuple.">mpi::get_mpi_type</a> maps a given C++ type to its corresponding MPI datatype and <a class="el" href="#gac117479a485f170ca920a64ba1e4ac34" title="Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...">mpi::has_mpi_type</a> checks if a given type has a corresponding MPI datatype.</li>
+<li><a class="el" href="#gab81d56ee147c1034fea1bf001c1856e0" title="Create a new MPI_Op for a generic addition by calling MPI_Op_create.">mpi::map_add</a> and <a class="el" href="#gae8618c4b71923a982ab66f1bf62549c9" title="Create a new MPI_Op from a given binary function by calling MPI_Op_create.">mpi::map_C_function</a> can help the user to implement custom MPI operations.</li>
+</ul>
 <p>See <a class="el" href="ex3.html">Example 3: Custom type and operator</a> for a detailed example.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
