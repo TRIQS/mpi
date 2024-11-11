@@ -90,7 +90,7 @@ namespace mpi {
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
-  template <contiguous_sized_range R> void broadcast_range(R &&rg, communicator c = {}, int root = 0) {
+  template <contiguous_sized_range R> void broadcast_range(R &&rg, communicator c = {}, int root = 0) { // NOLINT (ranges need not be forwarded)
     // check the sizes of all ranges
     using value_t   = std::ranges::range_value_t<R>;
     auto const size = std::ranges::size(rg);
@@ -151,7 +151,9 @@ namespace mpi {
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
    */
-  template <contiguous_sized_range R> void reduce_in_place_range(R &&rg, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  template <contiguous_sized_range R>
+  void reduce_in_place_range(R &&rg, communicator c = {}, int root = 0, bool all = false, // NOLINT (ranges need not be forwarded)
+                             MPI_Op op = MPI_SUM) {
     // check the sizes of all ranges
     using value_t   = std::ranges::range_value_t<R>;
     auto const size = std::ranges::size(rg);
@@ -221,7 +223,8 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    */
   template <contiguous_sized_range R1, contiguous_sized_range R2>
-  void reduce_range(R1 &&in_rg, R2 &&out_rg, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  void reduce_range(R1 &&in_rg, R2 &&out_rg, communicator c = {}, int root = 0, bool all = false, // NOLINT (ranges need not be forwarded)
+                    MPI_Op op = MPI_SUM) {
     // check input and output ranges
     auto const in_size = std::ranges::size(in_rg);
     EXPECTS_WITH_MESSAGE(all_equal(in_size, c), "Input range sizes are not equal across all processes in mpi::reduce_range");
@@ -311,7 +314,8 @@ namespace mpi {
    */
   template <contiguous_sized_range R1, contiguous_sized_range R2>
     requires(std::same_as<std::ranges::range_value_t<R1>, std::ranges::range_value_t<R2>>)
-  void scatter_range(R1 &&in_rg, R2 &&out_rg, long in_size, communicator c = {}, int root = 0, long chunk_size = 1) {
+  void scatter_range(R1 &&in_rg, R2 &&out_rg, long in_size, communicator c = {}, int root = 0, // NOLINT (ranges need not be forwarded)
+                     long chunk_size = 1) {
     // check the sizes of the input and output ranges
     if (c.rank() == root) {
       EXPECTS_WITH_MESSAGE(in_size == std::ranges::size(in_rg), "Input range size not equal to provided size in mpi::scatter_range");
@@ -405,7 +409,8 @@ namespace mpi {
    * @param all Should all processes receive the result of the reduction.
    */
   template <contiguous_sized_range R1, contiguous_sized_range R2>
-  void gather_range(R1 &&in_rg, R2 &&out_rg, long out_size, communicator c = {}, int root = 0, bool all = false) {
+  void gather_range(R1 &&in_rg, R2 &&out_rg, long out_size, communicator c = {}, int root = 0, // NOLINT (ranges need not be forwarded)
+                    bool all = false) {
     // check the sizes of the input and output ranges
     auto const in_size = std::ranges::size(in_rg);
     EXPECTS_WITH_MESSAGE(out_size = all_reduce(in_size, c), "Input range sizes don't add up to output range size in mpi::gather_range");

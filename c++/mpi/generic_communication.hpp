@@ -73,9 +73,9 @@ namespace mpi {
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
-  template <typename T> [[gnu::always_inline]] void broadcast(T &x, communicator c = {}, int root = 0) {
+  template <typename T> [[gnu::always_inline]] void broadcast(T &&x, communicator c = {}, int root = 0) {
     static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
-    if (has_env) mpi_broadcast(x, c, root);
+    if (has_env) mpi_broadcast(std::forward<T>(x), c, root);
   }
 
   /**
@@ -121,9 +121,9 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    */
   template <typename T>
-  [[gnu::always_inline]] inline void reduce_in_place(T &x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  [[gnu::always_inline]] inline void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     static_assert(not std::is_const_v<T>, "In-place mpi functions cannot be called on const objects");
-    if (has_env) mpi_reduce_in_place(x, c, root, all, op);
+    if (has_env) mpi_reduce_in_place(std::forward<T>(x), c, root, all, op);
   }
 
   /**
