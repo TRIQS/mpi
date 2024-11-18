@@ -127,72 +127,37 @@ $(function(){initNavTree('pair_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">//</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// Authors: Thomas Hahn, Nils Wentzell</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   18</span><span class="comment"> * @file</span></div>
-<div class="line"><span class="lineno">   19</span><span class="comment"> * @brief Provides an MPI broadcast and reduce for std::pair.</span></div>
-<div class="line"><span class="lineno">   20</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#</span><span class="preprocessor">pragma</span> <span class="preprocessor">once</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&quot;./mpi.hpp&quot;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;<a class="code" href="mpi_8hpp.html">./mpi.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">mpi</span><span class="preprocessor">.</span><span class="preprocessor">h</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;mpi.h&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">utility</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace</span> mpi {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span>mpi {</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   33</span><span class="comment">   * @addtogroup coll_comm</span></div>
-<div class="line"><span class="lineno">   34</span><span class="comment">   * @{</span></div>
-<div class="line"><span class="lineno">   35</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   38</span><span class="comment">   * @brief Implementation of an MPI broadcast for a std::pair.</span></div>
-<div class="line"><span class="lineno">   39</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   40</span><span class="comment">   * @details Simply calls the generic mpi::broadcast for the first and second element of the pair.</span></div>
-<div class="line"><span class="lineno">   41</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   42</span><span class="comment">   * @tparam T1 Type of the first element of the pair.</span></div>
-<div class="line"><span class="lineno">   43</span><span class="comment">   * @tparam T2 Type of the second element of the pair.</span></div>
-<div class="line"><span class="lineno">   44</span><span class="comment">   * @param p std::pair to broadcast.</span></div>
-<div class="line"><span class="lineno">   45</span><span class="comment">   * @param c mpi::communicator.</span></div>
-<div class="line"><span class="lineno">   46</span><span class="comment">   * @param root Rank of the root process.</span></div>
-<div class="line"><span class="lineno">   47</span><span class="comment">   */</span></div>
 <div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="group__coll__comm.html#gab331d0f1361f69228665b60f3262588a">   48</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt; <span class="keywordtype">void</span> <a class="code hl_function" href="group__coll__comm.html#gab331d0f1361f69228665b60f3262588a">mpi_broadcast</a>(std::pair&lt;T1, T2&gt; &amp;p, <a class="code hl_class" href="classmpi_1_1communicator.html">communicator</a> c <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">=</a> <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">{</a><a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">}</a>, <span class="keywordtype">int</span> root = 0) {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    broadcast(p.first, c, root);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    broadcast(p.second, c, root);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="group__coll__comm.html#gab331d0f1361f69228665b60f3262588a">   48</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt; <span class="keywordtype">void</span> <a class="code hl_function" href="group__coll__comm.html#gaad92b65d7516582a284fac742c4f430e">mpi_broadcast</a>(std::pair&lt;T1, T2&gt; &amp;p, <a class="code hl_class" href="classmpi_1_1communicator.html">communicator</a> c = {}, <span class="keywordtype">int</span> root = 0) {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <a class="code hl_function" href="group__coll__comm.html#gabe5a2bbf0b8121c97f36962450caaa56">broadcast</a>(p.first, c, root);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <a class="code hl_function" href="group__coll__comm.html#gabe5a2bbf0b8121c97f36962450caaa56">broadcast</a>(p.second, c, root);</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  }</div>
 </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   54</span><span class="comment">   * @brief Implementation of an MPI reduce for a std::pair.</span></div>
-<div class="line"><span class="lineno">   55</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   56</span><span class="comment">   * @details Simply calls the generic mpi::reduce for the first and second element of the pair.</span></div>
-<div class="line"><span class="lineno">   57</span><span class="comment">   *</span></div>
-<div class="line"><span class="lineno">   58</span><span class="comment">   * @tparam T1 Type of the first element of the pair.</span></div>
-<div class="line"><span class="lineno">   59</span><span class="comment">   * @tparam T2 Type of the second element of the pair.</span></div>
-<div class="line"><span class="lineno">   60</span><span class="comment">   * @param p std::pair to be reduced.</span></div>
-<div class="line"><span class="lineno">   61</span><span class="comment">   * @param c mpi::communicator.</span></div>
-<div class="line"><span class="lineno">   62</span><span class="comment">   * @param root Rank of the root process.</span></div>
-<div class="line"><span class="lineno">   63</span><span class="comment">   * @param all Should all processes receive the result of the reduction.</span></div>
-<div class="line"><span class="lineno">   64</span><span class="comment">   * @param op `MPI_Op` used in the reduction.</span></div>
-<div class="line"><span class="lineno">   65</span><span class="comment">   * @return std::pair&lt;T1, T2&gt; containing the result of each individual reduction.</span></div>
-<div class="line"><span class="lineno">   66</span><span class="comment">   */</span></div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt;</div>
 <div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="group__coll__comm.html#ga596d7bf8804da7049839279e1670fcff">   68</a></span>  <span class="keyword">auto</span> <a class="code hl_function" href="group__coll__comm.html#ga596d7bf8804da7049839279e1670fcff">mpi_reduce</a>(std::pair&lt;T1, T2&gt; <span class="keyword">const</span> &amp;p, <a class="code hl_class" href="classmpi_1_1communicator.html">communicator</a> c <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">=</a> <a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">{</a><a class="code hl_function" href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">}</a>, <span class="keywordtype">int</span> root = 0, <span class="keywordtype">bool</span> all = <span class="keyword">false</span>, MPI_Op op = MPI_SUM) {</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">return</span> std::make_pair(reduce(p.first, c, root, all, op), reduce(p.second, c, root, all, op));</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="group__coll__comm.html#ga596d7bf8804da7049839279e1670fcff">   68</a></span>  <span class="keyword">auto</span> <a class="code hl_function" href="group__coll__comm.html#ga2f4b9c71fd7e8d418c69a25bc1eb267b">mpi_reduce</a>(std::pair&lt;T1, T2&gt; <span class="keyword">const</span> &amp;p, <a class="code hl_class" href="classmpi_1_1communicator.html">communicator</a> c = {}, <span class="keywordtype">int</span> root = 0, <span class="keywordtype">bool</span> all = <span class="keyword">false</span>, MPI_Op op = MPI_SUM) {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">return</span> std::make_pair(<a class="code hl_function" href="group__coll__comm.html#ga8eaee05122bf70f15de0731b889e3949">reduce</a>(p.first, c, root, all, op), <a class="code hl_function" href="group__coll__comm.html#ga8eaee05122bf70f15de0731b889e3949">reduce</a>(p.second, c, root, all, op));</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  }</div>
 </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  <span class="comment">/** @} */</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>} <span class="comment">// namespace mpi</span></div>
 <div class="ttc" id="aclassmpi_1_1communicator_html"><div class="ttname"><a href="classmpi_1_1communicator.html">mpi::communicator</a></div><div class="ttdoc">C++ wrapper around MPI_Comm providing various convenience functions.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00043">communicator.hpp:43</a></div></div>
-<div class="ttc" id="aclassmpi_1_1communicator_html_affa6334fe09385303e648a2ba4691844"><div class="ttname"><a href="classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844">mpi::communicator::communicator</a></div><div class="ttdeci">communicator()=default</div><div class="ttdoc">Construct a communicator with MPI_COMM_WORLD.</div></div>
-<div class="ttc" id="agroup__coll__comm_html_ga596d7bf8804da7049839279e1670fcff"><div class="ttname"><a href="group__coll__comm.html#ga596d7bf8804da7049839279e1670fcff">mpi::mpi_reduce</a></div><div class="ttdeci">auto mpi_reduce(std::pair&lt; T1, T2 &gt; const &amp;p, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</div><div class="ttdoc">Implementation of an MPI reduce for a std::pair.</div><div class="ttdef"><b>Definition</b> <a href="#l00068">pair.hpp:68</a></div></div>
-<div class="ttc" id="agroup__coll__comm_html_gab331d0f1361f69228665b60f3262588a"><div class="ttname"><a href="group__coll__comm.html#gab331d0f1361f69228665b60f3262588a">mpi::mpi_broadcast</a></div><div class="ttdeci">void mpi_broadcast(std::pair&lt; T1, T2 &gt; &amp;p, communicator c={}, int root=0)</div><div class="ttdoc">Implementation of an MPI broadcast for a std::pair.</div><div class="ttdef"><b>Definition</b> <a href="#l00048">pair.hpp:48</a></div></div>
+<div class="ttc" id="agroup__coll__comm_html_ga2f4b9c71fd7e8d418c69a25bc1eb267b"><div class="ttname"><a href="group__coll__comm.html#ga2f4b9c71fd7e8d418c69a25bc1eb267b">mpi::mpi_reduce</a></div><div class="ttdeci">auto mpi_reduce(std::array&lt; T, N &gt; const &amp;arr, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</div><div class="ttdoc">Implementation of an MPI reduce for a std::array.</div><div class="ttdef"><b>Definition</b> <a href="array_8hpp_source.html#l00086">array.hpp:86</a></div></div>
+<div class="ttc" id="agroup__coll__comm_html_ga8eaee05122bf70f15de0731b889e3949"><div class="ttname"><a href="group__coll__comm.html#ga8eaee05122bf70f15de0731b889e3949">mpi::reduce</a></div><div class="ttdeci">decltype(auto) reduce(T &amp;&amp;x, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</div><div class="ttdoc">Generic MPI reduce.</div><div class="ttdef"><b>Definition</b> <a href="generic__communication_8hpp_source.html#l00097">generic_communication.hpp:97</a></div></div>
+<div class="ttc" id="agroup__coll__comm_html_gaad92b65d7516582a284fac742c4f430e"><div class="ttname"><a href="group__coll__comm.html#gaad92b65d7516582a284fac742c4f430e">mpi::mpi_broadcast</a></div><div class="ttdeci">void mpi_broadcast(std::array&lt; T, N &gt; &amp;arr, communicator c={}, int root=0)</div><div class="ttdoc">Implementation of an MPI broadcast for a std::arr.</div><div class="ttdef"><b>Definition</b> <a href="array_8hpp_source.html#l00051">array.hpp:51</a></div></div>
+<div class="ttc" id="agroup__coll__comm_html_gabe5a2bbf0b8121c97f36962450caaa56"><div class="ttname"><a href="group__coll__comm.html#gabe5a2bbf0b8121c97f36962450caaa56">mpi::broadcast</a></div><div class="ttdeci">void broadcast(T &amp;&amp;x, communicator c={}, int root=0)</div><div class="ttdoc">Generic MPI broadcast.</div><div class="ttdef"><b>Definition</b> <a href="generic__communication_8hpp_source.html#l00076">generic_communication.hpp:76</a></div></div>
+<div class="ttc" id="ampi_8hpp_html"><div class="ttname"><a href="mpi_8hpp.html">mpi.hpp</a></div><div class="ttdoc">Includes all relevant mpi headers.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
