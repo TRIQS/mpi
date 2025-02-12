@@ -181,20 +181,21 @@ namespace mpi {
   };
 
   namespace detail {
-    // Archive helper class obtain MPI custom type info using reference to class members
-    struct MpiArchive {
+
+    // Archive helper class to obtain MPI custom type info using references to class members.
+    struct mpi_archive {
       std::vector<int> block_lengths{};
       std::vector<MPI_Aint> displacements{};
       std::vector<MPI_Datatype> types{};
       MPI_Aint base_address{};
 
-      public:
-      explicit MpiArchive(const void *base) { MPI_Get_address(base, &base_address); }
+      // Constructor sets the base address of the object.
+      explicit mpi_archive(const void *base) { MPI_Get_address(base, &base_address); }
 
       // Overloaded operator& to process members to set the block lengths, displacements and MPI types.
       template <typename T>
         requires(has_mpi_type<T>)
-      MpiArchive &operator&(const T &member) {
+      mpi_archive &operator&(const T &member) {
         types.push_back(mpi_type<T>::get());
         MPI_Aint address{};
         MPI_Get_address(&member, &address);
@@ -224,7 +225,7 @@ namespace mpi {
    * @tparam T Type to be converted to an `MPI_Datatype`.
    */
   template <Serializable T> [[nodiscard]] MPI_Datatype get_mpi_type(const T &obj) {
-    detail::MpiArchive ar(&obj);
+    detail::mpi_archive ar(&obj);
     obj.serialize(ar);
     MPI_Datatype mpi_type{};
     MPI_Type_create_struct(static_cast<int>(ar.block_lengths.size()), ar.block_lengths.data(), ar.displacements.data(), ar.types.data(), &mpi_type);
