@@ -39,9 +39,6 @@ struct custom_cplx {
 // tie the data (used to construct the custom MPI type)
 inline auto tie_data(custom_cplx z) { return std::tie(z.real, z.imag); }
 
-// specialize mpi_type for custom_cplx
-template <> struct mpi::mpi_type<custom_cplx> : mpi::mpi_type_from_tie<custom_cplx> {};
-
 // stand-alone add function (the same as the operator+ above)
 custom_cplx add(custom_cplx const &x, custom_cplx const &y) { return x + y; }
 

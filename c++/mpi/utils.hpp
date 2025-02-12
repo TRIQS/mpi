@@ -25,6 +25,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 namespace mpi {
 
@@ -79,6 +80,31 @@ namespace mpi {
    */
   template <typename R>
   concept contiguous_sized_range = std::ranges::contiguous_range<R> && std::ranges::sized_range<R>;
+
+  namespace detail {
+
+    // Helper struct to check if a types serialize function serializes only fundamental types or enums
+    struct serialize_checker {
+
+      template <typename T>
+      void operator&(T const &t)
+        requires(std::is_fundamental_v<T> or std::is_enum_v<T> or requires { t.serialize(*this); })
+      {}
+
+      template <typename T>
+      void operator&(T &t)
+        requires(std::is_fundamental_v<T> or std::is_enum_v<T> or requires { t.deserialize(*this); })
+      {}
+    };
+
+  } // namespace detail
+
+  /// Check if objects of the type can be serialized and deserialized
+  template <typename T>
+  concept Serializable = requires(T a, detail::serialize_checker ar) {
+    a.serialize(ar);
+    a.deserialize(ar);
+  };
 
   /** @} */
 
