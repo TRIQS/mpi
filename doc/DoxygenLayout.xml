@@ -29,19 +29,24 @@
         <tab type="user" url="@ref mpi::environment" title="environment"/>
       </tab>
       <tab type="usergroup" url="@ref mpi_types_ops" title="MPI datatypes and operations">
+        <tab type="user" url="@ref mpi::Serializable" title="Serializable"/>
         <tab type="usergroup" url="@ref mpi::mpi_type" title="mpi_type">
           <tab type="user" url="@ref mpi::mpi_type< bool >" title="mpi_type<bool>"/>
           <tab type="user" url="@ref mpi::mpi_type< char >" title="mpi_type<char>"/>
+          <tab type="user" url="@ref mpi::mpi_type< const T >" title="mpi_type<const T>"/>
+          <tab type="user" url="@ref mpi::mpi_type< double >" title="mpi_type<double>"/>
+          <tab type="user" url="@ref mpi::mpi_type< E >" title="mpi_type<E>"/>
+          <tab type="user" url="@ref mpi::mpi_type< float >" title="mpi_type<float>"/>
           <tab type="user" url="@ref mpi::mpi_type< int >" title="mpi_type<int>"/>
           <tab type="user" url="@ref mpi::mpi_type< long >" title="mpi_type<long>"/>
           <tab type="user" url="@ref mpi::mpi_type< long long >" title="mpi_type<long long>"/>
-          <tab type="user" url="@ref mpi::mpi_type< double >" title="mpi_type<double>"/>
-          <tab type="user" url="@ref mpi::mpi_type< float >" title="mpi_type<float>"/>
+          <tab type="user" url="@ref mpi::mpi_type< S >" title="mpi_type<S>"/>
           <tab type="user" url="@ref mpi::mpi_type< std::complex< double > >" title="mpi_type<std::complex<double>>"/>
+          <tab type="user" url="@ref mpi::mpi_type< std::tuple< Ts... > >" title="mpi_type<std::tuple>"/>
+          <tab type="user" url="@ref mpi::mpi_type< U >" title="mpi_type<U>"/>
           <tab type="user" url="@ref mpi::mpi_type< unsigned int >" title="mpi_type<unsigned int>"/>
           <tab type="user" url="@ref mpi::mpi_type< unsigned long >" title="mpi_type<unsigned long>"/>
           <tab type="user" url="@ref mpi::mpi_type< unsigned long long >" title="mpi_type<unsigned long long>"/>
-          <tab type="user" url="@ref mpi::mpi_type< std::tuple< Ts... > >" title="mpi_type<std::tuple>"/>
         </tab>
       </tab>
       <tab type="user" url="@ref coll_comm" title="Collective MPI communication"/>

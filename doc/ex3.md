@@ -2,7 +2,8 @@
 
 [TOC]
 
-In this example, we show how to use mpi::mpi_type_from_tie, mpi::map_C_function and mpi::map_add to register a new MPI datatype and to define MPI operations for it.
+In this example, we show how to register a new MPI datatype and how to use mpi::map_C_function and mpi::map_add to
+define MPI operations for it.
 
 ```cpp
 #include <mpi/mpi.hpp>
@@ -19,13 +20,10 @@ inline my_complex operator+(const my_complex& z1, const my_complex& z2) {
   return { z1.real + z2.real, z1.imag + z2.imag };
 }
 
-// define a tie_data function for mpi_type_from_tie
+// define a tie_data function for my_complex to make it MPI compatible
 inline auto tie_data(const my_complex& z) {
   return std::tie(z.real, z.imag);
 }
-
-// register my_complex as an MPI type
-template <> struct mpi::mpi_type<my_complex> : mpi::mpi_type_from_tie<my_complex> {};
 
 int main(int argc, char *argv[]) {
   // initialize MPI environment

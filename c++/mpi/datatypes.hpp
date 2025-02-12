@@ -77,6 +77,14 @@ namespace mpi {
 #undef D
 
   /**
+   * @brief Specialization of mpi::mpi_type for enum types.
+   * @tparam E C++ enum type.
+   */
+  template <typename E>
+    requires(std::is_enum_v<E>)
+  struct mpi_type<E> : mpi_type<std::underlying_type_t<E>> {};
+
+  /**
    * @brief Specialization of mpi::mpi_type for `const` types.
    * @tparam T C++ type.
    */
@@ -93,6 +101,28 @@ namespace mpi {
    * @tparam T Type to be checked.
    */
   template <typename T> constexpr bool has_mpi_type<T, std::void_t<decltype(mpi_type<T>::get())>> = true;
+
+  namespace detail {
+
+    // Helper struct to check if member types are mpi-serializable, i.e. have an associated mpi_type
+    struct serialize_checker {
+      template <typename T>
+      void operator&(T &)
+        requires(has_mpi_type<T>)
+      {}
+    };
+
+  } // namespace detail
+
+  /**
+   * @brief A concept that checks if objects of a type can be serialized and deserialized.
+   * @tparam T Type to check.
+   */
+  template <typename T>
+  concept Serializable = requires(const T ac, T a, detail::serialize_checker ar) {
+    { ac.serialize(ar) } -> std::same_as<void>;
+    { a.deserialize(ar) } -> std::same_as<void>;
+  };
 
   /**
    * @brief Create a new `MPI_Datatype` from a tuple.
@@ -135,8 +165,11 @@ namespace mpi {
    * @brief Specialization of mpi::mpi_type for std::tuple.
    * @tparam Ts Tuple element types.
    */
-  template <typename... T> struct mpi_type<std::tuple<T...>> {
-    [[nodiscard]] static MPI_Datatype get() noexcept { return get_mpi_type(std::tuple<T...>{}); }
+  template <typename... Ts> struct mpi_type<std::tuple<Ts...>> {
+    [[nodiscard]] static MPI_Datatype get() noexcept {
+      static MPI_Datatype type = get_mpi_type(std::tuple<Ts...>{});
+      return type;
+    }
   };
 
   /**
@@ -156,15 +189,81 @@ namespace mpi {
    * auto tie_data(foo f) {
    *   return std::tie(f.x, f.y);
    * }
+   * @endcode
    *
-   * // provide a specialization of mpi_type
-   * template <> struct mpi::mpi_type<foo> : mpi::mpi_type_from_tie<foo> {};
+   * @tparam U Type to be converted to an `MPI_Datatype`.
+   */
+  template <typename U>
+    requires(not Serializable<U>) and requires(U u) { tie_data(u); }
+  struct mpi_type<U> {
+    [[nodiscard]] static MPI_Datatype get() noexcept {
+      static MPI_Datatype type = get_mpi_type(tie_data(U{}));
+      return type;
+    }
+  };
+
+  namespace detail {
+
+    // Archive helper class to obtain MPI custom type info using references to class members.
+    struct mpi_archive {
+      std::vector<int> block_lengths{};
+      std::vector<MPI_Aint> displacements{};
+      std::vector<MPI_Datatype> types{};
+      MPI_Aint base_address{};
+
+      // Constructor sets the base address of the object.
+      explicit mpi_archive(const void *base) { MPI_Get_address(base, &base_address); }
+
+      // Overloaded operator& to process members to set the block lengths, displacements and MPI types.
+      template <typename T>
+        requires(has_mpi_type<T>)
+      mpi_archive &operator&(const T &member) {
+        types.push_back(mpi_type<T>::get());
+        MPI_Aint address{};
+        MPI_Get_address(&member, &address);
+        displacements.push_back(MPI_Aint_diff(address, base_address));
+        block_lengths.push_back(1);
+        return *this;
+      }
+    };
+
+  } // namespace detail
+
+  /**
+   * @brief Create an `MPI_Datatype` from a serializable type.
+   *
+   * @details It is assumed that the type has a member function `serialize`
+   * which feeds all its class members into an archive using the `operator&`.
+   *
+   * @code{.cpp}
+   * // type to use for MPI communication
+   * struct foo {
+   *   double x;
+   *   int y;
+   *   void serialize(auto& ar) const { ar & x & y; }
+   * };
    * @endcode
    *
    * @tparam T Type to be converted to an `MPI_Datatype`.
    */
-  template <typename T> struct mpi_type_from_tie {
-    [[nodiscard]] static MPI_Datatype get() noexcept { return get_mpi_type(tie_data(T{})); }
+  template <Serializable T> [[nodiscard]] MPI_Datatype get_mpi_type(const T &obj) {
+    detail::mpi_archive ar(&obj);
+    obj.serialize(ar);
+    MPI_Datatype mpi_type{};
+    MPI_Type_create_struct(static_cast<int>(ar.block_lengths.size()), ar.block_lengths.data(), ar.displacements.data(), ar.types.data(), &mpi_type);
+    MPI_Type_commit(&mpi_type);
+    return mpi_type;
+  }
+
+  /**
+   * @brief Specialization of mpi::mpi_type for serializable types.
+   * @tparam S Serializable type.
+   */
+  template <Serializable S> struct mpi_type<S> {
+    [[nodiscard]] static MPI_Datatype get() noexcept {
+      static MPI_Datatype type = get_mpi_type(S{});
+      return type;
+    }
   };
 
   /** @} */
