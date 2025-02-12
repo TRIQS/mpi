@@ -128,9 +128,88 @@ TEST(MPI, TupleMPIDatatypes) {
 
   using type5 = std::tuple<int, double, char, custom_cplx, bool>;
   type5 tup5;
-  if (rank == root) { tup5 = std::make_tuple(100, 3.1314, 'r', custom_cplx{1.0, 2.0}, false); }
+  if (rank == root) { tup5 = std::make_tuple(100, 3.1314, 'r', custom_cplx{.real = 1.0, .imag = 2.0}, false); }
   mpi::broadcast(tup5, world, root);
   EXPECT_EQ(tup5, std::make_tuple(100, 3.1314, 'r', custom_cplx{1.0, 2.0}, false));
+}
+
+// a simple struct representing a complex number that is serializable
+struct serializable_cplx {
+  double real{}, imag{};
+
+  // add two serializable_cplx objects
+  serializable_cplx operator+(serializable_cplx z) const {
+    z.real += real;
+    z.imag += imag;
+    return z;
+  }
+
+  // default equal-to operator
+  bool operator==(const serializable_cplx &) const = default;
+
+  // serialize the object
+  void serialize(auto &ar) const { ar & real & imag; }
+  void deserialize(auto &ar) { ar & real & imag; }
+};
+
+// a simple struct that contains a serializable type and is serializable itself
+struct serializable_container {
+  serializable_cplx z1;
+  serializable_cplx z2;
+
+  // add two serializable_container objects
+  serializable_container operator+(serializable_container z) const {
+    z.z1 = z.z1 + z1;
+    z.z2 = z.z2 + z2;
+    return z;
+  }
+
+  // default equal-to operator
+  bool operator==(const serializable_container &) const = default;
+
+  // serialize the object
+  void serialize(auto &ar) const { ar & z1 & z2; }
+  void deserialize(auto &ar) { ar & z1 & z2; }
+};
+
+// check Serializable concept
+static_assert(mpi::Serializable<serializable_cplx>);
+static_assert(mpi::Serializable<serializable_container>);
+
+TEST(MPI, SerializableMPIDatatypes) {
+  mpi::communicator world;
+  int rank = world.rank();
+  int root = 0;
+
+  // check broadcast
+  auto z_exp = serializable_cplx{.real = 1.0, .imag = 2.0};
+  auto z = (rank == root ? z_exp : serializable_cplx{});
+  mpi::broadcast(z, world, root);
+  EXPECT_EQ(z, z_exp);
+
+  // check all_reduce
+  auto z_red = mpi::all_reduce(z, world, mpi::map_add<serializable_cplx>());
+  EXPECT_DOUBLE_EQ(z_exp.real * world.size(), z_red.real);
+  EXPECT_DOUBLE_EQ(z.imag * world.size(), z_red.imag);
+}
+
+TEST(MPI, SerializableOfSerializableMPIDatatypes) {
+  mpi::communicator world;
+  int rank = world.rank();
+  int root = 0;
+
+  // check broadcast
+  auto c_exp = serializable_container{.z1 = {.real = 1.0, .imag = 2.0}, .z2 = {.real = 3.0, .imag = 4.0}};
+  auto c = (rank == root ? c_exp : serializable_container{});
+  mpi::broadcast(c, world, root);
+  EXPECT_EQ(c, c_exp);
+
+  // check all_reduce
+  auto c_red = mpi::all_reduce(c, world, mpi::map_add<serializable_container>());
+  EXPECT_DOUBLE_EQ(c_exp.z1.real * world.size(), c_red.z1.real);
+  EXPECT_DOUBLE_EQ(c_exp.z1.imag * world.size(), c_red.z1.imag);
+  EXPECT_DOUBLE_EQ(c_exp.z2.real * world.size(), c_red.z2.real);
+  EXPECT_DOUBLE_EQ(c_exp.z2.imag * world.size(), c_red.z2.imag);
 }
 
 MPI_TEST_MAIN;
