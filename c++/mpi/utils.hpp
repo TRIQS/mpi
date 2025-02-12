@@ -83,9 +83,8 @@ namespace mpi {
 
   namespace detail {
 
-    // Helper struct to check if a types serialize function serializes only fundamental types or enums
+    // Helper struct to check if a type's serialize function serializes only fundamental types or enums.
     struct serialize_checker {
-
       template <typename T>
       void operator&(T const &t)
         requires(std::is_fundamental_v<T> or std::is_enum_v<T> or requires { t.serialize(*this); })
@@ -99,7 +98,10 @@ namespace mpi {
 
   } // namespace detail
 
-  /// Check if objects of the type can be serialized and deserialized
+  /**
+   * @brief A concept that checks if objects of a type can be serialized and deserialized.
+   * @tparam T Type to check.
+   */
   template <typename T>
   concept Serializable = requires(T a, detail::serialize_checker ar) {
     a.serialize(ar);
