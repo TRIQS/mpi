@@ -16,6 +16,7 @@ var searchData=
   ['communicator_13',['communicator',['../classmpi_1_1communicator.html',1,'mpi::communicator'],['../classmpi_1_1communicator.html#affa6334fe09385303e648a2ba4691844',1,'mpi::communicator::communicator()=default'],['../classmpi_1_1communicator.html#a214a657312177d663305eb0642c7f8fc',1,'mpi::communicator::communicator(MPI_Comm c)']]],
   ['communicator_2ehpp_14',['communicator.hpp',['../communicator_8hpp.html',1,'']]],
   ['compiling_20the_20examples_15',['Compiling the examples',['../examples.html#compiling',1,'']]],
-  ['custom_20cmake_20options_16',['Custom CMake options',['../installation.html#cmake_options',1,'']]],
-  ['custom_20type_20and_20operator_17',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
+  ['contiguous_5fsized_5frange_16',['contiguous_sized_range',['../conceptmpi_1_1contiguous__sized__range.html',1,'mpi']]],
+  ['custom_20cmake_20options_17',['Custom CMake options',['../installation.html#cmake_options',1,'']]],
+  ['custom_20type_20and_20operator_18',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
 ];

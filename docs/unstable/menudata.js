@@ -48,16 +48,20 @@ var menudata={children:[
 {text:"mpi_type",url:"structmpi_1_1mpi__type.html",children:[
 {text:"mpi_type<bool>",url:"structmpi_1_1mpi__type_3_01bool_01_4.html"},
 {text:"mpi_type<char>",url:"structmpi_1_1mpi__type_3_01char_01_4.html"},
+{text:"mpi_type<const T>",url:"structmpi_1_1mpi__type_3_01const_01_t_01_4.html"},
+{text:"mpi_type<double>",url:"structmpi_1_1mpi__type_3_01double_01_4.html"},
+{text:"mpi_type<E>",url:"structmpi_1_1mpi__type_3_01_e_01_4.html"},
+{text:"mpi_type<float>",url:"structmpi_1_1mpi__type_3_01float_01_4.html"},
 {text:"mpi_type<int>",url:"structmpi_1_1mpi__type_3_01int_01_4.html"},
 {text:"mpi_type<long>",url:"structmpi_1_1mpi__type_3_01long_01_4.html"},
 {text:"mpi_type<long long>",url:"structmpi_1_1mpi__type_3_01long_01long_01_4.html"},
-{text:"mpi_type<double>",url:"structmpi_1_1mpi__type_3_01double_01_4.html"},
-{text:"mpi_type<float>",url:"structmpi_1_1mpi__type_3_01float_01_4.html"},
+{text:"mpi_type<S>",url:"structmpi_1_1mpi__type_3_01_s_01_4.html"},
 {text:"mpi_type<std::complex<double>>",url:"structmpi_1_1mpi__type_3_01std_1_1complex_3_01double_01_4_01_4.html"},
+{text:"mpi_type<std::tuple>",url:"structmpi_1_1mpi__type_3_01std_1_1tuple_3_01_ts_8_8_8_01_4_01_4.html"},
+{text:"mpi_type<U>",url:"structmpi_1_1mpi__type_3_01_u_01_4.html"},
 {text:"mpi_type<unsigned int>",url:"structmpi_1_1mpi__type_3_01unsigned_01int_01_4.html"},
 {text:"mpi_type<unsigned long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01_4.html"},
-{text:"mpi_type<unsigned long long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html"},
-{text:"mpi_type<std::tuple>",url:"structmpi_1_1mpi__type.html"}]}]},
+{text:"mpi_type<unsigned long long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html"}]}]},
 {text:"Collective MPI communication",url:"group__coll__comm.html"},
 {text:"Lazy MPI communication",url:"group__mpi__lazy.html",children:[
 {text:"lazy",url:"structmpi_1_1lazy.html"},
@@ -67,7 +71,8 @@ var menudata={children:[
 {text:"Event handling",url:"group__event__handling.html",children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[
-{text:"contiguous_sized_range",url:"conceptmpi_1_1contiguous__sized__range.html"}]},
+{text:"contiguous_sized_range",url:"conceptmpi_1_1contiguous__sized__range.html"},
+{text:"Serializable",url:"conceptmpi_1_1_serializable.html"}]},
 {text:"File List",url:"files.html"}]},
 {text:"Changelog",url:"changelog.html"},
 {text:"Issues",url:"issues.html"}]}

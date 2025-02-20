@@ -55,16 +55,20 @@ var NAVTREE =
         [ "mpi_type", "structmpi_1_1mpi__type.html", [
           [ "mpi_type<bool>", "structmpi_1_1mpi__type_3_01bool_01_4.html", null ],
           [ "mpi_type<char>", "structmpi_1_1mpi__type_3_01char_01_4.html", null ],
+          [ "mpi_type<const T>", "structmpi_1_1mpi__type_3_01const_01_t_01_4.html", null ],
+          [ "mpi_type<double>", "structmpi_1_1mpi__type_3_01double_01_4.html", null ],
+          [ "mpi_type<E>", "structmpi_1_1mpi__type_3_01_e_01_4.html", null ],
+          [ "mpi_type<float>", "structmpi_1_1mpi__type_3_01float_01_4.html", null ],
           [ "mpi_type<int>", "structmpi_1_1mpi__type_3_01int_01_4.html", null ],
           [ "mpi_type<long>", "structmpi_1_1mpi__type_3_01long_01_4.html", null ],
           [ "mpi_type<long long>", "structmpi_1_1mpi__type_3_01long_01long_01_4.html", null ],
-          [ "mpi_type<double>", "structmpi_1_1mpi__type_3_01double_01_4.html", null ],
-          [ "mpi_type<float>", "structmpi_1_1mpi__type_3_01float_01_4.html", null ],
+          [ "mpi_type<S>", "structmpi_1_1mpi__type_3_01_s_01_4.html", null ],
           [ "mpi_type<std::complex<double>>", "structmpi_1_1mpi__type_3_01std_1_1complex_3_01double_01_4_01_4.html", null ],
+          [ "mpi_type<std::tuple>", "structmpi_1_1mpi__type_3_01std_1_1tuple_3_01_ts_8_8_8_01_4_01_4.html", null ],
+          [ "mpi_type<U>", "structmpi_1_1mpi__type_3_01_u_01_4.html", null ],
           [ "mpi_type<unsigned int>", "structmpi_1_1mpi__type_3_01unsigned_01int_01_4.html", null ],
           [ "mpi_type<unsigned long>", "structmpi_1_1mpi__type_3_01unsigned_01long_01_4.html", null ],
-          [ "mpi_type<unsigned long long>", "structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html", null ],
-          [ "mpi_type<std::tuple>", "structmpi_1_1mpi__type.html", null ]
+          [ "mpi_type<unsigned long long>", "structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html", null ]
         ] ]
       ] ],
       [ "Collective MPI communication", "group__coll__comm.html", null ],
@@ -78,7 +82,8 @@ var NAVTREE =
         [ "monitor", "classmpi_1_1monitor.html", null ]
       ] ],
       [ "Utilities", "group__utilities.html", [
-        [ "contiguous_sized_range", "conceptmpi_1_1contiguous__sized__range.html", null ]
+        [ "contiguous_sized_range", "conceptmpi_1_1contiguous__sized__range.html", null ],
+        [ "Serializable", "conceptmpi_1_1_serializable.html", null ]
       ] ],
       [ "File List", "files.html", "files" ]
     ] ],
@@ -92,5 +97,5 @@ var NAVTREEINDEX =
 "array_8hpp.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
