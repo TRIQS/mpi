@@ -163,35 +163,9 @@ $(function(){initNavTree('utils_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span></div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt;</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="conceptmpi_1_1contiguous__sized__range.html">   82</a></span>  <span class="keyword">concept </span><a class="code hl_concept" href="conceptmpi_1_1contiguous__sized__range.html">contiguous_sized_range</a> = std::ranges::contiguous_range&lt;R&gt; &amp;&amp; std::ranges::sized_range&lt;R&gt;;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  <span class="keyword">namespace </span>detail {</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span></div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="comment">// Helper struct to check if a type&#39;s serialize function serializes only fundamental types or enums.</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">struct </span>serialize_checker {</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>      <span class="keywordtype">void</span> operator&amp;(T <span class="keyword">const</span> &amp;t)</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keyword">requires</span>(std::is_fundamental_v&lt;T&gt; or std::is_enum_v&lt;T&gt; or <span class="keyword">requires</span> { t.serialize(*<span class="keyword">this</span>); })</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>      {}</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>      <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>      <span class="keywordtype">void</span> operator&amp;(T &amp;t)</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keyword">requires</span>(std::is_fundamental_v&lt;T&gt; or std::is_enum_v&lt;T&gt; or <span class="keyword">requires</span> { t.deserialize(*<span class="keyword">this</span>); })</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>      {}</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    };</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  } <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="foldopen" id="foldopen00106" data-start="{" data-end="}">
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="conceptmpi_1_1_serializable.html">  106</a></span>  <span class="keyword">concept </span><a class="code hl_concept" href="conceptmpi_1_1_serializable.html">Serializable</a> = <span class="keyword">requires</span>(T a, detail::serialize_checker ar) {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    a.serialize(ar);</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    a.deserialize(ar);</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  };</div>
-</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span></div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>} <span class="comment">// namespace mpi</span></div>
-<div class="ttc" id="aconceptmpi_1_1_serializable_html"><div class="ttname"><a href="conceptmpi_1_1_serializable.html">mpi::Serializable</a></div><div class="ttdoc">A concept that checks if objects of a type can be serialized and deserialized.</div><div class="ttdef"><b>Definition</b> <a href="#l00106">utils.hpp:106</a></div></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>} <span class="comment">// namespace mpi</span></div>
 <div class="ttc" id="aconceptmpi_1_1contiguous__sized__range_html"><div class="ttname"><a href="conceptmpi_1_1contiguous__sized__range.html">mpi::contiguous_sized_range</a></div><div class="ttdoc">A concept that checks if a range type is contiguous and sized.</div><div class="ttdef"><b>Definition</b> <a href="#l00082">utils.hpp:82</a></div></div>
 <div class="ttc" id="agroup__utilities_html_gabc2abaca95fbe7d5faf32c6998f20da8"><div class="ttname"><a href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">mpi::regular_t</a></div><div class="ttdeci">typename detail::_regular&lt; std::decay_t&lt; T &gt; &gt;::type regular_t</div><div class="ttdoc">Type trait to get the regular type of a type.</div><div class="ttdef"><b>Definition</b> <a href="#l00056">utils.hpp:56</a></div></div>
 <div class="ttc" id="agroup__utilities_html_gaee34d136ff5a6107c23f96092b8e20ec"><div class="ttname"><a href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">mpi::check_mpi_call</a></div><div class="ttdeci">void check_mpi_call(int errcode, const std::string &amp;mpi_routine)</div><div class="ttdoc">Check the success of an MPI call.</div><div class="ttdef"><b>Definition</b> <a href="#l00073">utils.hpp:73</a></div></div>
