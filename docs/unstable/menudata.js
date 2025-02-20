@@ -45,6 +45,7 @@ var menudata={children:[
 {text:"communicator",url:"classmpi_1_1communicator.html"},
 {text:"environment",url:"structmpi_1_1environment.html"}]},
 {text:"MPI datatypes and operations",url:"group__mpi__types__ops.html",children:[
+{text:"Serializable",url:"conceptmpi_1_1_serializable.html"},
 {text:"mpi_type",url:"structmpi_1_1mpi__type.html",children:[
 {text:"mpi_type<bool>",url:"structmpi_1_1mpi__type_3_01bool_01_4.html"},
 {text:"mpi_type<char>",url:"structmpi_1_1mpi__type_3_01char_01_4.html"},
@@ -71,8 +72,7 @@ var menudata={children:[
 {text:"Event handling",url:"group__event__handling.html",children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[
-{text:"contiguous_sized_range",url:"conceptmpi_1_1contiguous__sized__range.html"},
-{text:"Serializable",url:"conceptmpi_1_1_serializable.html"}]},
+{text:"contiguous_sized_range",url:"conceptmpi_1_1contiguous__sized__range.html"}]},
 {text:"File List",url:"files.html"}]},
 {text:"Changelog",url:"changelog.html"},
 {text:"Issues",url:"issues.html"}]}

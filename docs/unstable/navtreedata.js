@@ -52,6 +52,7 @@ var NAVTREE =
         [ "environment", "structmpi_1_1environment.html", null ]
       ] ],
       [ "MPI datatypes and operations", "group__mpi__types__ops.html", [
+        [ "Serializable", "conceptmpi_1_1_serializable.html", null ],
         [ "mpi_type", "structmpi_1_1mpi__type.html", [
           [ "mpi_type<bool>", "structmpi_1_1mpi__type_3_01bool_01_4.html", null ],
           [ "mpi_type<char>", "structmpi_1_1mpi__type_3_01char_01_4.html", null ],
@@ -82,8 +83,7 @@ var NAVTREE =
         [ "monitor", "classmpi_1_1monitor.html", null ]
       ] ],
       [ "Utilities", "group__utilities.html", [
-        [ "contiguous_sized_range", "conceptmpi_1_1contiguous__sized__range.html", null ],
-        [ "Serializable", "conceptmpi_1_1_serializable.html", null ]
+        [ "contiguous_sized_range", "conceptmpi_1_1contiguous__sized__range.html", null ]
       ] ],
       [ "File List", "files.html", "files" ]
     ] ],
