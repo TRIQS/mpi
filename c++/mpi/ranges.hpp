@@ -179,8 +179,12 @@ namespace mpi {
   /**
    * @brief Implementation of an MPI reduce for an mpi::contiguous_sized_range.
    *
-   * @details If mpi::has_mpi_type is true for the value type of the range, then the range is reduced using a simple
-   * `MPI_Reduce` or `MPI_Allreduce`. Otherwise, the specialized `mpi_reduce` is called for each element in the range.
+   * @details If the input and output ranges point to the same data, the output range together with all other arguments
+   * are forwarded to mpi::reduce_in_place_range.
+   *
+   * In case the input and output ranges are different and if mpi::has_mpi_type is true for the value type of the range,
+   * then the range is reduced using a simple `MPI_Reduce` or `MPI_Allreduce`. Otherwise, the specialized `mpi_reduce`
+   * is called for each element in the range.
    *
    * It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the input ranges
    * are equal across all processes and that they are equal to the size of the output range on receiving processes.
@@ -225,6 +229,13 @@ namespace mpi {
   template <contiguous_sized_range R1, contiguous_sized_range R2>
   void reduce_range(R1 &&in_rg, R2 &&out_rg, communicator c = {}, int root = 0, bool all = false, // NOLINT (ranges need not be forwarded)
                     MPI_Op op = MPI_SUM) {
+    // in case the input and ouput data pointers are equal, forward the MPI call to reduce_in_place_range and return
+    auto const in_data = std::ranges::data(in_rg);
+    auto out_data      = std::ranges::data(out_rg);
+    EXPECTS_WITH_MESSAGE(all_equal(static_cast<int>(in_data == out_data)),
+                         "Either zero or all processes have to choose the in-place option in mpi::reduce_range");
+    if (in_data == out_data) return reduce_in_place_range(std::forward<R2>(out_rg), c, root, all, op);
+
     // check input and output ranges
     auto const in_size = std::ranges::size(in_rg);
     EXPECTS_WITH_MESSAGE(all_equal(in_size, c), "Input range sizes are not equal across all processes in mpi::reduce_range");
@@ -246,8 +257,6 @@ namespace mpi {
     using out_value_t = std::ranges::range_value_t<R2>;
     if constexpr (has_mpi_type<in_value_t> && std::same_as<in_value_t, out_value_t>) {
       // make an MPI C library call for MPI compatible value types
-      auto const in_data = std::ranges::data(in_rg);
-      auto out_data      = std::ranges::data(out_rg);
       if (!all)
         check_mpi_call(MPI_Reduce(in_data, out_data, in_size, mpi_type<in_value_t>::get(), op, root, c.get()), "MPI_Reduce");
       else
@@ -413,7 +422,7 @@ namespace mpi {
                     bool all = false) {
     // check the sizes of the input and output ranges
     auto const in_size = std::ranges::size(in_rg);
-    EXPECTS_WITH_MESSAGE(out_size = all_reduce(in_size, c), "Input range sizes don't add up to output range size in mpi::gather_range");
+    EXPECTS_WITH_MESSAGE(out_size == all_reduce(in_size, c), "Input range sizes don't add up to output range size in mpi::gather_range");
     if (c.rank() == root || all) {
       EXPECTS_WITH_MESSAGE(out_size == std::ranges::size(out_rg), "Output range size is incorrect in mpi::gather_range");
     }

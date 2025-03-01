@@ -82,22 +82,36 @@ TEST(MPI, RangesReduceInPlaceTypeWithSpezializedMPIReduceInPlace) {
 TEST(MPI, RangesReduceMPIType) {
   // reduce a range with an MPI type
   mpi::communicator world;
-  std::array<int, 5> arr{0, 1, 2, 3, 4}, arr_red{};
+  std::array<int, 5> arr_orig{0, 1, 2, 3, 4}, arr_red{};
+  auto arr = arr_orig;
   mpi::reduce_range(arr, arr_red, world);
   if (world.rank() == 0)
     for (int i = 0; i < 5; ++i) EXPECT_EQ(arr_red[i], i * world.size());
   else
     for (int i = 0; i < 5; ++i) EXPECT_EQ(arr_red[i], 0);
 
+  // in-place reduce a range with an MPI type
+  arr = arr_orig;
+  mpi::reduce_range(arr, arr, world);
+  if (world.rank() == 0)
+    for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i * world.size());
+  else
+    for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], arr_orig[i]);
+
   // allreduce a range with an MPI type
-  arr     = {0, 1, 2, 3, 4};
+  arr     = arr_orig;
   arr_red = {};
   mpi::reduce_range(arr, arr_red, world, 0, true);
   for (int i = 0; i < 5; ++i) EXPECT_EQ(arr_red[i], i * world.size());
+
+  // in-place allreduce a range with an MPI type
+  arr = {0, 1, 2, 3, 4};
+  mpi::reduce_range(arr, arr, world, 0, true);
+  for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i * world.size());
 }
 
-TEST(MPI, RangesReduceTypeWithSpezializedMPIReduceInPlace) {
-  // reduce a range with a type that has a specialized mpi_reduce_in_place
+TEST(MPI, RangesReduceTypeWithSpezializedMPIReduce) {
+  // reduce a range with a type that has a specialized mpi_reduce
   mpi::communicator world;
   std::vector<non_mpi_t> vec(5, non_mpi_t{}), vec_red(5, non_mpi_t{});
   for (int i = 0; i < 5; ++i) vec[i].a = i;
@@ -107,10 +121,23 @@ TEST(MPI, RangesReduceTypeWithSpezializedMPIReduceInPlace) {
   else
     for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_red[i].a, non_mpi_t{}.a);
 
-  // allreduce a range with a type that has a specialized mpi_reduce_in_place
+  // in-place reduce a range with a type that has a specialized mpi_reduce
+  for (int i = 0; i < 5; ++i) vec[i].a = i;
+  mpi::reduce_range(vec, vec, world);
+  if (world.rank() == 0)
+    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i * world.size());
+  else
+    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i);
+
+  // allreduce a range with a type that has a specialized mpi_reduce
   for (int i = 0; i < 5; ++i) vec[i].a = i;
   mpi::reduce_range(vec, vec_red, world, 0, true);
   for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_red[i].a, i * world.size());
+
+  // in-place allreduce a range with a type that has a specialized mpi_reduce
+  for (int i = 0; i < 5; ++i) vec[i].a = i;
+  mpi::reduce_range(vec, vec, world, 0, true);
+  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i * world.size());
 }
 
 TEST(MPI, RangesScatterMPIType) {
