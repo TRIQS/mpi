@@ -44,22 +44,7 @@ struct non_mpi_t {
 // Specialize mpi_broadcast for non_mpi_t.
 void mpi_broadcast(non_mpi_t &x, mpi::communicator c = {}, int root = 0) { broadcast(x.a, c, root); }
 
-// Specialize mpi_reduce_in_place for non_mpi_t.
-void mpi_reduce_in_place(non_mpi_t &f, mpi::communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-  if (all) {
-    all_reduce_in_place(f.a, c, op);
-  } else {
-    reduce_in_place(f.a, c, root, false, op);
-  }
-}
-
-// Specialize mpi_reduce for non_mpi_t.
-non_mpi_t mpi_reduce(non_mpi_t const &f, mpi::communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-  non_mpi_t res{};
-  if (all) {
-    res.a = all_reduce(f.a, c, op);
-  } else {
-    res.a = reduce(f.a, c, root, false, op);
-  }
-  return (c.rank() == root || all ? res : non_mpi_t{});
+// Specialize mpi_reduce_into for non_mpi_t.
+void mpi_reduce_into(non_mpi_t const &in, non_mpi_t &out, mpi::communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  mpi::reduce_into(in.a, out.a, c, root, all, op);
 }

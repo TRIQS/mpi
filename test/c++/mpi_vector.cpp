@@ -21,85 +21,9 @@
 #include <mpi/mpi.hpp>
 
 #include <complex>
-#include <numeric>
 #include <string>
 #include <utility>
 #include <vector>
-
-TEST(MPI, VectorReduceInPlaceMPIType) {
-  // in-place reduce a vector with an MPI type
-  mpi::communicator world;
-  std::vector<int> vec{0, 1, 2, 3, 4};
-  mpi::reduce_in_place(vec, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i], i * world.size());
-  else
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i], i);
-
-  // in-place allreduce a vector with an MPI type
-  std::iota(vec.begin(), vec.end(), 0);
-  mpi::all_reduce_in_place(vec, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i], i * world.size());
-}
-
-TEST(MPI, VectorReduceInPlaceTypeWithSpezializedMPIReduceInPlace) {
-  // in-place reduce a vector with a type that has a specialized mpi_reduce_in_place
-  mpi::communicator world;
-  std::vector<non_mpi_t> vec(5);
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  mpi::reduce_in_place(vec, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i * world.size());
-  else
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i);
-
-  // in-place allreduce a vector with a type that has a specialized mpi_reduce_in_place
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  mpi::all_reduce_in_place(vec, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i * world.size());
-}
-
-TEST(MPI, VectorReduceMPIType) {
-  // reduce a vector with complex numbers
-  mpi::communicator world;
-  using vec_type = std::vector<std::complex<double>>;
-  const int size = 7;
-  vec_type vec(size);
-  for (int i = 0; i < size; ++i) vec[i] = std::complex<double>(i, -i);
-  auto vec_reduced = mpi::reduce(vec, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < size; ++i) EXPECT_EQ(vec_reduced[i], std::complex<double>(i * world.size(), -i * world.size()));
-  else
-    EXPECT_TRUE(vec_reduced.empty());
-
-  // allreduce a vector with complex numbers
-  vec_reduced = mpi::all_reduce(vec, world);
-  for (int i = 0; i < size; ++i) EXPECT_EQ(vec_reduced[i], std::complex<double>(i * world.size(), -i * world.size()));
-}
-
-TEST(MPI, VectorReduceTypeWithSpezializedMPIReduce) {
-  // reduce a vector with a type that has a specialized mpi_reduce
-  mpi::communicator world;
-  std::vector<non_mpi_t> vec(5);
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  auto vec_reduced = mpi::reduce(vec, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_reduced[i].a, i * world.size());
-  else
-    EXPECT_TRUE(vec_reduced.empty());
-
-  // allreduce a vector with a type that has a specialized mpi_reduce
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  auto vec_reduced_all = mpi::all_reduce(vec, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_reduced_all[i].a, i * world.size());
-}
-
-TEST(MPI, EmptyVectorReduce) {
-  // reduce an empty vector
-  mpi::communicator world;
-  std::vector<double> v1{};
-  std::vector<double> v2 = mpi::reduce(v1, world);
-}
 
 TEST(MPI, VectorGatherScatter) {
   // scatter and gather a vector of complex numbers

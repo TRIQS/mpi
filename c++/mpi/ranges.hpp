@@ -33,9 +33,12 @@
 #include <mpi.h>
 
 #include <algorithm>
+#include <concepts>
 #include <limits>
 #include <ranges>
 #include <stdexcept>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace mpi {
@@ -89,157 +92,89 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an in-place MPI reduce for an mpi::contiguous_sized_range object.
+   * @brief Implementation of an MPI reduce for `std::ranges::sized_range` objects.
    *
-   * @details If mpi::has_mpi_type is true for the value type of the range, then the range is reduced using a simple
-   * `MPI_Reduce` or `MPI_Allreduce` with `MPI_IN_PLACE`. Otherwise, the specialized `mpi_reduce_in_place` is called
-   * for each element in the range.
+   * @details The behaviour of this function is as follows:
+   * - If the number of elements to be reduced is zero, it does nothing.
+   * - If the range is contiguous with an MPI compatible value type, it calls `MPI_Reduce` or `MPI_Allreduce` to reduce
+   * the elements in the input ranges into the output ranges on receiving ranks.
+   *   - If the input and output ranges point to the same data, the reduction is done in place.
+   * - Otherwise, it calls mpi::reduce_into for each input-output element pair separately.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the ranges are
-   * equal across all processes.
+   * It throws an exception in case a call to the MPI C library fails and it expects
+   * - that the input range size on all processes and the output range size on receiving processes are equal and
+   * - that either all or none of the receiving processes choose the in place option.
    *
-   * If the ranges are empty or if mpi::has_env is false or if the communicator size is < 2, it does nothing.
-   *
-   * @note It is recommended to use the generic mpi::reduce_in_place and mpi::all_reduce_in_place for supported types,
-   * e.g. `std::vector` or `std::array`. It is the user's responsibility to ensure that ranges have the correct sizes.
-   *
-   * @code{.cpp}
-   * // create a vector on all ranks
-   * auto vec = std::vector<int>{0, 1, 2, 3, 4};
-   *
-   * // in-place reduce the middle elements only on rank 0
-   * mpi::reduce_in_place_range(std::span{vec.data() + 1, 3}, comm);
-   *
-   * // output result
-   * for (auto x : vec) std::cout << x << " ";
-   * std::cout << std::endl;
-   * @endcode
-   *
-   * Output (with 4 processes):
-   *
-   * ```
-   * 0 1 2 3 4
-   * 0 1 2 3 4
-   * 0 1 2 3 4
-   * 0 4 8 12 4
-   * ```
-   *
-   * @tparam R mpi::contiguous_sized_range type.
-   * @param rg Range to reduce.
+   * @tparam R1 `std::ranges::sized_range` type.
+   * @tparam R2 `std::ranges::sized_range` type.
+   * @param in_rg Range to be reduced.
+   * @param out_rg Range to be reduced into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
    */
-  template <contiguous_sized_range R>
-  void reduce_in_place_range(R &&rg, communicator c = {}, int root = 0, bool all = false, // NOLINT (ranges need not be forwarded)
-                             MPI_Op op = MPI_SUM) {
-    // check the sizes of all ranges
-    using value_t   = std::ranges::range_value_t<R>;
-    auto const size = std::ranges::size(rg);
-    EXPECTS_WITH_MESSAGE(all_equal(size, c), "Range sizes are not equal across all processes in mpi::reduce_in_place_range");
-
-    // do nothing if the range is empty, if MPI is not initialized or if the communicator size is < 2
-    if (size == 0 || !has_env || c.size() < 2) return;
-
-    // reduce the ranges
-    if constexpr (has_mpi_type<value_t>) {
-      // make an MPI C library call for MPI compatible value types
-      auto data = std::ranges::data(rg);
-      if (!all)
-        check_mpi_call(MPI_Reduce((c.rank() == root ? MPI_IN_PLACE : data), data, size, mpi_type<value_t>::get(), op, root, c.get()), "MPI_Reduce");
-      else
-        check_mpi_call(MPI_Allreduce(MPI_IN_PLACE, data, size, mpi_type<value_t>::get(), op, c.get()), "MPI_Allreduce");
-    } else {
-      // otherwise call the specialized mpi_reduce_in_place for each element
-      for (auto &val : rg) mpi_reduce_in_place(val, c, root, all, op);
-    }
-  }
-
-  /**
-   * @brief Implementation of an MPI reduce for an mpi::contiguous_sized_range.
-   *
-   * @details If mpi::has_mpi_type is true for the value type of the range, then the range is reduced using a simple
-   * `MPI_Reduce` or `MPI_Allreduce`. Otherwise, the specialized `mpi_reduce` is called for each element in the range.
-   *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the input ranges
-   * are equal across all processes and that they are equal to the size of the output range on receiving processes.
-   *
-   * If the input ranges are empty, it does nothing. If mpi::has_env is false or if the communicator size is < 2, it
-   * simply copies the input range to the output range.
-   *
-   * @note It is recommended to use the generic mpi::reduce and mpi::all_reduce for supported types, e.g. `std::vector`
-   * or `std::array`. It is the user's responsibility to ensure that ranges have the correct sizes.
-   *
-   * @code{.cpp}
-   * // create input and output vectors on all ranks
-   * auto in_vec = std::vector<int>{0, 1, 2, 3, 4};
-   * auto out_vec = std::vector<int>(in_vec.size(), 0);
-   *
-   * // allreduce the middle elements of the input vector to the last elements of the output vector
-   * mpi::reduce_range(std::span{in_vec.data() + 1, 3}, std::span{out_vec.data() + 2, 3}, comm, 0, true);
-   *
-   * // output result
-   * for (auto x : out_vec) std::cout << x << " ";
-   * std::cout << std::endl;
-   * @endcode
-   *
-   * Output (with 4 processes):
-   *
-   * ```
-   * 0 0 4 8 12
-   * 0 0 4 8 12
-   * 0 0 4 8 12
-   * 0 0 4 8 12
-   * ```
-   *
-   * @tparam R1 mpi::contiguous_sized_range type.
-   * @tparam R2 mpi::contiguous_sized_range type.
-   * @param in_rg Range to reduce.
-   * @param out_rg Range to reduce into.
-   * @param c mpi::communicator.
-   * @param root Rank of the root process.
-   * @param all Should all processes receive the result of the reduction.
-   * @param op `MPI_Op` used in the reduction.
-   */
-  template <contiguous_sized_range R1, contiguous_sized_range R2>
+  template <std::ranges::sized_range R1, std::ranges::sized_range R2>
   void reduce_range(R1 &&in_rg, R2 &&out_rg, communicator c = {}, int root = 0, bool all = false, // NOLINT (ranges need not be forwarded)
                     MPI_Op op = MPI_SUM) {
-    // check input and output ranges
-    auto const in_size = std::ranges::size(in_rg);
-    EXPECTS_WITH_MESSAGE(all_equal(in_size, c), "Input range sizes are not equal across all processes in mpi::reduce_range");
-    if (c.rank() == root || all) {
-      EXPECTS_WITH_MESSAGE(in_size == std::ranges::size(out_rg), "Input and output range sizes are not equal in mpi::reduce_range");
-    }
+    // check the size of the input range
+    auto size = static_cast<long>(std::ranges::size(in_rg));
+    EXPECTS_WITH_MESSAGE(all_equal(size, c), "Input range sizes are not equal on all processes in mpi::reduce_range");
 
-    // do nothing if the input range is empty
-    if (in_size == 0) return;
+    // do nothing if no elements are reduced
+    if (size <= 0) return;
 
-    // simply copy if there is no active MPI environment or if the communicator size is < 2
-    if (!has_env || c.size() < 2) {
-      std::ranges::copy(std::forward<R1>(in_rg), std::ranges::data(out_rg));
-      return;
-    }
+    // check the size of the output range
+    bool const receives = (c.rank() == root || all);
+    if (receives) EXPECTS_WITH_MESSAGE(size == std::ranges::size(out_rg), "Input and output range sizes are not equal in mpi::reduce_range");
 
-    // reduce the ranges
-    using in_value_t  = std::ranges::range_value_t<R1>;
-    using out_value_t = std::ranges::range_value_t<R2>;
-    if constexpr (has_mpi_type<in_value_t> && std::same_as<in_value_t, out_value_t>) {
-      // make an MPI C library call for MPI compatible value types
-      auto const in_data = std::ranges::data(in_rg);
-      auto out_data      = std::ranges::data(out_rg);
-      if (!all)
-        check_mpi_call(MPI_Reduce(in_data, out_data, in_size, mpi_type<in_value_t>::get(), op, root, c.get()), "MPI_Reduce");
-      else
-        check_mpi_call(MPI_Allreduce(in_data, out_data, in_size, mpi_type<in_value_t>::get(), op, c.get()), "MPI_Allreduce");
+    // call the MPI C library if the ranges are contiguous with MPI compatible value types
+    if constexpr (MPICompatibleRange<R1> && MPICompatibleRange<R2>) {
+      static_assert(std::same_as<std::remove_cvref_t<std::ranges::range_value_t<R1>>, std::remove_cvref_t<std::ranges::range_value_t<R2>>>,
+                    "Value types of input and output ranges not compatible in mpi::reduce_range");
+
+      // check if the reduction is in place
+      bool const in_place = (static_cast<void const *>(std::ranges::data(in_rg)) == static_cast<void *>(std::ranges::data(out_rg)));
+      if (all) {
+        EXPECTS_WITH_MESSAGE(all_equal(static_cast<int>(in_place), c),
+                             "Either zero or all receiving processes have to choose the in place option in mpi::reduce_range");
+      }
+
+      // in case there is no active MPI environment or if the communicator size is < 2, copy to the output range
+      if (!has_env || c.size() < 2) {
+        std::ranges::copy(std::forward<R1>(in_rg), std::ranges::data(out_rg));
+        return;
+      }
+
+      // make the MPI C library call (allow the number of elements to larger than INT_MAX)
+      constexpr long max_int = std::numeric_limits<int>::max();
+      for (long offset = 0; size > 0; offset += max_int, size -= max_int) {
+        auto in_data  = static_cast<void const *>(std::ranges::data(in_rg) + offset);
+        auto out_data = std::ranges::data(out_rg) + offset;
+        if (receives and in_place) in_data = MPI_IN_PLACE;
+        auto const count = static_cast<int>(std::min(size, max_int));
+        if (all) {
+          check_mpi_call(MPI_Allreduce(in_data, out_data, count, mpi_type<std::ranges::range_value_t<R1>>::get(), op, c.get()), "MPI_Allreduce");
+        } else {
+          check_mpi_call(MPI_Reduce(in_data, out_data, count, mpi_type<std::ranges::range_value_t<R1>>::get(), op, root, c.get()), "MPI_Reduce");
+        }
+      }
     } else {
-      // otherwise call the specialized mpi_reduce for each element
-      // the size of the output range is arbitrary on non-recieving ranks, so we cannot use transform on them
-      if (c.rank() == root || all)
-        std::ranges::transform(std::forward<R1>(in_rg), std::ranges::data(out_rg), [&](auto const &val) { return reduce(val, c, root, all, op); });
-      else
-        // the assignment is needed in case a lazy object is returned
-        std::ranges::for_each(std::forward<R1>(in_rg), [&](auto const &val) { [[maybe_unused]] out_value_t ignore = reduce(val, c, root, all, op); });
+      // fallback to element-wise reduction if the range is not contiguous with an MPI compatible value type
+      if (size <= std::ranges::size(out_rg)) {
+        // on ranks where the output range size is large enough, reduce into the output elements
+        for (auto &&[x_in, x_out] : itertools::zip(in_rg, out_rg)) reduce_into(x_in, x_out, c, root, all, op);
+      } else {
+        // on all other ranks, reduce into a dummy output object (needs to be default constructible)
+        using out_value_t = std::ranges::range_value_t<R2>;
+        if constexpr (std::is_default_constructible_v<out_value_t>) {
+          out_value_t out_dummy{};
+          for (auto &&x_in : in_rg) reduce_into(x_in, out_dummy, c, root, all, op);
+        } else {
+          // if it is not default constructible, is there something we can do?
+          throw std::runtime_error("Cannot default construct dummy object in mpi::reduce_range");
+        }
+      }
     }
   }
 
