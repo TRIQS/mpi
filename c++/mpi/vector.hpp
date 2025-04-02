@@ -16,7 +16,7 @@
 
 /**
  * @file
- * @brief Provides an MPI broadcast, reduce, scatter and gather for std::vector.
+ * @brief Provides an MPI broadcast, reduce, scatter and gather for `std::vector`.
  */
 
 #pragma once
@@ -38,20 +38,20 @@ namespace mpi {
    */
 
   /**
-   * @brief Implementation of an MPI broadcast for a std::vector.
+   * @brief Implementation of an MPI broadcast for a `std::vector`.
    *
    * @details It first broadcasts the size of the vector from the root process to all other processes, then resizes the
    * vector on all non-root processes and calls mpi::broadcast_range with the (resized) input vector.
    *
    * @tparam T Value type of the vector.
-   * @param v std::vector to broadcast.
+   * @param v `std::vector` to broadcast.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
   template <typename T> void mpi_broadcast(std::vector<T> &v, communicator c = {}, int root = 0) {
-    auto bsize = v.size();
-    broadcast(bsize, c, root);
-    if (c.rank() != root) v.resize(bsize);
+    auto count = v.size();
+    broadcast(count, c, root);
+    if (c.rank() != root) v.resize(count);
     broadcast_range(v, c, root);
   }
 
@@ -84,8 +84,7 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    * @return std::vector containing the result of each individual reduction.
    */
-  template <typename T>
-  auto mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+  template <typename T> auto mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
     std::vector<regular_t<T>> res(c.rank() == root || all ? v.size() : 0);
     reduce_range(v, res, c, root, all, op);
     return res;

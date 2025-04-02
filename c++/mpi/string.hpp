@@ -16,7 +16,7 @@
 
 /**
  * @file
- * @brief Provides an MPI broadcast for std::string.
+ * @brief Provides an MPI broadcast and gather for `std::string`.
  */
 
 #pragma once
@@ -35,19 +35,19 @@ namespace mpi {
    */
 
   /**
-   * @brief Implementation of an MPI broadcast for a std::string.
+   * @brief Implementation of an MPI broadcast for a `std::string`.
    *
    * @details It first broadcasts the size of the string from the root process to all other processes, then resizes the
    * string on all non-root processes and calls mpi::broadcast_range with the (resized) input string.
    *
-   * @param s std::string to broadcast.
+   * @param s `std::string` to broadcast (into).
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
   inline void mpi_broadcast(std::string &s, communicator c, int root) {
-    size_t len = s.size();
-    broadcast(len, c, root);
-    if (c.rank() != root) s.resize(len);
+    auto count = s.size();
+    broadcast(count, c, root);
+    if (c.rank() != root) s.resize(count);
     broadcast_range(s, c, root);
   }
 

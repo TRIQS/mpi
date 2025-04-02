@@ -16,7 +16,7 @@
 
 /**
  * @file
- * @brief Provides an MPI broadcast and reduce for std::pair.
+ * @brief Provides an MPI broadcast and reduce for `std::pair`.
  */
 
 #pragma once
@@ -35,13 +35,13 @@ namespace mpi {
    */
 
   /**
-   * @brief Implementation of an MPI broadcast for a std::pair.
+   * @brief Implementation of an MPI broadcast for a `std::pair`.
    *
-   * @details Simply calls the generic mpi::broadcast for the first and second element of the pair.
+   * @details It calls the generic mpi::broadcast for the first and second element of the pair.
    *
    * @tparam T1 Type of the first element of the pair.
    * @tparam T2 Type of the second element of the pair.
-   * @param p std::pair to broadcast.
+   * @param p `std::pair` to broadcast.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */

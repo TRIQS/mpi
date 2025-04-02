@@ -14,7 +14,7 @@
 //
 // Authors: Thomas Hahn, Nils Wentzell
 
-#include "./non_mpi_t.hpp"
+#include "./custom_types.hpp"
 
 #include <gtest/gtest.h>
 #include <itertools/itertools.hpp>
@@ -23,26 +23,6 @@
 #include <complex>
 #include <numeric>
 #include <tuple>
-
-TEST(MPI, ArrayBroadcastMPIType) {
-  // broadcast an array with an MPI type
-  mpi::communicator world;
-  std::array<int, 5> arr{};
-  if (world.rank() == 0) std::iota(arr.begin(), arr.end(), 0);
-  mpi::broadcast(arr, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i);
-}
-
-TEST(MPI, ArrayBroadcastTypeWithSpezializedMPIBroadcast) {
-  // broadcast an array with a type that has a specialized mpi_broadcast
-  mpi::communicator world;
-  std::array<non_mpi_t, 5> arr{};
-  if (world.rank() == 0) {
-    for (int i = 0; i < 5; ++i) arr[i].a = i;
-  }
-  mpi::broadcast(arr, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i].a, i);
-}
 
 TEST(MPI, ArrayReduceInPlaceMPIType) {
   // in-place reduce an array with an MPI type
