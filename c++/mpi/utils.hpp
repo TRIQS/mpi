@@ -25,7 +25,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 
 namespace mpi {
 
@@ -33,27 +32,6 @@ namespace mpi {
    * @addtogroup utilities
    * @{
    */
-
-  namespace detail {
-
-    // Helper struct to get the regular type of a type.
-    template <typename T, typename Enable = void> struct _regular {
-      using type = T;
-    };
-
-    // Spezialization of _regular for types with a `regular_type` type alias.
-    template <typename T> struct _regular<T, std::void_t<typename T::regular_type>> {
-      using type = typename T::regular_type;
-    };
-
-  } // namespace detail
-
-  /**
-   * @ingroup utilities
-   * @brief Type trait to get the regular type of a type.
-   * @tparam T Type to check.
-   */
-  template <typename T> using regular_t = typename detail::_regular<std::decay_t<T>>::type;
 
   /**
    * @brief Check the success of an MPI call.
@@ -73,13 +51,6 @@ namespace mpi {
   inline void check_mpi_call(int errcode, const std::string &mpi_routine) {
     if (errcode != MPI_SUCCESS) throw std::runtime_error("MPI error " + std::to_string(errcode) + " in MPI routine " + mpi_routine);
   }
-
-  /**
-   * @brief A concept that checks if a range type is contiguous and sized.
-   * @tparam R Range type.
-   */
-  template <typename R>
-  concept contiguous_sized_range = std::ranges::contiguous_range<R> && std::ranges::sized_range<R>;
 
   /** @} */
 

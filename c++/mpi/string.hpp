@@ -52,22 +52,22 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI gather for a std::string.
+   * @brief Implementation of an MPI gather for a `std::string` that gathers directly into an existing output string.
    *
-   * @details It first all-reduces the sizes of the input string from all processes and then calls mpi::gather_range.
+   * @details It first all-reduces the sizes of the input strings from all processes. On receiving ranks, the output
+   * string is resized to the reduced size in case it has not the correct size. On non-receiving ranks, the output
+   * string is always unmodified. Then mpi::gather_range with the input and (resized) output strings is called.
    *
-   * @param s std::string to gather.
+   * @param s_in `std::string` to gather.
+   * @param s_out `std::string` to gather into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result.
-   * @return std::string containing the result of the gather operation.
    */
-  inline std::string mpi_gather(std::string const &s, communicator c = {}, int root = 0, bool all = false) {
-    long len = static_cast<long>(all_reduce(s.size(), c));
-    std::string res{};
-    if (c.rank() == root || all) res.resize(len);
-    gather_range(s, res, len, c, root, all);
-    return res;
+  inline void mpi_gather_into(std::string const &s_in, std::string &s_out, communicator c = {}, int root = 0, bool all = false) {
+    auto const gather_size = mpi::all_reduce(s_in.size(), c);
+    if ((c.rank() == root || all) && s_out.size() != s_in.size()) s_out.resize(gather_size);
+    gather_range(s_in, s_out, c, root, all);
   }
 
   /** @} */

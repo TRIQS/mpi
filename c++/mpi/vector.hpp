@@ -125,22 +125,23 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI gather for a std::vector.
+   * @brief Implementation of an MPI gather for a `std::vector` that gathers directly into an existing output vector.
    *
-   * @details It first all-reduces the sizes of the input vectors from all processes and then calls mpi::gather_range.
+   * @details It first all-reduces the sizes of the input vectors from all processes. On receiving ranks, the output
+   * vector is resized to the reduced size in case it has not the correct size. On non-receiving ranks, the output
+   * vector is always unmodified. Then mpi::gather_range with the input and (resized) output vector is called.
    *
    * @tparam T Value type of the vector.
-   * @param v std::vector to gather.
+   * @param v_in `std::vector` to gather.
+   * @param v_out `std::vector` to gather into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result.
-   * @return std::vector containing the result of the gather operation.
    */
-  template <typename T> auto mpi_gather(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false) {
-    long bsize = mpi::all_reduce(v.size(), c);
-    std::vector<T> res(c.rank() == root || all ? bsize : 0);
-    gather_range(v, res, bsize, c, root, all);
-    return res;
+  template <typename T> void mpi_gather_into(std::vector<T> const &v_in, std::vector<T> &v_out, communicator c = {}, int root = 0, bool all = false) {
+    auto const gather_size = mpi::all_reduce(v_in.size(), c);
+    if ((c.rank() == root || all) && v_out.size() != gather_size) v_out.resize(gather_size);
+    gather_range(v_in, v_out, c, root, all);
   }
 
   /** @} */
