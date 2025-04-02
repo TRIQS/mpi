@@ -27,7 +27,6 @@
 #include "./datatypes.hpp"
 #include "./environment.hpp"
 #include "./generic_communication.hpp"
-#include "./lazy.hpp"
 #include "./monitor.hpp"
 #include "./operators.hpp"
 #include "./pair.hpp"

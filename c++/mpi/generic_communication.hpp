@@ -26,7 +26,6 @@
 
 #include "./communicator.hpp"
 #include "./datatypes.hpp"
-#include "./lazy.hpp"
 #include "./macros.hpp"
 #include "./utils.hpp"
 
