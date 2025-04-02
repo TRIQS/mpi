@@ -28,6 +28,8 @@
 
 #include <mpi.h>
 
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace mpi {
@@ -56,38 +58,49 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an in-place MPI reduce for a std::vector.
+   * @brief Implementation of an MPI reduce for a `std::vector`.
    *
-   * @details It simply calls mpi::reduce_in_place_range with the given input vector.
+   * @details It first constructs the output vector with its value type equal to the return type of
+   * `reduce(std::declval<T>())`. On receiving ranks, the output vector is then resized to the size of the input vector.
+   * On non-receiving ranks, the output vector is always empty.
+   *
+   * It calls mpi::reduce_range with the input and constructed output vector.
    *
    * @tparam T Value type of the vector.
-   * @param v std::vector to reduce.
+   * @param v `std::vector` to reduce.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
+   * @return `std::vector` containing the result of the reduction.
    */
-  template <typename T> void mpi_reduce_in_place(std::vector<T> &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    reduce_in_place_range(v, c, root, all, op);
+  template <typename T> auto mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+    using value_type = std::remove_cvref_t<decltype(reduce(std::declval<T>()))>;
+    std::vector<value_type> res(c.rank() == root || all ? v.size() : 0);
+    reduce_range(v, res, c, root, all, op);
+    return res;
   }
 
   /**
-   * @brief Implementation of an MPI reduce for a std::vector.
+   * @brief Implementation of an MPI reduce for a `std::vector` that reduces directly into a given output vector.
    *
-   * @details It simply calls mpi::reduce_range with the given input vector and an empty vector of the same size.
+   * @details It first resizes the output vector to the size of the input vector on receiving ranks and then calls
+   * mpi::reduce_range with the input and (resized) output vector.
    *
-   * @tparam T Value type of the vector.
-   * @param v std::vector to reduce.
+   * @tparam T1 Value type of the vector to be reduced.
+   * @tparam T2 Value type of the vector to be reduced into.
+   * @param v_in `std::vector` to reduce.
+   * @param v_out `std::vector` to reduce into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
-   * @return std::vector containing the result of each individual reduction.
    */
-  template <typename T> auto mpi_reduce(std::vector<T> const &v, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    std::vector<regular_t<T>> res(c.rank() == root || all ? v.size() : 0);
-    reduce_range(v, res, c, root, all, op);
-    return res;
+  template <typename T1, typename T2>
+  void mpi_reduce_into(std::vector<T1> const &v_in, std::vector<T2> &v_out, communicator c = {}, int root = 0, bool all = false,
+                       MPI_Op op = MPI_SUM) {
+    if ((c.rank() == root || all) && v_out.size() != v_in.size()) v_out.resize(v_in.size());
+    reduce_range(v_in, v_out, c, root, all, op);
   }
 
   /**

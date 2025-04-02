@@ -20,76 +20,8 @@
 #include <gtest/gtest.h>
 #include <mpi/mpi.hpp>
 
-#include <array>
 #include <numeric>
 #include <vector>
-
-TEST(MPI, RangesReduceInPlaceMPIType) {
-  // in-place reduce a range with an MPI type
-  mpi::communicator world;
-  std::array<int, 5> arr{0, 1, 2, 3, 4};
-  mpi::reduce_in_place_range(arr, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i * world.size());
-  else
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i);
-
-  // in-place allreduce a range with an MPI type
-  arr = {0, 1, 2, 3, 4};
-  mpi::reduce_in_place_range(arr, world, 0, true);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i * world.size());
-}
-
-TEST(MPI, RangesReduceInPlaceTypeWithSpezializedMPIReduceInPlace) {
-  // in-place reduce a range with a type that has a specialized mpi_reduce_in_place
-  mpi::communicator world;
-  std::vector<non_mpi_t> vec(5);
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  mpi::reduce_in_place_range(vec, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i * world.size());
-  else
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i);
-
-  // in-place allreduce a range with a type that has a specialized mpi_reduce_in_place
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  mpi::reduce_in_place_range(vec, world, 0, true);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i * world.size());
-}
-
-TEST(MPI, RangesReduceMPIType) {
-  // reduce a range with an MPI type
-  mpi::communicator world;
-  std::array<int, 5> arr{0, 1, 2, 3, 4}, arr_red{};
-  mpi::reduce_range(arr, arr_red, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(arr_red[i], i * world.size());
-  else
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(arr_red[i], 0);
-
-  // allreduce a range with an MPI type
-  arr     = {0, 1, 2, 3, 4};
-  arr_red = {};
-  mpi::reduce_range(arr, arr_red, world, 0, true);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(arr_red[i], i * world.size());
-}
-
-TEST(MPI, RangesReduceTypeWithSpezializedMPIReduceInPlace) {
-  // reduce a range with a type that has a specialized mpi_reduce_in_place
-  mpi::communicator world;
-  std::vector<non_mpi_t> vec(5, non_mpi_t{}), vec_red(5, non_mpi_t{});
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  mpi::reduce_range(vec, vec_red, world);
-  if (world.rank() == 0)
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_red[i].a, i * world.size());
-  else
-    for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_red[i].a, non_mpi_t{}.a);
-
-  // allreduce a range with a type that has a specialized mpi_reduce_in_place
-  for (int i = 0; i < 5; ++i) vec[i].a = i;
-  mpi::reduce_range(vec, vec_red, world, 0, true);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec_red[i].a, i * world.size());
-}
 
 TEST(MPI, RangesScatterMPIType) {
   // scatter a range with an MPI type

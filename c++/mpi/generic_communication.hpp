@@ -27,6 +27,7 @@
 #include "./communicator.hpp"
 #include "./datatypes.hpp"
 #include "./lazy.hpp"
+#include "./macros.hpp"
 #include "./utils.hpp"
 
 #include <mpi.h>
@@ -93,9 +94,11 @@ namespace mpi {
   /**
    * @brief Generic MPI reduce.
    *
-   * @details If mpi::has_env is true or if the return type of the specialized `mpi_reduce` is lazy, this function calls
-   * the specialized `mpi_reduce` function for the given object. Otherwise, it simply converts the input object to the
-   * output type `mpi_reduce` would return.
+   * @details If there is a specialized `mpi_reduce` for the given type, we call it. Otherwise, we call mpi::reduce_into
+   * with the given input object and a default constructed output object of type `T`.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
    *
    * @tparam T Type to be reduced.
    * @param x Object to be reduced.
@@ -103,39 +106,62 @@ namespace mpi {
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
-   * @return The result of the specialized `mpi_reduce` call.
+   * @return Result of the specialized `mpi_reduce` call.
    */
   template <typename T>
-  [[gnu::always_inline]] inline decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    // return type of mpi_reduce
-    using r_t = decltype(mpi_reduce(std::forward<T>(x), c, root, all, op));
-    if constexpr (is_mpi_lazy<r_t>) {
-      return mpi_reduce(std::forward<T>(x), c, root, all, op);
+  [[gnu::always_inline]] decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, // NOLINT (forwarding is not needed)
+                                               MPI_Op op = MPI_SUM) {
+    if constexpr (requires { mpi_reduce(x, c, root, all, op); }) {
+      return mpi_reduce(x, c, root, all, op);
     } else {
-      if (has_env)
-        return mpi_reduce(std::forward<T>(x), c, root, all, op);
-      else
-        return detail::convert<r_t>(std::forward<T>(x));
+      std::remove_cvref_t<T> res;
+      reduce_into(x, res, c, root, all, op);
+      return res;
     }
   }
 
   /**
-   * @brief Generic in-place MPI reduce.
+   * @brief Generic in place MPI reduce.
    *
-   * @details If mpi::has_env is true, this functions calls the specialized `mpi_reduce_in_place` function for the given
-   * object. Otherwise, it does nothing.
+   * @details We call mpi::reduce_into with the given object as the input and output argument.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
    *
    * @tparam T Type to be reduced.
-   * @param x Object to be reduced.
+   * @param x Object to be reduced (into).
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
    */
   template <typename T>
-  [[gnu::always_inline]] inline void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    static_assert(not std::is_const_v<T>, "In-place mpi functions cannot be called on const objects");
-    if (has_env) mpi_reduce_in_place(std::forward<T>(x), c, root, all, op);
+  [[gnu::always_inline]] void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, // NOLINT (forwarding is not needed)
+                                              MPI_Op op = MPI_SUM) {
+    mpi_reduce_into(x, x, c, root, all, op);
+  }
+
+  /**
+   * @brief Generic MPI reduce that reduces directly into an existing output object.
+   *
+   * @details It calls the specialized `mpi_reduce_into` function.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
+   *
+   * @tparam T1 Type to be reduced.
+   * @tparam T2 Type to be reduced into.
+   * @param x_in Object to be reduced.
+   * @param x_out Object to be reduced into.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   * @param all Should all processes receive the result of the reduction.
+   * @param op `MPI_Op` used in the reduction.
+   */
+  template <typename T1, typename T2>
+  [[gnu::always_inline]] void reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0, // NOLINT (forwarding is not needed)
+                                          bool all = false, MPI_Op op = MPI_SUM) {
+    mpi_reduce_into(x_in, x_out, c, root, all, op);
   }
 
   /**
@@ -195,16 +221,25 @@ namespace mpi {
    * @brief Generic MPI all-reduce.
    * @details It simply calls mpi::reduce with `all = true`.
    */
-  template <typename T> [[gnu::always_inline]] inline decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    return reduce(std::forward<T>(x), c, 0, true, op);
+  template <typename T> [[gnu::always_inline]] decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT
+    return reduce(x, c, 0, true, op);
   }
 
   /**
-   * @brief Generic MPI all-reduce in-place.
+   * @brief Generic MPI all-reduce in place.
    * @details It simply calls mpi::reduce_in_place with `all = true`.
    */
-  template <typename T> [[gnu::always_inline]] inline void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) {
-    reduce_in_place(std::forward<T>(x), c, 0, true, op);
+  template <typename T> [[gnu::always_inline]] void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT
+    reduce_in_place(x, c, 0, true, op);
+  }
+
+  /**
+   * @brief Generic MPI all-reduce that reduces directly into an existing output object.
+   * @details It simply calls mpi::reduce_into with `all = true`.
+   */
+  template <typename T1, typename T2>
+  [[gnu::always_inline]] void all_reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT
+    return reduce_into(x_in, x_out, c, 0, true, op);
   }
 
   /**
@@ -213,6 +248,26 @@ namespace mpi {
    */
   template <typename T> [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
     return gather(std::forward<T>(x), c, 0, true);
+  }
+
+  /**
+   * @brief Checks if a given object is equal across all ranks in the given communicator.
+   *
+   * @details It makes two calls to mpi::all_reduce, one with `MPI_MIN` and the other with `MPI_MAX`, and compares their
+   * results.
+   *
+   * @note `MPI_MIN` and `MPI_MAX` need to make sense for the given type `T`.
+   *
+   * @tparam T Type to be checked.
+   * @param x Object to be equality compared.
+   * @param c mpi::communicator.
+   * @return If the given object is equal on all ranks, it returns true. Otherwise, it returns false.
+   */
+  template <typename T> bool all_equal(T const &x, communicator c = {}) {
+    if (!has_env || c.size() < 2) return true;
+    auto min_obj = all_reduce(x, c, MPI_MIN);
+    auto max_obj = all_reduce(x, c, MPI_MAX);
+    return min_obj == max_obj;
   }
 
   /**
@@ -239,10 +294,12 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI reduce for types that have a corresponding MPI datatype, i.e. for which a
-   * specialization of mpi::mpi_type has been defined.
+   * @brief Implementation of an MPI reduce for types that have a corresponding MPI datatype.
    *
-   * @details It throws an exception in case a call to the MPI C library fails.
+   * @details If mpi::has_env is false or if the communicator size is < 2, it returns a copy of the input object.
+   * Otherwise, it calls `MPI_Allreduce` or `MPI_Reduce` with a default constructed output object.
+   *
+   * It throws an exception in case the call to the MPI C library fails.
    *
    * @tparam T Type to be reduced.
    * @param x Object to be reduced.
@@ -250,29 +307,39 @@ namespace mpi {
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
-   * @return The result of the reduction.
+   * @return Result of the reduction.
    */
   template <typename T>
     requires(has_mpi_type<T>)
   T mpi_reduce(T const &x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    T b;
-    auto d = mpi_type<T>::get();
-    if (!all)
-      // old MPI implementations may require a non-const send buffer
-      check_mpi_call(MPI_Reduce(const_cast<T *>(&x), &b, 1, d, op, root, c.get()), "MPI_Reduce"); // NOLINT
-    else
-      check_mpi_call(MPI_Allreduce(const_cast<T *>(&x), &b, 1, d, op, c.get()), "MPI_Allreduce"); // NOLINT
-    return b;
+    // in case there is no active MPI environment or if the communicator size is < 2, return the input object
+    if (!has_env || c.size() < 2) return x;
+
+    // make the MPI C library call with a default constructed output object
+    T res;
+    if (all) {
+      check_mpi_call(MPI_Allreduce(&x, &res, 1, mpi_type<T>::get(), op, c.get()), "MPI_Allreduce");
+    } else {
+      check_mpi_call(MPI_Reduce(&x, &res, 1, mpi_type<T>::get(), op, root, c.get()), "MPI_Reduce");
+    }
+    return res;
   }
 
   /**
-   * @brief Implementation of an in-place MPI reduce for types that have a corresponding MPI datatype, i.e. for which
-   * a specialization of mpi::mpi_type has been defined.
+   * @brief Implementation of an MPI reduce that reduces directly into an existing output object for types that have a
+   * corresponding MPI datatype.
    *
-   * @details It throws an exception in case a call to the MPI C library fails.
+   * @details If the addresses of the input and output objects are equal, the reduction is done in place.
+   *
+   * If mpi::has_env is false or if the communicator size is < 2, it either does nothing (in place) or copies the input
+   * into the output object. Otherwise, it calls `MPI_Allreduce` or `MPI_Reduce` (with `MPI_IN_PLACE`).
+   *
+   * It throws an exception in case the call to the MPI C library fails and it is expected that either all or none of
+   * the receiving processes choose the in place option.
    *
    * @tparam T Type to be reduced.
-   * @param x Object to be reduced.
+   * @param x_in Object to be reduced.
+   * @param x_out Object to be reduced into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the reduction.
@@ -280,33 +347,29 @@ namespace mpi {
    */
   template <typename T>
     requires(has_mpi_type<T>)
-  void mpi_reduce_in_place(T &x, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    if (!all)
-      check_mpi_call(MPI_Reduce((c.rank() == root ? MPI_IN_PLACE : &x), &x, 1, mpi_type<T>::get(), op, root, c.get()), "MPI_Reduce");
-    else
-      check_mpi_call(MPI_Allreduce(MPI_IN_PLACE, &x, 1, mpi_type<T>::get(), op, c.get()), "MPI_Allreduce");
-  }
+  void mpi_reduce_into(T const &x_in, T &x_out, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
+    // check if the reduction is in place
+    auto in_ptr         = static_cast<void const *>(&x_in);
+    auto out_ptr        = static_cast<void *>(&x_out);
+    bool const in_place = (in_ptr == out_ptr);
+    if (all) {
+      EXPECTS_WITH_MESSAGE(all_equal(static_cast<int>(in_place), c),
+                           "Either zero or all receiving processes have to choose the in place option in mpi_reduce_into");
+    }
 
-  /**
-   * @brief Checks if a given object is equal across all ranks in the given communicator.
-   *
-   * @details It requires that there is a specialized `mpi_reduce` for the given type `T` and that it is equality
-   * comparable as well as default constructible.
-   *
-   * It makes two calls to mpi::all_reduce, one with `MPI_MIN` and the other with `MPI_MAX`, and compares their results.
-   *
-   * @note `MPI_MIN` and `MPI_MAX` need to make sense for the given type `T`.
-   *
-   * @tparam T Type to be checked.
-   * @param x Object to be equality compared.
-   * @param c mpi::communicator.
-   * @return If the given object is equal on all ranks, it returns true. Otherwise, it returns false.
-   */
-  template <typename T> bool all_equal(T const &x, communicator c = {}) {
-    if (!has_env) return true;
-    auto min_obj = all_reduce(x, c, MPI_MIN);
-    auto max_obj = all_reduce(x, c, MPI_MAX);
-    return min_obj == max_obj;
+    // in case there is no active MPI environment or if the communicator size is < 2, do nothing (in place) or copy
+    if (!has_env || c.size() < 2) {
+      if (!in_place) x_out = x_in;
+      return;
+    }
+
+    // make the MPI C library call
+    if (in_place && (c.rank() == root || all)) in_ptr = MPI_IN_PLACE;
+    if (all) {
+      check_mpi_call(MPI_Allreduce(in_ptr, out_ptr, 1, mpi_type<T>::get(), op, c.get()), "MPI_Allreduce");
+    } else {
+      check_mpi_call(MPI_Reduce(in_ptr, out_ptr, 1, mpi_type<T>::get(), op, root, c.get()), "MPI_Reduce");
+    }
   }
 
   /** @} */
