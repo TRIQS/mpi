@@ -91,8 +91,9 @@ namespace mpi {
   template <typename T> struct mpi_type<const T> : mpi_type<T> {};
 
   /**
-   * @brief Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been specialized.
-   * @tparam T Type to be checked.
+   * @brief Type trait to check if a type `T` has a corresponding MPI datatype, i.e. if mpi::mpi_type has been
+   * specialized.
+   * @tparam `T` Type to be checked.
    */
   template <typename T, typename = void> constexpr bool has_mpi_type = false;
 

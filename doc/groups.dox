@@ -51,17 +51,46 @@
  * @brief Generic and specialized implementations for a subset of collective MPI communications (broadcast, reduce,
  * gather, scatter).
  *
- * @details The generic functions (mpi::broadcast, mpi::reduce, mpi::scatter, ...) call their more specialized
- * counterparts (e.g. mpi::mpi_broadcast, mpi::mpi_reduce, mpi::mpi_scatter, ...).
+ * @details **mpi** provides several generic collective communications routines as well as specializations for certain
+ * common types. The generic functions usually simply forward the call to one of the specializations (`mpi_broadcast`,
+ * `mpi_gather`, `mpi_gather_into`, `mpi_reduce`, `mpi_reduce_into`, `mpi_scatter` or `mpi_scatter_into`) using ADL but
+ * can also perform some additional checks. It is therefore recommended to always use the generic versions when
+ * possible.
  *
- * **mpi** provides (some) implementations for
- * - scalar types that have a corresponding mpi::mpi_type,
- * - `std::vector` and `std::array` types with MPI compatible value types,
- * - `std::string` and
- * - `std::pair`.
+ * Here is a short overview of the available generic functions:
+ * - mpi::broadcast: Calls the specialization `mpi_broadcast`.
+ * - mpi::gather: Calls the specialization `mpi_gather` if it is implemented. Otherwise, it calls mpi::gather_into with
+ * a default constructed output object.
+ * - mpi::gather_into: Calls the specialization `mpi_gather_into`.
+ * - mpi::reduce: Calls the specialization `mpi_reduce` if it is implemented. Otherwise, it calls mpi::reduce_into with
+ * a default constructed output object.
+ * - mpi::reduce_in_place: Calls the specialization `mpi_reduce_into` with the same input and output object.
+ * - mpi::reduce_into: Calls the specialization `mpi_reduce_into`.
+ * - mpi::scatter: Calls the specialization `mpi_scatter` if it is implemented. Otherwise, it calls mpi::scatter_into
+ * with a default constructed output object.
+ * - mpi::scatter_into: Calls the specialization `mpi_scatter_into`.
  *
- * Furthermore, there are several functions to simplify communicating generic, contiguous ranges: mpi::broadcast_range,
- * mpi::gather_range, mpi::reduce_in_place_range, mpi::reduce_range and mpi::scatter_range.
+ * In case, all processes should receive the result of the MPI operation, one can use the convenience functions
+ * mpi::all_gather, mpi::all_gather_into, mpi::all_reduce, mpi::all_reduce_in_place or mpi::all_reduce_into. They
+ * forward the given arguments to their "non-all" counterparts with the `all` argument set to true.
+ *
+ * **mpi** provides various specializations for several types. For example,
+ * - for MPI compatible types, i.e. for types that have a corresponding mpi::mpi_type, it provides an
+ * @ref "mpi::mpi_broadcast(T &x, mpi::communicator, int)" "mpi_broadcast",
+ * @ref "mpi::mpi_reduce(T const &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce",
+ * @ref "mpi::mpi_reduce_into(T const &, T &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce_into",
+ * @ref "mpi::mpi_gather(T const &, mpi::communicator, int, bool)" "mpi_gather" and an
+ * @ref "mpi::mpi_gather_into(T const &, R &&, mpi::communicator, int, bool)" "mpi_gather_into".
+ * - for strings, it provides an @ref "mpi::mpi_broadcast(std::string &, mpi::communicator, int)" "mpi_broadcast"
+ * and an @ref "mpi::mpi_gather_into(std::string const &, std::string &, mpi::communicator, int, bool)"
+ * "mpi_gather_into".
+ *
+ * Users are encouraged to implement their own specializations for their custom types or in case a specialization is
+ * missing (see e.g. @ref ex4).
+ *
+ * Furthermore, there are several functions to simplify communicating (contiguous) ranges: mpi::broadcast_range,
+ * mpi::gather_range, mpi::reduce_range and mpi::scatter_range. Some of these range functions are more generic than
+ * others. Please check the documentation of the specific function for more details.
  */
 
 /**

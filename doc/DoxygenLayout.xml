@@ -22,6 +22,7 @@
       <tab type="user" url="@ref ex1" title="Example 1: Hello world!"/>
       <tab type="user" url="@ref ex2" title="Example 2: Use monitor to communicate errors"/>
       <tab type="user" url="@ref ex3" title="Example 3: Custom type and operator"/>
+      <tab type="user" url="@ref ex4" title="Example 4: Provide custom spezializations"/>
     </tab>
     <tab type="usergroup" url="@ref documentation" title="API Documentation">
       <tab type="usergroup" url="@ref mpi_essentials" title="MPI essentials">
@@ -50,17 +51,11 @@
         </tab>
       </tab>
       <tab type="user" url="@ref coll_comm" title="Collective MPI communication"/>
-      <tab type="usergroup" url="@ref mpi_lazy" title="Lazy MPI communication">
-        <tab type="user" url="@ref mpi::lazy" title="lazy"/>
-        <tab type="user" url="@ref mpi::tag::gather" title="gather tag"/>
-        <tab type="user" url="@ref mpi::tag::reduce" title="reduce tag"/>
-        <tab type="user" url="@ref mpi::tag::scatter" title="scatter tag"/>
-      </tab>
       <tab type="usergroup" url="@ref event_handling" title="Event handling">
         <tab type="user" url="@ref mpi::monitor" title="monitor"/>
       </tab>
       <tab type="usergroup" url="@ref utilities" title="Utilities">
-        <tab type="user" url="@ref mpi::contiguous_sized_range" title="contiguous_sized_range"/>
+        <tab type="user" url="@ref mpi::MPICompatibleRange" title="MPICompatibleRange"/>
       </tab>
       <tab type="filelist" visible="yes" title="" intro=""/>
     </tab>

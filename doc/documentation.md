@@ -35,17 +35,7 @@ Furthermore, it offers tools to simplify the creation of custom MPI operations u
 
 ## Collective MPI communication
 
-The following generic collective communications are defined in @ref coll_comm "Collective MPI communication":
-
-* @ref mpi::all_gather "all_gather"
-* @ref mpi::all_reduce "all_reduce"
-* @ref mpi::all_reduce_in_place "all_reduce_in_place"
-* @ref mpi::broadcast "broadcast"
-* @ref mpi::gather "gather"
-* @ref mpi::reduce "reduce"
-* @ref mpi::reduce_in_place "reduce_in_place"
-* @ref mpi::scatter "scatter"
-
+**mpi** provides several generic @ref coll_comm "Collective MPI communication".
 They offer a much simpler interface than their MPI C library analogs.
 For example, the following broadcasts a `std::vector<double>` from the process with rank 0 to all others:
 
@@ -61,17 +51,10 @@ MPI_Bcast(vec.data(), static_cast<int>(vec.size()), MPI_DOUBLE, 0, MPI_COMM_WORL
 
 Under the hood, the generic mpi::broadcast implementation calls the specialized
 @ref "mpi::mpi_broadcast(std::vector< T >&, mpi::communicator, int)".
-The other generic functions are implemented in the same way.
-See the "Functions" section in @ref coll_comm to check which datatypes are supported out of the box.
+Other generic functions in **mpi** work similarly.
+See the "Functions" section in @ref coll_comm to check which datatypes and MPI operations are supported out of the box.
 
 In case your datatype is not supported, you are free to provide your own specialization.
-
-Furthermore, there are several functions to simplify communicating generic, contiguous ranges:
-- mpi::broadcast_range,
-- mpi::gather_range,
-- mpi::reduce_in_place_range,
-- mpi::reduce_range and
-- mpi::scatter_range.
 
 ## Lazy MPI communication
 
