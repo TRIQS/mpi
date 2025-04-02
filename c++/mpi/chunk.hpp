@@ -22,11 +22,11 @@
 #pragma once
 
 #include "./communicator.hpp"
+#include "./macros.hpp"
 
 #include <itertools/itertools.hpp>
 
 #include <iterator>
-#include <stdexcept>
 #include <utility>
 
 namespace mpi {
@@ -39,7 +39,7 @@ namespace mpi {
    * @details The optional parameter `min_size` can be used to first divide the range into equal parts of size
    * `min_size` before distributing them as evenly as possible across the number of specified subranges.
    *
-   * It throws an exception if `min_size < 1` or if it is not a divisor of `end`.
+   * It is expected that `min_size > 0` and that `min_size` is a divisor of `end`.
    *
    * @param end End of the integer range `[0, end)`.
    * @param nranges Number of subranges.
@@ -48,7 +48,7 @@ namespace mpi {
    * @return Length of the i<sup>th</sup> subrange.
    */
   [[nodiscard]] inline long chunk_length(long end, int nranges, int i, long min_size = 1) {
-    if (min_size < 1 || end % min_size != 0) throw std::runtime_error("Error in mpi::chunk_length: min_size must be a divisor of end");
+    EXPECTS_WITH_MESSAGE(min_size > 0 && end % min_size == 0, "Error in mpi::chunk_length: min_size must be a divisor of end");
     auto [node_begin, node_end] = itertools::chunk_range(0, end / min_size, nranges, i);
     return (node_end - node_begin) * min_size;
   }
