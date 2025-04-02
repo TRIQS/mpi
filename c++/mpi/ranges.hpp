@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <concepts>
 #include <limits>
+#include <numeric>
 #include <ranges>
 #include <stdexcept>
 #include <type_traits>
@@ -249,109 +250,62 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI gather for an mpi::contiguous_sized_range.
+   * @brief Implementation of an MPI gather for mpi::MPICompatibleRange objects.
    *
-   * @details If mpi::has_mpi_type is true for the value type of the input ranges, then the ranges are gathered using a
-   * simple `MPI_Gatherv` or `MPI_Allgatherv`. Otherwise, each process broadcasts its elements to all other processes
-   * which implies that `all == true` is required in this case.
+   * @details The behaviour of this function is as follows:
+   * - If the number of elements to be gathered is zero, it does nothing.
+   * - Otherwise, it calls `MPI_Gatherv` or `MPI_Allgatherv` to gather the elements from the input ranges on all
+   * processes into the output ranges on receiving processes.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the input ranges
-   * add up to the given size of the output range and that the output ranges have the correct size on receiving
-   * processes.
+   * This is the inverse operation of mpi::scatter_range. The numbers of elements to be gathered do not have to be equal
+   * on all processes.
    *
-   * If the input ranges are all empty, it does nothing. If mpi::has_env is false or if the communicator size is < 2, it
-   * simply copies the input range to the output range.
+   * It throws an exception in case a call to the MPI C library fails and it expects that the output range sizes on
+   * receiving processes is the number of elements to be gathered.
    *
-   * @note It is recommended to use the generic mpi::gather for supported types, e.g. `std::vector` and `std::string`.
-   * It is the user's responsibility to ensure that the ranges have the correct sizes.
+   * @note In place gathering is not supported.
    *
-   * @code{.cpp}
-   * // create input and output vectors on all ranks
-   * auto in_vec  = std::vector<int>{0, 1, 2, 3, 4};
-   * auto out_vec = std::vector<int>(3 * comm.size(), 0);
-   *
-   * // gather the middle elements of the input vectors from all ranks on rank 0
-   * mpi::gather_range(std::span{in_vec.data() + 1, 3}, out_vec, 3 * comm.size(), comm);
-   *
-   * // output result
-   * for (auto x : out_vec) std::cout << x << " ";
-   * std::cout << std::endl;
-   * @endcode
-   *
-   * Output (with 2 processes):
-   *
-   * ```
-   * 0 0 0 0 0 0 0 0 0 0 0 0
-   * 0 0 0 0 0 0 0 0 0 0 0 0
-   * 0 0 0 0 0 0 0 0 0 0 0 0
-   * 1 2 3 1 2 3 1 2 3 1 2 3
-   * ```
-   *
-   * @tparam R1 mpi::contiguous_sized_range type.
-   * @tparam R2 mpi::contiguous_sized_range type.
-   * @param in_rg Range to gather.
-   * @param out_rg Range to gather into.
-   * @param out_size Size of the output range on receiving processes (must also be given on non-receiving ranks).
+   * @tparam R1 mpi::MPICompatibleRange type.
+   * @tparam R2 mpi::MPICompatibleRange type.
+   * @param in_rg Range to be gathered.
+   * @param out_rg Range to be gathered into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
-   * @param all Should all processes receive the result of the reduction.
+   * @param all Should all processes receive the result of the gather operation.
    */
-  template <contiguous_sized_range R1, contiguous_sized_range R2>
-  void gather_range(R1 &&in_rg, R2 &&out_rg, long out_size, communicator c = {}, int root = 0, // NOLINT (ranges need not be forwarded)
-                    bool all = false) {
-    // check the sizes of the input and output ranges
-    auto const in_size = std::ranges::size(in_rg);
-    EXPECTS_WITH_MESSAGE(out_size = all_reduce(in_size, c), "Input range sizes don't add up to output range size in mpi::gather_range");
+  template <MPICompatibleRange R1, MPICompatibleRange R2>
+    requires(std::same_as<std::remove_cvref_t<std::ranges::range_value_t<R1>>, std::remove_cvref_t<std::ranges::range_value_t<R2>>>)
+  void gather_range(R1 &&in_rg, R2 &&out_rg, communicator c = {}, int root = 0, bool all = false) { // NOLINT (ranges need not be forwarded)
+    // get the receive counts (sendcount from each process) and the displacements
+    auto sendcount  = static_cast<int>(std::ranges::size(in_rg));
+    auto recvcounts = all_gather(sendcount, c);
+    auto displs     = std::vector<int>(c.size() + 1, 0);
+    std::partial_sum(recvcounts.begin(), recvcounts.end(), displs.begin() + 1);
+
+    // do nothing if there are no elements to gather
+    if (displs.back() == 0) return;
+
+    // check the size of the output range on receiving ranks
     if (c.rank() == root || all) {
-      EXPECTS_WITH_MESSAGE(out_size == std::ranges::size(out_rg), "Output range size is incorrect in mpi::gather_range");
+      EXPECTS_WITH_MESSAGE(displs.back() == std::ranges::size(out_rg),
+                           "Output range size is not equal the number of elements to be received in mpi::gather_range");
     }
 
-    // do nothing if the output range is empty
-    if (out_size == 0) return;
-
-    // simply copy if there is no active MPI environment or if the communicator size is < 2
+    // in case there is no active MPI environment or if the communicator size is < 2, copy to the output range
     if (!has_env || c.size() < 2) {
       std::ranges::copy(std::forward<R1>(in_rg), std::ranges::data(out_rg));
       return;
     }
 
-    // prepare arguments for the MPI call
-    auto recvcounts = std::vector<int>(c.size());
-    auto displs     = std::vector<int>(c.size() + 1, 0);
-    int sendcount   = in_size;
-    if (!all)
-      check_mpi_call(MPI_Gather(&sendcount, 1, mpi_type<int>::get(), recvcounts.data(), 1, mpi_type<int>::get(), root, c.get()), "MPI_Gather");
-    else
-      check_mpi_call(MPI_Allgather(&sendcount, 1, mpi_type<int>::get(), recvcounts.data(), 1, mpi_type<int>::get(), c.get()), "MPI_Allgather");
-    for (int i = 0; i < c.size(); ++i) displs[i + 1] = recvcounts[i] + displs[i];
-
-    // gather the ranges
-    using in_value_t  = std::ranges::range_value_t<R1>;
-    using out_value_t = std::ranges::range_value_t<R2>;
-    if constexpr (has_mpi_type<in_value_t> && has_mpi_type<out_value_t>) {
-      // make an MPI C library call for MPI compatible value types
-      auto const in_data = std::ranges::data(in_rg);
-      auto out_data      = std::ranges::data(out_rg);
-      if (!all)
-        check_mpi_call(MPI_Gatherv(in_data, sendcount, mpi_type<in_value_t>::get(), out_data, recvcounts.data(), displs.data(),
-                                   mpi_type<out_value_t>::get(), root, c.get()),
-                       "MPI_Gatherv");
-      else
-        check_mpi_call(MPI_Allgatherv(in_data, sendcount, mpi_type<in_value_t>::get(), out_data, recvcounts.data(), displs.data(),
-                                      mpi_type<out_value_t>::get(), c.get()),
-                       "MPI_Allgatherv");
+    // make the MPI C library call
+    if (all) {
+      check_mpi_call(MPI_Allgatherv(std::ranges::data(in_rg), sendcount, mpi_type<std::ranges::range_value_t<R1>>::get(), std::ranges::data(out_rg),
+                                    recvcounts.data(), displs.data(), mpi_type<std::ranges::range_value_t<R2>>::get(), c.get()),
+                     "MPI_Allgatherv");
     } else {
-      if (all) {
-        // if all == true, each process broadcasts it elements to all other ranks
-        for (int i = 0; i < c.size(); ++i) {
-          auto view = std::views::drop(out_rg, displs[i]) | std::views::take(displs[i + 1] - displs[i]);
-          if (c.rank() == i) std::ranges::copy(in_rg, std::ranges::begin(view));
-          broadcast_range(view, c, i);
-        }
-      } else {
-        // otherwise throw an exception
-        throw std::runtime_error{"Error in mpi::gather_range: Types with no corresponding datatype can only be all-gathered"};
-      }
+      check_mpi_call(MPI_Gatherv(std::ranges::data(in_rg), sendcount, mpi_type<std::ranges::range_value_t<R1>>::get(), std::ranges::data(out_rg),
+                                 recvcounts.data(), displs.data(), mpi_type<std::ranges::range_value_t<R2>>::get(), root, c.get()),
+                     "MPI_Gatherv");
     }
   }
 

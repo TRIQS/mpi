@@ -33,9 +33,9 @@
 #include <mpi.h>
 
 #include <algorithm>
+#include <concepts>
 #include <ranges>
 #include <type_traits>
-#include <utility>
 #include <vector>
 
 namespace mpi {
@@ -52,27 +52,6 @@ namespace mpi {
    * @addtogroup coll_comm
    * @{
    */
-
-  namespace detail {
-
-    // Type trait to check if a type is a std::vector.
-    template <typename T> inline constexpr bool is_std_vector = false;
-
-    // Spezialization of is_std_vector for std::vector<T>.
-    template <typename T> inline constexpr bool is_std_vector<std::vector<T>> = true;
-
-    // Convert an object of type V to an object of type T.
-    template <typename T, typename V> T convert(V v) {
-      if constexpr (is_std_vector<T>) {
-        T res;
-        res.reserve(v.size());
-        for (auto &x : v) res.emplace_back(convert<typename T::value_type>(std::move(x)));
-        return res;
-      } else
-        return T{std::move(v)};
-    }
-
-  } // namespace detail
 
   /**
    * @brief Generic MPI broadcast.
@@ -213,35 +192,58 @@ namespace mpi {
   /**
    * @brief Generic MPI gather.
    *
-   * @details If mpi::has_env is true or if the return type of the specialized `mpi_gather` is lazy, this function
-   * calls the specialized `mpi_gather` function for the given object. Otherwise, it simply converts the input object to
-   * the output type `mpi_gather` would return.
+   * @details If there is a specialized `mpi_gather` for the given type, we call it. Otherwise, we call mpi::gather_into
+   * with the given input object and a default constructed output object of type `T`.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
    *
    * @tparam T Type to be gathered.
    * @param x Object to be gathered.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param all Should all processes receive the result of the gather.
-   * @return The result of the specialized `mpi_gather` call.
+   * @return Result of the specialized `mpi_gather` call.
    */
-  template <typename T> [[gnu::always_inline]] inline decltype(auto) gather(T &&x, mpi::communicator c = {}, int root = 0, bool all = false) {
-    // return type of mpi_gather
-    using r_t = decltype(mpi_gather(std::forward<T>(x), c, root, all));
-    if constexpr (is_mpi_lazy<r_t>) {
-      return mpi_gather(std::forward<T>(x), c, root, all);
+  template <typename T>
+  [[gnu::always_inline]] decltype(auto) gather(T &&x, communicator c = {}, int root = 0, bool all = false) { // NOLINT (forwarding is not needed)
+    if constexpr (requires { mpi_gather(x, c, root, all); }) {
+      return mpi_gather(x, c, root, all);
     } else {
-      if (has_env)
-        return mpi_gather(std::forward<T>(x), c, root, all);
-      else
-        return detail::convert<r_t>(std::forward<T>(x));
+      std::remove_cvref_t<T> res;
+      gather_into(x, res, c, root, all);
+      return res;
     }
+  }
+
+  /**
+   * @brief Generic MPI gather that gathers directly into an existing output object.
+   *
+   * @details It calls the specialized `mpi_gather_into` function.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
+   *
+   * @tparam T1 Type to be gathered.
+   * @tparam T2 Type to be gathered into.
+   * @param x_in Object to be gathered.
+   * @param x_out Object to be gathered into.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   * @param all Should all processes receive the result of the gather.
+   */
+  template <typename T1, typename T2>
+  [[gnu::always_inline]] void gather_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0, // NOLINT (forwarding is not needed)
+                                          bool all = false) {
+    mpi_gather_into(x_in, x_out, c, root, all);
   }
 
   /**
    * @brief Generic MPI all-reduce.
    * @details It simply calls mpi::reduce with `all = true`.
    */
-  template <typename T> [[gnu::always_inline]] decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT
+  template <typename T>
+  [[gnu::always_inline]] decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
     return reduce(x, c, 0, true, op);
   }
 
@@ -249,7 +251,8 @@ namespace mpi {
    * @brief Generic MPI all-reduce in place.
    * @details It simply calls mpi::reduce_in_place with `all = true`.
    */
-  template <typename T> [[gnu::always_inline]] void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT
+  template <typename T>
+  [[gnu::always_inline]] void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
     reduce_in_place(x, c, 0, true, op);
   }
 
@@ -258,7 +261,7 @@ namespace mpi {
    * @details It simply calls mpi::reduce_into with `all = true`.
    */
   template <typename T1, typename T2>
-  [[gnu::always_inline]] void all_reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT
+  [[gnu::always_inline]] void all_reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
     return reduce_into(x_in, x_out, c, 0, true, op);
   }
 
@@ -266,8 +269,17 @@ namespace mpi {
    * @brief Generic MPI all-gather.
    * @details It simply calls mpi::gather with `all = true`.
    */
-  template <typename T> [[gnu::always_inline]] inline decltype(auto) all_gather(T &&x, communicator c = {}) {
-    return gather(std::forward<T>(x), c, 0, true);
+  template <typename T> [[gnu::always_inline]] decltype(auto) all_gather(T &&x, communicator c = {}) { // NOLINT (forwarding is not needed)
+    return gather(x, c, 0, true);
+  }
+
+  /**
+   * @brief Generic MPI all-gather that gathers directly into an existing output object.
+   * @details It simply calls mpi::gather_into with `all = true`.
+   */
+  template <typename T1, typename T2>
+  [[gnu::always_inline]] void all_gather_into(T1 &&x_in, T2 &&x_out, communicator c = {}) { // NOLINT (forwarding is not needed)
+    return gather_into(x_in, x_out, c, 0, true);
   }
 
   /**
@@ -389,6 +401,68 @@ namespace mpi {
       check_mpi_call(MPI_Allreduce(in_ptr, out_ptr, 1, mpi_type<T>::get(), op, c.get()), "MPI_Allreduce");
     } else {
       check_mpi_call(MPI_Reduce(in_ptr, out_ptr, 1, mpi_type<T>::get(), op, root, c.get()), "MPI_Reduce");
+    }
+  }
+
+  /**
+   * @brief Implementation of an MPI gather for types that have a corresponding MPI datatype.
+   *
+   * @details It constructs an output vector, resizes it on receiving ranks to the size of the communicator and calls
+   * mpi::mpi_gather_into. On non-receiving ranks the output vector is empty.
+   *
+   * @tparam T Type to be gathered.
+   * @param x Object to be gathered.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   * @param all Should all processes receive the result of the gather.
+   * @return `std::vector` containing the gathered objects.
+   */
+  template <typename T>
+    requires(has_mpi_type<T>)
+  std::vector<T> mpi_gather(T const &x, communicator c = {}, int root = 0, bool all = false) {
+    std::vector<T> res(c.rank() == root || all ? c.size() : 0);
+    mpi_gather_into(x, res, c, root, all);
+    return res;
+  }
+
+  /**
+   * @brief Implementation of an MPI gather that gathers directly into an existing output range for types that have a
+   * corresponding MPI datatype.
+   *
+   * @details If mpi::has_env is false or if the communicator size is < 2, it copies the input object into the range.
+   * Otherwise, it calls `MPI_Allgather` or `MPI_Gather.
+   *
+   * It throws an exception in case a call to the MPI C library fails and it expects that the range size on receiving
+   * processes is equal the communicator size.
+   *
+   * @tparam T Type to be gathered.
+   * @tparam R MPICompatibleRange type to be gathered into.
+   * @param x Object to be gathered.
+   * @param rg Range to be gathered into.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   * @param all Should all processes receive the result of the gather.
+   */
+  template <typename T, MPICompatibleRange R>
+    requires(has_mpi_type<T> && std::same_as<T, std::remove_cvref_t<std::ranges::range_value_t<R>>>)
+  void mpi_gather_into(T const &x, R &&rg, communicator c = {}, int root = 0, bool all = false) { // NOLINT (ranges need not be forwarded)
+    // check the size of the output range
+    if (c.rank() == root || all) {
+      EXPECTS_WITH_MESSAGE(c.size() == std::ranges::size(rg), "Output range size is not equal the number of ranks in mpi_gather_into");
+    }
+
+    // in case there is no active MPI environment or if the communicator size is < 2, copy the input into the range
+    if (!has_env || c.size() < 2) {
+      std::ranges::copy(std::views::single(x), std::ranges::begin(rg));
+      return;
+    }
+
+    // make the MPI C library call
+    using value_t = std::ranges::range_value_t<R>;
+    if (all) {
+      check_mpi_call(MPI_Allgather(&x, 1, mpi_type<T>::get(), std::ranges::data(rg), 1, mpi_type<value_t>::get(), c.get()), "MPI_Allgather");
+    } else {
+      check_mpi_call(MPI_Gather(&x, 1, mpi_type<T>::get(), std::ranges::data(rg), 1, mpi_type<value_t>::get(), root, c.get()), "MPI_Gather");
     }
   }
 

@@ -20,7 +20,9 @@
 #include <gtest/gtest.h>
 #include <mpi/mpi.hpp>
 
+#include <algorithm>
 #include <tuple>
+#include <vector>
 
 // Custom type which is MPI compatible.
 struct mpi_t {
@@ -47,4 +49,21 @@ void mpi_broadcast(non_mpi_t &x, mpi::communicator c = {}, int root = 0) { broad
 // Specialize mpi_reduce_into for non_mpi_t.
 void mpi_reduce_into(non_mpi_t const &in, non_mpi_t &out, mpi::communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
   mpi::reduce_into(in.a, out.a, c, root, all, op);
+}
+
+// Specialize mpi_gather for non_mpi_t.
+std::vector<non_mpi_t> mpi_gather(non_mpi_t const &x, mpi::communicator c = {}, int root = 0, bool all = false) {
+  std::vector<int> a_vec = gather(x.a, c, root, all);
+  std::vector<non_mpi_t> res{};
+  if (c.rank() == root || all) {
+    res.resize(c.size());
+    std::ranges::transform(a_vec, res.begin(), [](int a) { return non_mpi_t{a}; });
+  }
+  return res;
+}
+
+// Specialize mpi_gather_into for non_mpi_t.
+void mpi_gather_into(non_mpi_t const &x, auto &&rg, mpi::communicator c = {}, int root = 0, bool all = false) {
+  auto vec = mpi_gather(x, c, root, all);
+  if (c.rank() == root || all) std::ranges::copy(vec, std::ranges::begin(rg));
 }
