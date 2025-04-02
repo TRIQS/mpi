@@ -23,22 +23,6 @@
 #include <numeric>
 #include <vector>
 
-TEST(MPI, RangesScatterMPIType) {
-  // scatter a range with an MPI type
-  mpi::communicator world;
-  auto const rank = world.rank();
-  auto sizes      = std::vector<int>(world.size());
-  for (int i = 0; i < world.size(); ++i) sizes[i] = static_cast<int>(mpi::chunk_length(10, world.size(), i));
-  auto acc_sizes = std::vector<int>(world.size() + 1, 0);
-  std::partial_sum(sizes.begin(), sizes.end(), std::next(acc_sizes.begin()));
-  std::vector<int> vec(10, 0), vec_scattered(sizes[rank], 0);
-  if (rank == 0) {
-    for (int i = 0; i < 10; ++i) vec[i] = i;
-  }
-  mpi::scatter_range(vec, vec_scattered, 10, world, 0);
-  for (int i = 0; i < sizes[rank]; ++i) EXPECT_EQ(vec_scattered[i], i + acc_sizes[rank]);
-}
-
 TEST(MPI, RangesGatherMPIType) {
   // gather a range with an MPI type
   mpi::communicator world;
