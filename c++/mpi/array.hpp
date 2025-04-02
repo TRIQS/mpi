@@ -16,7 +16,7 @@
 
 /**
  * @file
- * @brief Provides an MPI broadcast, reduce, scatter and gather for std::vector.
+ * @brief Provides an MPI broadcast and reduce for `std::array`.
  */
 
 #pragma once
@@ -38,13 +38,13 @@ namespace mpi {
    */
 
   /**
-   * @brief Implementation of an MPI broadcast for a std::arr.
+   * @brief Implementation of an MPI broadcast for a `std::array`.
    *
-   * @details It simply calls mpi::broadcast_range with the input array.
+   * @details It calls mpi::broadcast_range with the given array.
    *
    * @tparam T Value type of the array.
    * @tparam N Size of the array.
-   * @param arr std::array to broadcast.
+   * @param arr `std::array` to broadcast (into).
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */

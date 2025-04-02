@@ -19,18 +19,6 @@
 
 #include <string>
 
-TEST(MPI, StringBroadcast) {
-  // broadcast a string
-  mpi::communicator world;
-
-  std::string s;
-  if (world.rank() == 0) s = "Hello World";
-
-  mpi::broadcast(s);
-
-  EXPECT_EQ(s, std::string{"Hello World"});
-}
-
 TEST(MPI, StringGather) {
   // gather a string
   mpi::communicator world;

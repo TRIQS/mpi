@@ -17,25 +17,7 @@
 #include <gtest/gtest.h>
 #include <mpi/mpi.hpp>
 
-#include <complex>
-#include <string>
 #include <utility>
-
-TEST(MPI, PairBroadcast) {
-  // broadcast a pair consisting of a string and a complex number
-  std::pair<std::string, std::complex<double>> p;
-
-  auto str  = std::string{"Hello"};
-  auto cplx = std::complex<double>(1.0, 2.0);
-
-  mpi::communicator world;
-  if (world.rank() == 0) p = {str, cplx};
-
-  mpi::broadcast(p);
-  auto [str_bc, cplx_bc] = p;
-  EXPECT_EQ(str, str_bc);
-  EXPECT_EQ(cplx, cplx_bc);
-}
 
 TEST(MPI, PairReduce) {
   // reduce a pair of integers

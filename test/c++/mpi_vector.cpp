@@ -14,7 +14,7 @@
 //
 // Authors: Thomas Hahn, Nils Wentzell
 
-#include "./non_mpi_t.hpp"
+#include "./custom_types.hpp"
 
 #include <gtest/gtest.h>
 #include <itertools/itertools.hpp>
@@ -25,30 +25,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-TEST(MPI, VectorBroadcastMPIType) {
-  // broadcast a vector with an MPI type
-  mpi::communicator world;
-  std::vector<int> vec(5, 0);
-  if (world.rank() == 0) {
-    std::iota(vec.begin(), vec.end(), 0);
-  } else {
-    vec.clear();
-  }
-  mpi::broadcast(vec, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i], i);
-}
-
-TEST(MPI, VectorBroadcastTypeWithSpezializedMPIBroadcast) {
-  // broadcast a vector with a type that has a specialized mpi_broadcast
-  mpi::communicator world;
-  std::vector<non_mpi_t> vec(5);
-  if (world.rank() == 0) {
-    for (int i = 0; i < 5; ++i) vec[i].a = i;
-  }
-  mpi::broadcast(vec, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i);
-}
 
 TEST(MPI, VectorReduceInPlaceMPIType) {
   // in-place reduce a vector with an MPI type

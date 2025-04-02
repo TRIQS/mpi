@@ -16,7 +16,7 @@
 
 /**
  * @file
- * @brief Provides an MPI broadcast, reduce, scatter and gather for contiguous ranges.
+ * @brief Provides an MPI broadcast, reduce, scatter and gather for generic ranges.
  */
 
 #pragma once
@@ -33,6 +33,7 @@
 #include <mpi.h>
 
 #include <algorithm>
+#include <limits>
 #include <ranges>
 #include <stdexcept>
 #include <vector>
@@ -45,67 +46,46 @@ namespace mpi {
    */
 
   /**
-   * @brief Implementation of an MPI broadcast for an mpi::contiguous_sized_range object.
+   * @brief Implementation of an MPI broadcast for `std::ranges::sized_range` objects.
    *
-   * @details If mpi::has_mpi_type is true for the value type of the range, then the range is broadcasted using a simple
-   * `MPI_Bcast`. Otherwise, the generic mpi::broadcast is called for each element of the range.
+   * @details The behaviour of this function is as follows:
+   * - If the number of elements to be broadcasted is zero, it does nothing.
+   * - If the range is contiguous with an MPI compatible value type, it calls `MPI_Bcast` and broadcasts the elements
+   * from the input range on the root process to all other processes.
+   * - Otherwise, it calls mpi::broadcast for each element separately.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the sizes of the ranges are
-   * equal across all processes.
+   * It throws an exception in case a call to the MPI C library fails and it expects that the input range size is equal
+   * on all processes.
    *
-   * If the ranges are empty or if mpi::has_env is false or if the communicator size is < 2, it does nothing.
-   *
-   * @note It is recommended to use the generic mpi::broadcast for supported types, e.g. `std::vector`, `std::array` or
-   * `std::string`. It is the user's responsibility to ensure that ranges have the correct sizes.
-   *
-   * @code{.cpp}
-   * // create a vector on all ranks
-   * auto vec = std::vector<int>(5);
-   *
-   * if (comm.rank() == 0) {
-   *   // on rank 0, initialize the vector and broadcast the first 3 elements
-   *   vec = {1, 2, 3, 0, 0};
-   *   mpi::broadcast_range(std::span{vec.data(), 3}, comm);
-   * } else {
-   *   // on other ranks, broadcast to the last 3 elements of the vector
-   *   mpi::broadcast_range(std::span{vec.data() + 2, 3}, comm);
-   * }
-   *
-   * // output result
-   * for (auto x : vec) std::cout << x << " ";
-   * std::cout << std::endl;
-   * @endcode
-   *
-   * Output (with 4 processes):
-   *
-   * ```
-   * 1 2 3 0 0
-   * 0 0 1 2 3
-   * 0 0 1 2 3
-   * 0 0 1 2 3
-   * ```
-   *
-   * @tparam R mpi::contiguous_sized_range type.
-   * @param rg Range to broadcast.
+   * @tparam R `std::ranges::sized_range` type.
+   * @param rg Range to be broadcasted (into).
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
-  template <contiguous_sized_range R> void broadcast_range(R &&rg, communicator c = {}, int root = 0) { // NOLINT (ranges need not be forwarded)
-    // check the sizes of all ranges
-    using value_t   = std::ranges::range_value_t<R>;
-    auto const size = std::ranges::size(rg);
-    EXPECTS_WITH_MESSAGE(all_equal(size, c), "Range sizes are not equal across all processes in mpi::broadcast_range");
+  template <std::ranges::sized_range R> void broadcast_range(R &&rg, communicator c = {}, int root = 0) { // NOLINT (ranges need not be forwarded)
+    // check the size of the range
+    auto size = static_cast<long>(std::ranges::size(rg));
+    EXPECTS_WITH_MESSAGE(all_equal(size, c), "Range sizes are not equal on all processes in mpi::broadcast_range");
 
-    // do nothing if the range is empty, if MPI is not initialized or if the communicator size is < 2
-    if (size == 0 || !has_env || c.size() < 2) return;
+    // do nothing if no elements are broadcasted
+    if (size <= 0) return;
 
-    // broadcast the range
-    if constexpr (has_mpi_type<value_t>)
-      // make an MPI C library call for MPI compatible value types
-      check_mpi_call(MPI_Bcast(std::ranges::data(rg), size, mpi_type<value_t>::get(), root, c.get()), "MPI_Bcast");
-    else
-      // otherwise call the specialized mpi_broadcast for each element
-      for (auto &val : rg) broadcast(val, c, root);
+    // call the MPI C library if the ranges are contiguous with MPI compatible value types, otherwise do element-wise
+    // broadcasts
+    if constexpr (MPICompatibleRange<R>) {
+      // in case there is no active MPI environment or if the communicator size is < 2, do nothing
+      if (!has_env || c.size() < 2) return;
+
+      // make the MPI C library call (allow the number of elements to larger than INT_MAX)
+      constexpr long max_int = std::numeric_limits<int>::max();
+      for (long offset = 0; size > 0; offset += max_int, size -= max_int) {
+        auto const count = static_cast<int>(std::min(size, max_int));
+        check_mpi_call(MPI_Bcast(std::ranges::data(rg) + offset, count, mpi_type<std::ranges::range_value_t<R>>::get(), root, c.get()), "MPI_Bcast");
+      }
+    } else {
+      // otherwise call the generic broadcast for each element separately
+      for (auto &x : rg) broadcast(x, c, root);
+    }
   }
 
   /**

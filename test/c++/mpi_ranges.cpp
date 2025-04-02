@@ -15,7 +15,7 @@
 //
 // Authors: Thomas Hahn, Hugo U.R. Strand
 
-#include "./non_mpi_t.hpp"
+#include "./custom_types.hpp"
 
 #include <gtest/gtest.h>
 #include <mpi/mpi.hpp>
@@ -23,28 +23,6 @@
 #include <array>
 #include <numeric>
 #include <vector>
-
-TEST(MPI, RangesBroadcastMPIType) {
-  // broadcast a range with an MPI type
-  mpi::communicator world;
-  std::array<int, 5> arr{};
-  if (world.rank() == 0) {
-    for (int i = 0; i < 5; ++i) arr[i] = i;
-  }
-  mpi::broadcast_range(arr, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(arr[i], i);
-}
-
-TEST(MPI, RangesBroadcastTypeWithSpezializedMPIBroadcast) {
-  // broadcast a range with a type that has a specialized mpi_broadcast
-  mpi::communicator world;
-  std::vector<non_mpi_t> vec(5);
-  if (world.rank() == 0) {
-    for (int i = 0; i < 5; ++i) vec[i].a = i;
-  }
-  mpi::broadcast_range(vec, world);
-  for (int i = 0; i < 5; ++i) EXPECT_EQ(vec[i].a, i);
-}
 
 TEST(MPI, RangesReduceInPlaceMPIType) {
   // in-place reduce a range with an MPI type

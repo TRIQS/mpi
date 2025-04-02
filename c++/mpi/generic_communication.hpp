@@ -24,17 +24,28 @@
 
 #pragma once
 
+#include "./communicator.hpp"
 #include "./datatypes.hpp"
 #include "./lazy.hpp"
 #include "./utils.hpp"
 
 #include <mpi.h>
 
+#include <algorithm>
+#include <ranges>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace mpi {
+
+  /**
+   * @ingroup utilities
+   * @brief A concept that checks if a range type is contiguous and sized and has an MPI compatible value type.
+   * @tparam R Range type.
+   */
+  template <typename R>
+  concept MPICompatibleRange = std::ranges::contiguous_range<R> && std::ranges::sized_range<R> && has_mpi_type<std::ranges::range_value_t<R>>;
 
   /**
    * @addtogroup coll_comm
@@ -65,17 +76,18 @@ namespace mpi {
   /**
    * @brief Generic MPI broadcast.
    *
-   * @details If mpi::has_env is true, this function calls the specialized `mpi_broadcast` function for the given
-   * object, otherwise it does nothing.
+   * @details It calls the specialized `mpi_broadcast` function.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
    *
    * @tparam T Type to be broadcasted.
-   * @param x Object to be broadcasted.
+   * @param x Object to be broadcasted (into).
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
-  template <typename T> [[gnu::always_inline]] void broadcast(T &&x, communicator c = {}, int root = 0) {
-    static_assert(not std::is_const_v<T>, "mpi::broadcast cannot be called on const objects");
-    if (has_env) mpi_broadcast(std::forward<T>(x), c, root);
+  template <typename T> [[gnu::always_inline]] void broadcast(T &&x, communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
+    mpi_broadcast(x, c, root);
   }
 
   /**
@@ -204,19 +216,25 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI broadcast for types that have a corresponding MPI datatype, i.e. for which a
-   * specialization of mpi::mpi_type has been defined.
+   * @brief Implementation of an MPI broadcast for types that have a corresponding MPI datatype.
    *
-   * @details It throws an exception in case a call to the MPI C library fails.
+   * @details If mpi::has_env is false or if the communicator size is < 2, it does nothing. Otherwise, it calls
+   * `MPI_Bcast`.
+   *
+   * It throws an exception in case the call to the MPI C library fails.
    *
    * @tparam T Type to be broadcasted.
-   * @param x Object to be broadcasted.
+   * @param x Object to be broadcasted (into).
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
   template <typename T>
     requires(has_mpi_type<T>)
   void mpi_broadcast(T &x, communicator c = {}, int root = 0) {
+    // in case there is no active MPI environment or if the communicator size is < 2, do nothing
+    if (!has_env || c.size() < 2) return;
+
+    // make the MPI C library call
     check_mpi_call(MPI_Bcast(&x, 1, mpi_type<T>::get(), root, c.get()), "MPI_Bcast");
   }
 
