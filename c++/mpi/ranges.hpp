@@ -179,100 +179,73 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI scatter for an mpi::contiguous_sized_range.
+   * @brief Implementation of an MPI scatter for mpi::MPICompatibleRange objects.
    *
-   * @details If mpi::has_mpi_type is true for the value type of the range, then the range is scattered as evenly as
-   * possible across the processes in the communicator using a simple `MPI_Scatterv`. Otherwise an exception is thrown.
+   * @details The behaviour of this function is as follows:
+   * - If the number of elements to be scattered is zero, it does nothing.
+   * - Otherwise, it calls `MPI_Scatterv` to scatter the input range from the root process to the output ranges on all
+   * other processes.
    *
-   * The user can specify a chunk size which is used to divide the input range into chunks of the specified size. The
-   * number of chunks are then distributed evenly across the processes in the communicator. The size of the input range
-   * is required to be a multiple of the given chunk size, otherwise an exception is thrown.
+   * By default, the input range is scattered as evenly as possible from the root process to all other processes in the
+   * communicator. To change that, the user can specify a chunk size which is used to divide the number of elements to
+   * be scattered into chunks of the specified size. Then, instead of single elements, the chunks are distributed evenly
+   * across the processes in the communicator.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the output ranges have the
-   * correct size and that they add up to the size of the input range on the root process.
+   * It throws an exception if call to the MPI C library fails and it expects
+   * - that the number of elements to be scattered is equal on all processes,
+   * - that the size of the input range on the root process is equal the number of elements to be scattered and
+   * - that the output range size is equal the number of elements to be received on all processes.
    *
-   * If the input range is empty on root, it does nothing. If mpi::has_env is false or if the communicator size is < 2,
-   * it simply copies the input range to the output range.
+   * @note In place scattering is not supported.
    *
-   * @note It is recommended to use the generic mpi::scatter for supported types, e.g. `std::vector`. It is the user's
-   * responsibility to ensure that the ranges have the correct sizes (mpi::chunk_length can be useful to do that).
-   *
-   * @code{.cpp}
-   * // create input and output vectors on all ranks
-   * auto in_vec = std::vector<int>{};
-   * if (comm.rank() == 0) in_vec = {0, 1, 2, 3, 4, 5, 6, 7};
-   * auto out_vec = std::vector<int>(mpi::chunk_length(5, comm.size(), comm.rank()), 0);
-   *
-   * // scatter the middle elements of the input vector from rank 0 to all ranks
-   * mpi::scatter_range(std::span{in_vec.data() + 1, 5}, out_vec, 5, comm);
-   *
-   * // output result
-   * for (auto x : out_vec) std::cout << x << " ";
-   * std::cout << std::endl;
-   * @endcode
-   *
-   * Output (with 2 processes):
-   *
-   * ```
-   * 4 5
-   * 1 2 3
-   * ```
-   *
-   * @tparam R1 mpi::contiguous_sized_range type.
-   * @tparam R2 mpi::contiguous_sized_range type.
-   * @param in_rg Range to scatter.
-   * @param out_rg Range to scatter into.
-   * @param in_size Size of the input range on root (must also be given on non-root ranks).
+   * @tparam R1 mpi::MPICompatibleRange type.
+   * @tparam R2 mpi::MPICompatibleRange type.
+   * @param in_rg Range to be scattered.
+   * @param out_rg Range to be scattered into.
+   * @param scatter_size Number of elements to be scattered.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    * @param chunk_size Size of the chunks to scatter.
    */
-  template <contiguous_sized_range R1, contiguous_sized_range R2>
-    requires(std::same_as<std::ranges::range_value_t<R1>, std::ranges::range_value_t<R2>>)
-  void scatter_range(R1 &&in_rg, R2 &&out_rg, long in_size, communicator c = {}, int root = 0, // NOLINT (ranges need not be forwarded)
+  template <MPICompatibleRange R1, MPICompatibleRange R2>
+    requires(std::same_as<std::remove_cvref_t<std::ranges::range_value_t<R1>>, std::remove_cvref_t<std::ranges::range_value_t<R2>>>)
+  void scatter_range(R1 &&in_rg, R2 &&out_rg, long scatter_size, communicator c = {}, int root = 0, // NOLINT (ranges need not be forwarded)
                      long chunk_size = 1) {
-    // check the sizes of the input and output ranges
+    // check the number of elements to be scattered
+    EXPECTS_WITH_MESSAGE(all_equal(scatter_size, c), "Number of elements to be scattered is not equal on all processes in mpi::scatter_range");
+
+    // do nothing if no elements are scattered
+    if (scatter_size == 0) return;
+
+    // check the size of the input range on root
     if (c.rank() == root) {
-      EXPECTS_WITH_MESSAGE(in_size == std::ranges::size(in_rg), "Input range size not equal to provided size in mpi::scatter_range");
+      EXPECTS_WITH_MESSAGE(scatter_size == std::ranges::size(in_rg),
+                           "Input range size on root is not equal the number of elements to be scattered in mpi::scatter_range");
     }
-    EXPECTS_WITH_MESSAGE(in_size == all_reduce(std::ranges::size(out_rg), c),
-                         "Output range sizes don't add up to input range size in mpi::scatter_range");
 
-    // do nothing if the input range is empty
-    if (in_size == 0) return;
+    // check the size of the output range
+    auto const recvcount = static_cast<int>(chunk_length(scatter_size, c.size(), c.rank(), chunk_size));
+    EXPECTS_WITH_MESSAGE(recvcount == std::ranges::size(out_rg),
+                         "Output range size is not equal the number of elements to be received in mpi::scatter_range");
 
-    // simply copy if there is no active MPI environment or if the communicator size is < 2
+    // in case there is no active MPI environment or if the communicator size is < 2, copy to output range
     if (!has_env || c.size() < 2) {
       std::ranges::copy(std::forward<R1>(in_rg), std::ranges::data(out_rg));
       return;
     }
 
-    // check the size of the output range
-    int recvcount = static_cast<int>(chunk_length(in_size, c.size(), c.rank(), chunk_size));
-    EXPECTS_WITH_MESSAGE(recvcount == std::ranges::size(out_rg), "Output range size is incorrect in mpi::scatter_range");
-
     // prepare arguments for the MPI call
     auto sendcounts = std::vector<int>(c.size());
     auto displs     = std::vector<int>(c.size() + 1, 0);
     for (int i = 0; i < c.size(); ++i) {
-      sendcounts[i] = static_cast<int>(chunk_length(in_size, c.size(), i, chunk_size));
+      sendcounts[i] = static_cast<int>(chunk_length(scatter_size, c.size(), i, chunk_size));
       displs[i + 1] = sendcounts[i] + displs[i];
     }
 
-    // scatter the range
-    using in_value_t  = std::ranges::range_value_t<R1>;
-    using out_value_t = std::ranges::range_value_t<R2>;
-    if constexpr (has_mpi_type<in_value_t> && has_mpi_type<out_value_t>) {
-      // make an MPI C library call for MPI compatible value types
-      auto const in_data = std::ranges::data(in_rg);
-      auto out_data      = std::ranges::data(out_rg);
-      check_mpi_call(MPI_Scatterv(in_data, sendcounts.data(), displs.data(), mpi_type<in_value_t>::get(), out_data, recvcount,
-                                  mpi_type<out_value_t>::get(), root, c.get()),
-                     "MPI_Scatterv");
-    } else {
-      // otherwise throw an exception
-      throw std::runtime_error{"Error in mpi::scatter_range: Types with no corresponding datatype can only be all-gathered"};
-    }
+    // make the MPI C library call
+    check_mpi_call(MPI_Scatterv(std::ranges::data(in_rg), sendcounts.data(), displs.data(), mpi_type<std::ranges::range_value_t<R1>>::get(),
+                                std::ranges::data(out_rg), recvcount, mpi_type<std::ranges::range_value_t<R2>>::get(), root, c.get()),
+                   "MPI_Scatterv");
   }
 
   /**

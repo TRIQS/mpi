@@ -167,27 +167,47 @@ namespace mpi {
   /**
    * @brief Generic MPI scatter.
    *
-   * @details If mpi::has_env is true or if the return type of the specialized `mpi_scatter` is lazy, this function
-   * calls the specialized `mpi_scatter` function for the given object. Otherwise, it simply converts the input object
-   * to the output type `mpi_scatter` would return.
+   * @details If there is a specialized `mpi_scatter` for the given type, we call it. Otherwise, we call
+   * mpi::scatter_into with the given input object and a default constructed output object of type `T`.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
    *
    * @tparam T Type to be scattered.
    * @param x Object to be scattered.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
-   * @return The result of the specialized `mpi_scatter` call.
+   * @return Result of the specialized `mpi_scatter` call.
    */
-  template <typename T> [[gnu::always_inline]] inline decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) {
-    // return type of mpi_scatter
-    using r_t = decltype(mpi_scatter(std::forward<T>(x), c, root));
-    if constexpr (is_mpi_lazy<r_t>) {
-      return mpi_scatter(std::forward<T>(x), c, root);
+  template <typename T>
+  [[gnu::always_inline]] decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
+    if constexpr (requires { mpi_scatter(x, c, root); }) {
+      return mpi_scatter(x, c, root);
     } else {
-      if (has_env)
-        return mpi_scatter(std::forward<T>(x), c, root);
-      else
-        return detail::convert<r_t>(std::forward<T>(x));
+      std::remove_cvref_t<T> res;
+      scatter_into(x, res, c, root);
+      return res;
     }
+  }
+
+  /**
+   * @brief Generic MPI scatter that scatters directly into an existing output object.
+   *
+   * @details It calls the specialized `mpi_scatter_into` function.
+   *
+   * @note We do not check if an MPI runtime environment is being used, i.e. if mpi::has_env is true. It is the
+   * responsibility of the specializations to do this check, in case they make direct calls to the MPI C library.
+   *
+   * @tparam T1 Type to be scattered.
+   * @tparam T2 Type to be scattered into.
+   * @param x_in Object to be scattered.
+   * @param x_out Object to be scattered into.
+   * @param c mpi::communicator.
+   * @param root Rank of the root process.
+   */
+  template <typename T1, typename T2>
+  [[gnu::always_inline]] void scatter_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
+    mpi_scatter_into(x_in, x_out, c, root);
   }
 
   /**

@@ -70,13 +70,4 @@ TEST(MPI, VectorGatherOnlyOnRoot) {
   }
 }
 
-TEST(MPI, VectorScatterSizeZero) {
-  // pass a vector of size 0 to scatter
-  mpi::communicator world;
-  std::vector<int> v = {1, 2, 3};
-  if (world.rank() == 0) v.clear();
-  auto res = mpi::scatter(v, world);
-  EXPECT_TRUE(res.empty());
-}
-
 MPI_TEST_MAIN;

@@ -104,23 +104,24 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI scatter for a std::vector.
+   * @brief Implementation of an MPI scatter for a `std::vector` that scatters directly into an existing output vector.
    *
-   * @details It first broadcasts the size of the vector from the root process to all other processes and then calls
-   * mpi::scatter_range.
+   * @details It first broadcasts the size of the input vector from the root process to all other processes and
+   * resizes the output vector if it has not the correct size. The size of the output vector is determined with
+   * mpi::chunk_length. Then mpi::scatter_range is called with the input and (resized) output vector.
    *
    * @tparam T Value type of the vector.
-   * @param v std::vector to scatter.
+   * @param v_in `std::vector` to scatter.
+   * @param v_out `std::vector` to scatter into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
-   * @return std::vector containing the result of the scatter operation.
    */
-  template <typename T> auto mpi_scatter(std::vector<T> const &v, communicator c = {}, int root = 0) {
-    auto bsize = v.size();
-    broadcast(bsize, c, root);
-    std::vector<T> res(chunk_length(bsize, c.size(), c.rank()));
-    scatter_range(v, res, bsize, c, root);
-    return res;
+  template <typename T> void mpi_scatter_into(std::vector<T> const &v_in, std::vector<T> &v_out, communicator c = {}, int root = 0) {
+    auto scatter_size = static_cast<int>(v_in.size());
+    broadcast(scatter_size, c, root);
+    auto const recvcount = chunk_length(scatter_size, c.size(), c.rank());
+    if (v_out.size() != recvcount) v_out.resize(recvcount);
+    scatter_range(v_in, v_out, scatter_size, c, root);
   }
 
   /**
