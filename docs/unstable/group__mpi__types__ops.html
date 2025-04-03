@@ -209,7 +209,7 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:gac117479a485f170ca920a64ba1e4ac34" id="r_gac117479a485f170ca920a64ba1e4ac34"><td class="memTemplParams" colspan="2">template&lt;typename T, typename = void&gt; </td></tr>
 <tr class="memitem:gac117479a485f170ca920a64ba1e4ac34"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gac117479a485f170ca920a64ba1e4ac34">mpi::has_mpi_type</a> = false</td></tr>
-<tr class="memdesc:gac117479a485f170ca920a64ba1e4ac34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type trait to check if a type T has a corresponding MPI datatype, i.e. if <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been specialized.  <br /></td></tr>
+<tr class="memdesc:gac117479a485f170ca920a64ba1e4ac34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type trait to check if a type <code>T</code> has a corresponding MPI datatype, i.e. if <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been specialized.  <br /></td></tr>
 <tr class="separator:gac117479a485f170ca920a64ba1e4ac34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3b16e36ff8ecef29e60aa81ab4406328" id="r_ga3b16e36ff8ecef29e60aa81ab4406328"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:ga3b16e36ff8ecef29e60aa81ab4406328"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga3b16e36ff8ecef29e60aa81ab4406328">mpi::has_mpi_type&lt; T, std::void_t&lt; decltype(mpi_type&lt; T &gt;::get())&gt; &gt;</a> = true</td></tr>
@@ -259,7 +259,7 @@ template&lt;Serializable T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00249">249</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00250">250</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
 
 </div>
 </div>
@@ -307,7 +307,7 @@ template&lt;typename... Ts&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><code>MPI_Datatype</code> consisting of the types of the tuple elements. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00139">139</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00140">140</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
 
 </div>
 </div>
@@ -404,15 +404,15 @@ template&lt;typename T, typename = void&gt; </div>
 
 <p><code>#include &lt;<a class="el" href="datatypes_8hpp.html">mpi/datatypes.hpp</a>&gt;</code></p>
 
-<p>Type trait to check if a type T has a corresponding MPI datatype, i.e. if <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been specialized. </p>
+<p>Type trait to check if a type <code>T</code> has a corresponding MPI datatype, i.e. if <a class="el" href="structmpi_1_1mpi__type.html" title="Map C++ datatypes to the corresponding MPI datatypes.">mpi::mpi_type</a> has been specialized. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type to be checked. </td></tr>
+    <tr><td class="paramname">`T`</td><td>Type to be checked. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00097">97</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00098">98</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
 
 </div>
 </div>
@@ -448,7 +448,7 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00103">103</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="datatypes_8hpp_source.html#l00104">104</a> of file <a class="el" href="datatypes_8hpp_source.html">datatypes.hpp</a>.</p>
 
 </div>
 </div>

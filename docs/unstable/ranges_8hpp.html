@@ -123,11 +123,16 @@ $(function(){initNavTree('ranges_8hpp.html',''); initResizable(true); });
 <code>#include &lt;itertools/itertools.hpp&gt;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;concepts&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
 <code>#include &lt;ranges&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Provides an MPI broadcast, reduce, scatter and gather for contiguous ranges. </p>
+<div class="textblock"><p>Provides an MPI broadcast, reduce, scatter and gather for generic ranges. </p>
 
 <p class="definition">Definition in file <a class="el" href="ranges_8hpp_source.html">ranges.hpp</a>.</p>
 </div>
@@ -135,27 +140,24 @@ $(function(){initNavTree('ranges_8hpp.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga91ae5f78ffc7222e5565b092b5dd2700" id="r_ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R&gt; </td></tr>
+<tr class="memitem:ga91ae5f78ffc7222e5565b092b5dd2700" id="r_ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memTemplParams" colspan="2">template&lt;std::ranges::sized_range R&gt; </td></tr>
 <tr class="memitem:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga91ae5f78ffc7222e5565b092b5dd2700">mpi::broadcast_range</a> (R &amp;&amp;rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
-<tr class="memdesc:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> object.  <br /></td></tr>
+<tr class="memdesc:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for <code>std::ranges::sized_range</code> objects.  <br /></td></tr>
 <tr class="separator:ga91ae5f78ffc7222e5565b092b5dd2700"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa880186aea80cf1611a38ba3feeb7301" id="r_gaa880186aea80cf1611a38ba3feeb7301"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; </td></tr>
-<tr class="memitem:gaa880186aea80cf1611a38ba3feeb7301"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gaa880186aea80cf1611a38ba3feeb7301">mpi::gather_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long out_size, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
-<tr class="memdesc:gaa880186aea80cf1611a38ba3feeb7301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>.  <br /></td></tr>
-<tr class="separator:gaa880186aea80cf1611a38ba3feeb7301"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2a00b30a9c1c601f5df8ad48a6c0875a" id="r_ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R&gt; </td></tr>
-<tr class="memitem:ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga2a00b30a9c1c601f5df8ad48a6c0875a">mpi::reduce_in_place_range</a> (R &amp;&amp;rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a> object.  <br /></td></tr>
-<tr class="separator:ga2a00b30a9c1c601f5df8ad48a6c0875a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7545bbaec8b5f14ec3919ce6c3400807" id="r_ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; </td></tr>
+<tr class="memitem:ga8750ff5d165d2a9b2006cf3302ea6921" id="r_ga8750ff5d165d2a9b2006cf3302ea6921"><td class="memTemplParams" colspan="2">template&lt;MPICompatibleRange R1, MPICompatibleRange R2&gt; <br />
+requires (std::same_as&lt;std::remove_cvref_t&lt;std::ranges::range_value_t&lt;R1&gt;&gt;, std::remove_cvref_t&lt;std::ranges::range_value_t&lt;R2&gt;&gt;&gt;)</td></tr>
+<tr class="memitem:ga8750ff5d165d2a9b2006cf3302ea6921"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga8750ff5d165d2a9b2006cf3302ea6921">mpi::gather_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
+<tr class="memdesc:ga8750ff5d165d2a9b2006cf3302ea6921"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for <a class="el" href="conceptmpi_1_1_m_p_i_compatible_range.html" title="A concept that checks if a range type is contiguous and sized and has an MPI compatible value type.">mpi::MPICompatibleRange</a> objects.  <br /></td></tr>
+<tr class="separator:ga8750ff5d165d2a9b2006cf3302ea6921"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7545bbaec8b5f14ec3919ce6c3400807" id="r_ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memTemplParams" colspan="2">template&lt;std::ranges::sized_range R1, std::ranges::sized_range R2&gt; </td></tr>
 <tr class="memitem:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga7545bbaec8b5f14ec3919ce6c3400807">mpi::reduce_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>.  <br /></td></tr>
+<tr class="memdesc:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for <code>std::ranges::sized_range</code> objects.  <br /></td></tr>
 <tr class="separator:ga7545bbaec8b5f14ec3919ce6c3400807"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga781fd7448a64aa11baa9a8dd3173a23c" id="r_ga781fd7448a64aa11baa9a8dd3173a23c"><td class="memTemplParams" colspan="2">template&lt;contiguous_sized_range R1, contiguous_sized_range R2&gt; <br />
-requires (std::same_as&lt;std::ranges::range_value_t&lt;R1&gt;, std::ranges::range_value_t&lt;R2&gt;&gt;)</td></tr>
-<tr class="memitem:ga781fd7448a64aa11baa9a8dd3173a23c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga781fd7448a64aa11baa9a8dd3173a23c">mpi::scatter_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long in_size, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, long chunk_size=1)</td></tr>
-<tr class="memdesc:ga781fd7448a64aa11baa9a8dd3173a23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for an <a class="el" href="conceptmpi_1_1contiguous__sized__range.html" title="A concept that checks if a range type is contiguous and sized.">mpi::contiguous_sized_range</a>.  <br /></td></tr>
-<tr class="separator:ga781fd7448a64aa11baa9a8dd3173a23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaacfed5d37ff3273d5983c4acc22d6386" id="r_gaacfed5d37ff3273d5983c4acc22d6386"><td class="memTemplParams" colspan="2">template&lt;MPICompatibleRange R1, MPICompatibleRange R2&gt; <br />
+requires (std::same_as&lt;std::remove_cvref_t&lt;std::ranges::range_value_t&lt;R1&gt;&gt;, std::remove_cvref_t&lt;std::ranges::range_value_t&lt;R2&gt;&gt;&gt;)</td></tr>
+<tr class="memitem:gaacfed5d37ff3273d5983c4acc22d6386"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gaacfed5d37ff3273d5983c4acc22d6386">mpi::scatter_range</a> (R1 &amp;&amp;in_rg, R2 &amp;&amp;out_rg, long scatter_size, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, long chunk_size=1)</td></tr>
+<tr class="memdesc:gaacfed5d37ff3273d5983c4acc22d6386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for <a class="el" href="conceptmpi_1_1_m_p_i_compatible_range.html" title="A concept that checks if a range type is contiguous and sized and has an MPI compatible value type.">mpi::MPICompatibleRange</a> objects.  <br /></td></tr>
+<tr class="separator:gaacfed5d37ff3273d5983c4acc22d6386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -39,7 +39,8 @@ var menudata={children:[
 {text:"Compiling the examples",url:"examples.html#compiling"},
 {text:"Example 1: Hello world!",url:"ex1.html"},
 {text:"Example 2: Use monitor to communicate errors",url:"ex2.html"},
-{text:"Example 3: Custom type and operator",url:"ex3.html"}]},
+{text:"Example 3: Custom type and operator",url:"ex3.html"},
+{text:"Example 4: Provide custom spezializations",url:"ex4.html"}]},
 {text:"API Documentation",url:"documentation.html",children:[
 {text:"MPI essentials",url:"group__mpi__essentials.html",children:[
 {text:"communicator",url:"classmpi_1_1communicator.html"},
@@ -64,15 +65,10 @@ var menudata={children:[
 {text:"mpi_type<unsigned long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01_4.html"},
 {text:"mpi_type<unsigned long long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html"}]}]},
 {text:"Collective MPI communication",url:"group__coll__comm.html"},
-{text:"Lazy MPI communication",url:"group__mpi__lazy.html",children:[
-{text:"lazy",url:"structmpi_1_1lazy.html"},
-{text:"gather tag",url:"structmpi_1_1tag_1_1gather.html"},
-{text:"reduce tag",url:"structmpi_1_1tag_1_1reduce.html"},
-{text:"scatter tag",url:"structmpi_1_1tag_1_1scatter.html"}]},
 {text:"Event handling",url:"group__event__handling.html",children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[
-{text:"contiguous_sized_range",url:"conceptmpi_1_1contiguous__sized__range.html"}]},
+{text:"MPICompatibleRange",url:"conceptmpi_1_1_m_p_i_compatible_range.html"}]},
 {text:"File List",url:"files.html"}]},
 {text:"Changelog",url:"changelog.html"},
 {text:"Issues",url:"issues.html"}]}

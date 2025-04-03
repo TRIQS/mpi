@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['operator_0',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
-  ['overview_1',['Overview',['../index.html',1,'']]]
+  ['monitor_20to_20communicate_20errors_0',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]]
 ];

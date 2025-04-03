@@ -1,8 +1,10 @@
 var searchData=
 [
-  ['handling_0',['handling',['../group__event__handling.html',1,'Event handling'],['../documentation.html#autotoc_md17',1,'Event handling']]],
-  ['has_5fenv_1',['has_env',['../group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1',1,'mpi']]],
-  ['has_5fmpi_5ftype_2',['has_mpi_type',['../group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34',1,'mpi']]],
-  ['has_5fmpi_5ftype_3c_20t_2c_20std_3a_3avoid_5ft_3c_20decltype_28mpi_5ftype_3c_20t_20_3e_3a_3aget_28_29_29_3e_20_3e_3',['has_mpi_type&lt; T, std::void_t&lt; decltype(mpi_type&lt; T &gt;::get())&gt; &gt;',['../group__mpi__types__ops.html#ga3b16e36ff8ecef29e60aa81ab4406328',1,'mpi']]],
-  ['hello_20world_4',['Example 1: Hello world!',['../ex1.html',1,'']]]
+  ['gather_0',['gather',['../group__coll__comm.html#gad8079c5141a34385a430bb467e79ab0e',1,'mpi']]],
+  ['gather_5finto_1',['gather_into',['../group__coll__comm.html#ga20d1b068815d57325f8d6361ee2f741d',1,'mpi']]],
+  ['gather_5frange_2',['gather_range',['../group__coll__comm.html#ga8750ff5d165d2a9b2006cf3302ea6921',1,'mpi']]],
+  ['general_3',['General',['../changelog.html#autotoc_md1',1,'General'],['../changelog.html#autotoc_md5',1,'General'],['../changelog.html#autotoc_md9',1,'General']]],
+  ['generic_5fcommunication_2ehpp_4',['generic_communication.hpp',['../generic__communication_8hpp.html',1,'']]],
+  ['get_5',['get',['../classmpi_1_1communicator.html#ac0af4ecaeecae0ebc6c24aeef58f930e',1,'mpi::communicator']]],
+  ['get_5fmpi_5ftype_6',['get_mpi_type',['../group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d',1,'mpi::get_mpi_type(std::tuple&lt; Ts... &gt; tup)'],['../group__mpi__types__ops.html#ga312882be87fe6ee2c3617bdc701c42d6',1,'mpi::get_mpi_type(const T &amp;obj)']]]
 ];

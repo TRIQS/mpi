@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['contiguous_5fsized_5frange_0',['contiguous_sized_range',['../conceptmpi_1_1contiguous__sized__range.html',1,'mpi']]]
+  ['mpicompatiblerange_0',['MPICompatibleRange',['../conceptmpi_1_1_m_p_i_compatible_range.html',1,'mpi']]]
 ];

@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['use_20monitor_20to_20communicate_20errors_0',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
-  ['utilities_1',['Utilities',['../group__utilities.html',1,'Utilities'],['../documentation.html#autotoc_md18',1,'Utilities']]],
-  ['utils_2ehpp_2',['utils.hpp',['../utils_8hpp.html',1,'']]]
+  ['the_20examples_0',['Compiling the examples',['../examples.html#compiling',1,'']]],
+  ['to_20communicate_20errors_1',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
+  ['to_20start_2',['Where to start?',['../index.html#start',1,'']]],
+  ['type_20and_20operator_3',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
 ];

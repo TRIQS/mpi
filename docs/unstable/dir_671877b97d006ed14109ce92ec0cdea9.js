@@ -6,7 +6,6 @@ var dir_671877b97d006ed14109ce92ec0cdea9 =
     [ "datatypes.hpp", "datatypes_8hpp.html", "datatypes_8hpp" ],
     [ "environment.hpp", "environment_8hpp.html", "environment_8hpp" ],
     [ "generic_communication.hpp", "generic__communication_8hpp.html", "generic__communication_8hpp" ],
-    [ "lazy.hpp", "lazy_8hpp.html", "lazy_8hpp" ],
     [ "macros.hpp", "macros_8hpp.html", null ],
     [ "monitor.hpp", "monitor_8hpp.html", null ],
     [ "mpi.hpp", "mpi_8hpp.html", null ],

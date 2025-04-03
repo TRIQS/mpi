@@ -109,8 +109,6 @@ $(function(){initNavTree('utils_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#concepts">Concepts</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">utils.hpp File Reference</div></div>
 </div><!--header-->
@@ -118,7 +116,6 @@ $(function(){initNavTree('utils_8hpp.html',''); initResizable(true); });
 <div class="textblock"><code>#include &lt;mpi.h&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;type_traits&gt;</code><br />
 </div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides general utilities related to MPI. </p>
 
@@ -126,19 +123,6 @@ $(function(){initNavTree('utils_8hpp.html',''); initResizable(true); });
 </div>
 <p><a href="utils_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
-Concepts</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptmpi_1_1contiguous__sized__range.html">mpi::contiguous_sized_range</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A concept that checks if a range type is contiguous and sized. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:gabc2abaca95fbe7d5faf32c6998f20da8" id="r_gabc2abaca95fbe7d5faf32c6998f20da8"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:gabc2abaca95fbe7d5faf32c6998f20da8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">mpi::regular_t</a> = typename detail::_regular&lt;std::decay_t&lt;T&gt;&gt;::type</td></tr>
-<tr class="memdesc:gabc2abaca95fbe7d5faf32c6998f20da8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type trait to get the regular type of a type.  <br /></td></tr>
-<tr class="separator:gabc2abaca95fbe7d5faf32c6998f20da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gaee34d136ff5a6107c23f96092b8e20ec" id="r_gaee34d136ff5a6107c23f96092b8e20ec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">mpi::check_mpi_call</a> (int errcode, const std::string &amp;mpi_routine)</td></tr>

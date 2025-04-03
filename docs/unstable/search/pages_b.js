@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['projects_0',['Integration in C++ projects',['../integration.html',1,'']]]
+  ['operator_0',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
+  ['overview_1',['Overview',['../index.html',1,'']]]
 ];

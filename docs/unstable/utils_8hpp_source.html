@@ -134,41 +134,19 @@ $(function(){initNavTree('utils_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span>mpi {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keyword">namespace </span>detail {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="comment">// Helper struct to get the regular type of a type.</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Enable = <span class="keywordtype">void</span>&gt; <span class="keyword">struct </span>_regular {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>      <span class="keyword">using </span>type = T;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    };</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="comment">// Spezialization of _regular for types with a `regular_type` type alias.</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span>_regular&lt;T, std::void_t&lt;typename T::regular_type&gt;&gt; {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      <span class="keyword">using </span>type = <span class="keyword">typename</span> T::regular_type;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    };</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  } <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">   56</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">using </span><a class="code hl_typedef" href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">regular_t</a> = <span class="keyword">typename</span> detail::_regular&lt;std::decay_t&lt;T&gt;&gt;::type;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span></div>
-<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">   73</a></span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a>(<span class="keywordtype">int</span> errcode, <span class="keyword">const</span> std::string &amp;mpi_routine) {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">if</span> (errcode != MPI_SUCCESS) <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;MPI error &quot;</span> + std::to_string(errcode) + <span class="stringliteral">&quot; in MPI routine &quot;</span> + mpi_routine);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  }</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">namespace </span>mpi {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span></div>
+<div class="foldopen" id="foldopen00051" data-start="{" data-end="}">
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">   51</a></span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a>(<span class="keywordtype">int</span> errcode, <span class="keyword">const</span> std::string &amp;mpi_routine) {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">if</span> (errcode != MPI_SUCCESS) <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;MPI error &quot;</span> + std::to_string(errcode) + <span class="stringliteral">&quot; in MPI routine &quot;</span> + mpi_routine);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  }</div>
 </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="conceptmpi_1_1contiguous__sized__range.html">   82</a></span>  <span class="keyword">concept </span><a class="code hl_concept" href="conceptmpi_1_1contiguous__sized__range.html">contiguous_sized_range</a> = std::ranges::contiguous_range&lt;R&gt; &amp;&amp; std::ranges::sized_range&lt;R&gt;;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>} <span class="comment">// namespace mpi</span></div>
-<div class="ttc" id="aconceptmpi_1_1contiguous__sized__range_html"><div class="ttname"><a href="conceptmpi_1_1contiguous__sized__range.html">mpi::contiguous_sized_range</a></div><div class="ttdoc">A concept that checks if a range type is contiguous and sized.</div><div class="ttdef"><b>Definition</b> <a href="#l00082">utils.hpp:82</a></div></div>
-<div class="ttc" id="agroup__utilities_html_gabc2abaca95fbe7d5faf32c6998f20da8"><div class="ttname"><a href="group__utilities.html#gabc2abaca95fbe7d5faf32c6998f20da8">mpi::regular_t</a></div><div class="ttdeci">typename detail::_regular&lt; std::decay_t&lt; T &gt; &gt;::type regular_t</div><div class="ttdoc">Type trait to get the regular type of a type.</div><div class="ttdef"><b>Definition</b> <a href="#l00056">utils.hpp:56</a></div></div>
-<div class="ttc" id="agroup__utilities_html_gaee34d136ff5a6107c23f96092b8e20ec"><div class="ttname"><a href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">mpi::check_mpi_call</a></div><div class="ttdeci">void check_mpi_call(int errcode, const std::string &amp;mpi_routine)</div><div class="ttdoc">Check the success of an MPI call.</div><div class="ttdef"><b>Definition</b> <a href="#l00073">utils.hpp:73</a></div></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>} <span class="comment">// namespace mpi</span></div>
+<div class="ttc" id="agroup__utilities_html_gaee34d136ff5a6107c23f96092b8e20ec"><div class="ttname"><a href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">mpi::check_mpi_call</a></div><div class="ttdeci">void check_mpi_call(int errcode, const std::string &amp;mpi_routine)</div><div class="ttdoc">Check the success of an MPI call.</div><div class="ttdef"><b>Definition</b> <a href="#l00051">utils.hpp:51</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

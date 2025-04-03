@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['all_0',['all',['../structmpi_1_1lazy.html#a083f8bdf77b02d3f18c9e84a4c19b519',1,'mpi::lazy']]]
+  ['has_5fenv_0',['has_env',['../group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1',1,'mpi']]],
+  ['has_5fmpi_5ftype_1',['has_mpi_type',['../group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34',1,'mpi']]],
+  ['has_5fmpi_5ftype_3c_20t_2c_20std_3a_3avoid_5ft_3c_20decltype_28mpi_5ftype_3c_20t_20_3e_3a_3aget_28_29_29_3e_20_3e_2',['has_mpi_type&lt; T, std::void_t&lt; decltype(mpi_type&lt; T &gt;::get())&gt; &gt;',['../group__mpi__types__ops.html#ga3b16e36ff8ecef29e60aa81ab4406328',1,'mpi']]]
 ];

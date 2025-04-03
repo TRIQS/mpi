@@ -118,9 +118,11 @@ $(function(){initNavTree('vector_8hpp.html',''); initResizable(true); });
 <code>#include &quot;<a class="el" href="ranges_8hpp_source.html">./ranges.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="utils_8hpp_source.html">./utils.hpp</a>&quot;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Provides an MPI broadcast, reduce, scatter and gather for std::vector. </p>
+<div class="textblock"><p>Provides an MPI broadcast, reduce, scatter and gather for <code>std::vector</code>. </p>
 
 <p class="definition">Definition in file <a class="el" href="vector_8hpp_source.html">vector.hpp</a>.</p>
 </div>
@@ -130,24 +132,24 @@ $(function(){initNavTree('vector_8hpp.html',''); initResizable(true); });
 Functions</h2></td></tr>
 <tr class="memitem:ga452e85429efcccd36141a49b2c7012cb" id="r_ga452e85429efcccd36141a49b2c7012cb"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:ga452e85429efcccd36141a49b2c7012cb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb">mpi::mpi_broadcast</a> (std::vector&lt; T &gt; &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
-<tr class="memdesc:ga452e85429efcccd36141a49b2c7012cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a std::vector.  <br /></td></tr>
+<tr class="memdesc:ga452e85429efcccd36141a49b2c7012cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a <code>std::vector</code>.  <br /></td></tr>
 <tr class="separator:ga452e85429efcccd36141a49b2c7012cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1c04a9783361b9c6eec689971aed2922" id="r_ga1c04a9783361b9c6eec689971aed2922"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:ga1c04a9783361b9c6eec689971aed2922"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga1c04a9783361b9c6eec689971aed2922">mpi::mpi_gather</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
-<tr class="memdesc:ga1c04a9783361b9c6eec689971aed2922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a std::vector.  <br /></td></tr>
-<tr class="separator:ga1c04a9783361b9c6eec689971aed2922"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafa214ad19ee230898ada500363d8aa77" id="r_gafa214ad19ee230898ada500363d8aa77"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:gafa214ad19ee230898ada500363d8aa77"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gafa214ad19ee230898ada500363d8aa77">mpi::mpi_gather_into</a> (std::vector&lt; T &gt; const &amp;v_in, std::vector&lt; T &gt; &amp;v_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false)</td></tr>
+<tr class="memdesc:gafa214ad19ee230898ada500363d8aa77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI gather for a <code>std::vector</code> that gathers directly into an existing output vector.  <br /></td></tr>
+<tr class="separator:gafa214ad19ee230898ada500363d8aa77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6f289495a232fb35118cb9ed26c5ae31" id="r_ga6f289495a232fb35118cb9ed26c5ae31"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:ga6f289495a232fb35118cb9ed26c5ae31"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga6f289495a232fb35118cb9ed26c5ae31">mpi::mpi_reduce</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga6f289495a232fb35118cb9ed26c5ae31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a std::vector.  <br /></td></tr>
+<tr class="memdesc:ga6f289495a232fb35118cb9ed26c5ae31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <code>std::vector</code>.  <br /></td></tr>
 <tr class="separator:ga6f289495a232fb35118cb9ed26c5ae31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae123b365235e205f4a4b992ff11b9722" id="r_gae123b365235e205f4a4b992ff11b9722"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:gae123b365235e205f4a4b992ff11b9722"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gae123b365235e205f4a4b992ff11b9722">mpi::mpi_reduce_in_place</a> (std::vector&lt; T &gt; &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:gae123b365235e205f4a4b992ff11b9722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an in-place MPI reduce for a std::vector.  <br /></td></tr>
-<tr class="separator:gae123b365235e205f4a4b992ff11b9722"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaa70951052bcbc3c57354a4d49cbb267" id="r_gaaa70951052bcbc3c57354a4d49cbb267"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:gaaa70951052bcbc3c57354a4d49cbb267"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#gaaa70951052bcbc3c57354a4d49cbb267">mpi::mpi_scatter</a> (std::vector&lt; T &gt; const &amp;v, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
-<tr class="memdesc:gaaa70951052bcbc3c57354a4d49cbb267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for a std::vector.  <br /></td></tr>
-<tr class="separator:gaaa70951052bcbc3c57354a4d49cbb267"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga93e46bb67503a6b4604882dc9cf48e81" id="r_ga93e46bb67503a6b4604882dc9cf48e81"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
+<tr class="memitem:ga93e46bb67503a6b4604882dc9cf48e81"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga93e46bb67503a6b4604882dc9cf48e81">mpi::mpi_reduce_into</a> (std::vector&lt; T1 &gt; const &amp;v_in, std::vector&lt; T2 &gt; &amp;v_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga93e46bb67503a6b4604882dc9cf48e81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <code>std::vector</code> that reduces directly into a given output vector.  <br /></td></tr>
+<tr class="separator:ga93e46bb67503a6b4604882dc9cf48e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3b9053b85c0a52746323623a64621ac5" id="r_ga3b9053b85c0a52746323623a64621ac5"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:ga3b9053b85c0a52746323623a64621ac5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga3b9053b85c0a52746323623a64621ac5">mpi::mpi_scatter_into</a> (std::vector&lt; T &gt; const &amp;v_in, std::vector&lt; T &gt; &amp;v_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
+<tr class="memdesc:ga3b9053b85c0a52746323623a64621ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI scatter for a <code>std::vector</code> that scatters directly into an existing output vector.  <br /></td></tr>
+<tr class="separator:ga3b9053b85c0a52746323623a64621ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

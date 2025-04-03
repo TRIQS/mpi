@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['to_20communicate_20errors_0',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
-  ['type_20and_20operator_1',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
+  ['projects_0',['Integration in C++ projects',['../integration.html',1,'']]],
+  ['provide_20custom_20spezializations_1',['Example 4: Provide custom spezializations',['../ex4.html',1,'']]]
 ];

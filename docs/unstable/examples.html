@@ -122,10 +122,11 @@ $(function(){initNavTree('examples.html',''); initResizable(true); });
 <li><a class="el" href="ex1.html">Example 1: Hello world!</a></li>
 <li><a class="el" href="ex2.html">Example 2: Use monitor to communicate errors</a></li>
 <li><a class="el" href="ex3.html">Example 3: Custom type and operator</a></li>
+<li><a class="el" href="ex4.html">Example 4: Provide custom spezializations</a></li>
 </ul>
 <h1><a class="anchor" id="compiling"></a>
 Compiling the examples</h1>
-<p>All examples have been compiled on a MacBook Pro with an Apple M2 Max chip and <a href="https://www.open-mpi.org/">open-mpi</a> 4.1.5. We further used clang 16.0.6 together with cmake 3.27.2.</p>
+<p>All examples have been compiled on a MacBook Pro with an Apple M2 Max chip and <a href="https://www.open-mpi.org/">open-mpi</a> 5.0.1. We further used clang 19.1.7 together with cmake 3.31.5.</p>
 <p>Assuming that the actual example code is in a file <code>main.cpp</code>, the following generic <code>CMakeLists.txt</code> should work for all examples:</p>
 <div class="fragment"><div class="line">cmake_minimum_required(VERSION 3.20)</div>
 <div class="line">project(example CXX)</div>
@@ -141,7 +142,7 @@ Compiling the examples</h1>
 <div class="line">FetchContent_Declare(</div>
 <div class="line">  mpi</div>
 <div class="line">  GIT_REPOSITORY https://github.com/TRIQS/mpi.git</div>
-<div class="line">  GIT_TAG        1.2.x</div>
+<div class="line">  GIT_TAG        1.3.x</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(mpi)</div>
 <div class="line"> </div>

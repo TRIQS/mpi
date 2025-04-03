@@ -200,7 +200,7 @@ General</h3>
 <li>Make sure to std::abort in mpi abort when not in an mpi env</li>
 <li>Simplify check for mpi env vars, provide single static <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a></li>
 <li>Fix generic mpi operations for vector/lazy types, Protect in_place operations against rvalues and const</li>
-<li>Change type of <a class="el" href="structmpi_1_1lazy.html" title="Represents a lazy MPI communication.">mpi::lazy</a> to match lazy implementation for triqs::gfs, add is_mpi_lazy checker</li>
+<li>Change type of mpi::lazy to match lazy implementation for triqs::gfs, add is_mpi_lazy checker</li>
 <li>Check that all vector sizes match in all_reduce(std::vector)</li>
 <li>Call to all_reduce should not take a root argument</li>
 <li>Type bool should be associated with MPI_CXX_BOOL</li>

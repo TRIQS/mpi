@@ -108,116 +108,11 @@ $(function(){initNavTree('group__mpi__lazy.html',''); initResizable(true); });
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">Lazy MPI communication</div></div>
 </div><!--header-->
 <div class="contents">
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Allow specific types to use lazy MPI communication. </p>
-<p>Please look at the MPI interface in the <a href="https://triqs.github.io/nda/latest/group__av__mpi.html">nda library</a> for more details.</p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmpi_1_1lazy.html">mpi::lazy&lt; Tag, T &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a lazy MPI communication.  <a href="structmpi_1_1lazy.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmpi_1_1tag_1_1gather.html">mpi::tag::gather</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag to specify a lazy MPI gather call.  <a href="structmpi_1_1tag_1_1gather.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmpi_1_1tag_1_1reduce.html">mpi::tag::reduce</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag to specify a lazy MPI reduce call.  <a href="structmpi_1_1tag_1_1reduce.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmpi_1_1tag_1_1scatter.html">mpi::tag::scatter</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag to specify a lazy MPI scatter call.  <a href="structmpi_1_1tag_1_1scatter.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:gaea1d1d296f80ece0880a0d39aa8ca6bb" id="r_gaea1d1d296f80ece0880a0d39aa8ca6bb"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:gaea1d1d296f80ece0880a0d39aa8ca6bb"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gaea1d1d296f80ece0880a0d39aa8ca6bb">mpi::is_mpi_lazy</a> = false</td></tr>
-<tr class="memdesc:gaea1d1d296f80ece0880a0d39aa8ca6bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type trait to check if a type is <a class="el" href="structmpi_1_1lazy.html" title="Represents a lazy MPI communication.">mpi::lazy</a>.  <br /></td></tr>
-<tr class="separator:gaea1d1d296f80ece0880a0d39aa8ca6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2a36325087766f9dc587196d7f15d91e" id="r_ga2a36325087766f9dc587196d7f15d91e"><td class="memTemplParams" colspan="2">template&lt;typename Tag, typename T&gt; </td></tr>
-<tr class="memitem:ga2a36325087766f9dc587196d7f15d91e"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga2a36325087766f9dc587196d7f15d91e">mpi::is_mpi_lazy&lt; lazy&lt; Tag, T &gt; &gt;</a> = true</td></tr>
-<tr class="memdesc:ga2a36325087766f9dc587196d7f15d91e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spezialization of <a class="el" href="#gaea1d1d296f80ece0880a0d39aa8ca6bb" title="Type trait to check if a type is mpi::lazy.">mpi::is_mpi_lazy</a>.  <br /></td></tr>
-<tr class="separator:ga2a36325087766f9dc587196d7f15d91e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="gaea1d1d296f80ece0880a0d39aa8ca6bb" name="gaea1d1d296f80ece0880a0d39aa8ca6bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaea1d1d296f80ece0880a0d39aa8ca6bb">&#9670;&#160;</a></span>is_mpi_lazy</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool mpi::is_mpi_lazy = false</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p><code>#include &lt;<a class="el" href="lazy_8hpp.html">mpi/lazy.hpp</a>&gt;</code></p>
-
-<p>Type trait to check if a type is <a class="el" href="structmpi_1_1lazy.html" title="Represents a lazy MPI communication.">mpi::lazy</a>. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type to be checked. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="lazy_8hpp_source.html#l00084">84</a> of file <a class="el" href="lazy_8hpp_source.html">lazy.hpp</a>.</p>
-
-</div>
-</div>
-<a id="ga2a36325087766f9dc587196d7f15d91e" name="ga2a36325087766f9dc587196d7f15d91e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2a36325087766f9dc587196d7f15d91e">&#9670;&#160;</a></span>is_mpi_lazy&lt; lazy&lt; Tag, T &gt; &gt;</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Tag, typename T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="#gaea1d1d296f80ece0880a0d39aa8ca6bb">mpi::is_mpi_lazy</a>&lt; <a class="el" href="structmpi_1_1lazy.html">lazy</a>&lt; Tag, T &gt; &gt; = true</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p><code>#include &lt;<a class="el" href="lazy_8hpp.html">mpi/lazy.hpp</a>&gt;</code></p>
-
-<p>Spezialization of <a class="el" href="#gaea1d1d296f80ece0880a0d39aa8ca6bb" title="Type trait to check if a type is mpi::lazy.">mpi::is_mpi_lazy</a>. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Tag</td><td>Type to specify the kind of MPI call. </td></tr>
-    <tr><td class="paramname">T</td><td>Type to be checked. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="lazy_8hpp_source.html#l00092">92</a> of file <a class="el" href="lazy_8hpp_source.html">lazy.hpp</a>.</p>
-
-</div>
-</div>
+<p>Please look at the MPI interface in the <a href="https://triqs.github.io/nda/latest/group__av__mpi.html">nda library</a> for more details. </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
