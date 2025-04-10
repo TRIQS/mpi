@@ -67,4 +67,54 @@ TEST(MPI, OMPHybrid) {
   EXPECT_EQ(n * (n - 1) / 2, sum);
 }
 
+TEST(MPI, OMPHybridParallelForSingleLoop) {
+  // first divide a range among MPI processes and then among OMP threads
+  mpi::communicator world;
+  int const n = 10;
+  long sum    = 0;
+#pragma omp parallel for reduction(+ : sum)
+  for (auto i : mpi::chunk(range(n))) sum += i;
+
+  // reduce and check the sum, i.e. that every element of the range has been visited
+  sum = mpi::all_reduce(sum, world);
+  EXPECT_EQ(n * (n - 1) / 2, sum);
+}
+
+TEST(MPI, OMPHybridParallelForDoubleLoop) {
+  mpi::communicator world;
+  int const n1 = 11;
+  int const n2 = 13;
+
+  // divide the outer loop among MPI processes, collapse the inner and outer loop and divide it among OMP threads
+  long sum = 0;
+#pragma omp parallel for collapse(2) reduction(+ : sum)
+  for (auto i : mpi::chunk(range(n1))) {
+    for (auto j : range(n2)) sum += i * n2 + j;
+  }
+
+  // reduce and check the sum, i.e. that every element of the range has been visited
+  sum = mpi::all_reduce(sum, world);
+  EXPECT_EQ(n1 * n2 * (n1 * n2 - 1) / 2, sum);
+}
+
+TEST(MPI, OMPHybridParallelForTripleLoop) {
+  mpi::communicator world;
+  int const n1 = 11;
+  int const n2 = 13;
+  int const n3 = 17;
+
+  // divide the outer loop among MPI processes, collapse the inner and outer loops and divide it among OMP threads
+  long sum = 0;
+#pragma omp parallel for collapse(3) reduction(+ : sum)
+  for (auto i : mpi::chunk(range(n1))) {
+    for (auto j : range(n2)) {
+      for (auto k : range(n3)) sum += i * n2 * n3 + j * n3 + k;
+    }
+  }
+
+  // reduce and check the sum, i.e. that every element of the range has been visited
+  sum = mpi::all_reduce(sum, world);
+  EXPECT_EQ(n1 * n2 * n3 * (n1 * n2 * n3 - 1) / 2, sum);
+}
+
 MPI_TEST_MAIN;
