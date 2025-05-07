@@ -14,10 +14,16 @@
 //
 // Authors: Philipp Dumitrescu, Olivier Parcollet, Nils Wentzell
 
-#include <mpi/mpi.hpp>
-#include <mpi/vector.hpp>
 #include <gtest/gtest.h>
+#include <mpi/mpi.hpp>
+
+#include <array>
+#include <cstddef>
+#include <iterator>
 #include <numeric>
+#include <span>
+#include <utility>
+#include <vector>
 
 // Test cases are adapted from slides and exercises of the HLRS course:
 // Introduction to the Message Passing Interface (MPI)
@@ -26,7 +32,7 @@
 // https://fs.hlrs.de/projects/par/par_prog_ws/pdf/mpi_3.1_rab.pdf
 // https://fs.hlrs.de/projects/par/par_prog_ws/practical/MPI31single.tar.gz
 
-TEST(MPI_Window, CommunicatorMember) {
+TEST(MPI, WindowCommunicatorMember) {
   mpi::communicator world;
 
   int data = world.rank();
@@ -39,7 +45,7 @@ TEST(MPI_Window, CommunicatorMember) {
   EXPECT_EQ(win_comm.size(), world.size());
 }
 
-TEST(MPI_Window, SharedCommMember) {
+TEST(MPI, WindowSharedCommunicatorMember) {
   auto shm = mpi::communicator{}.split_shared();
 
   mpi::shared_window<int> win{shm, 1};
@@ -50,16 +56,10 @@ TEST(MPI_Window, SharedCommMember) {
   EXPECT_EQ(sh_win_comm.size(), shm.size());
 }
 
-TEST(MPI_Window, SharedCommunicator) {
+TEST(MPI, WindowGetAttrBase) {
   mpi::communicator world;
-  [[maybe_unused]] auto shm = world.split_shared();
-}
 
-TEST(MPI_Window, GetAttrBase) {
-  mpi::communicator world;
-  int rank = world.rank();
-
-  int buffer = rank;
+  int buffer = world.rank();
   mpi::window<int> win{world, &buffer, 1};
 
   void *base_ptr = win.base();
@@ -67,7 +67,7 @@ TEST(MPI_Window, GetAttrBase) {
   EXPECT_EQ(base_ptr, &buffer);
 }
 
-TEST(MPI_Window, WindowAllocate) {
+TEST(MPI, WindowAllocate) {
   mpi::communicator world;
   int rank = world.rank();
 
@@ -75,14 +75,14 @@ TEST(MPI_Window, WindowAllocate) {
   *(win.base()) = rank;
 
   win.fence();
-  int rcv;
+  int rcv{};
   win.get(&rcv, 1, rank);
   win.fence();
 
   EXPECT_EQ(rcv, rank);
 }
 
-TEST(MPI_Window, PassiveTargetCommunication) {
+TEST(MPI, WindowPassiveTargetCommunication) {
   mpi::communicator world;
   if (world.size() < 2) { GTEST_SKIP() << "Test requires at least 2 processes\n"; }
   int rank = world.rank();
@@ -104,7 +104,7 @@ TEST(MPI_Window, PassiveTargetCommunication) {
   }
 }
 
-TEST(MPI_Window, ActiveTargetCommunication) {
+TEST(MPI, WindowActiveTargetCommunication) {
   mpi::communicator world;
   if (world.size() < 2) {
     // Target rank cannot be equal to origin rank (deadlocks), so we need at
@@ -132,23 +132,23 @@ TEST(MPI_Window, ActiveTargetCommunication) {
 
   if (rank == origin_rank) {
     win.start(target_group); // blocks until target_rank calls post()
-    int origin_addr[] = {42};
-    int origin_count  = 1;
-    win.put(origin_addr, origin_count, target_rank);
+    auto origin_arr  = std::array<int, 1>{42};
+    int origin_count = 1;
+    win.put(origin_arr.data(), origin_count, target_rank);
     win.complete();
   }
 }
 
-TEST(MPI_Window, GetAttrSize) {
+TEST(MPI, WindowGetAttrSize) {
   mpi::communicator world;
-  int buffer;
+  int buffer{};
   mpi::window<int> win{world, &buffer, 1};
 
   MPI_Aint size = win.size();
   EXPECT_EQ(size, sizeof(int));
 }
 
-TEST(MPI_Window, MoveConstructor) {
+TEST(MPI, WindowMoveConstructor) {
   mpi::communicator world;
   int i = 1;
   mpi::window<int> win1{world, &i, 1};
@@ -159,19 +159,19 @@ TEST(MPI_Window, MoveConstructor) {
   EXPECT_EQ(win1.base(), nullptr);
 }
 
-TEST(MPI_Window, NullptrSizeZero) {
+TEST(MPI, WindowNullptrSizeZero) {
   mpi::communicator world;
   mpi::window<int> win{world, nullptr, 0};
 
-  EXPECT_EQ(win.data(), nullptr);
+  EXPECT_EQ(win.base(), nullptr);
   EXPECT_EQ(win.size(), 0);
 }
 
-TEST(MPI_Window, OneSidedGet) {
+TEST(MPI, WindowOneSidedGet) {
   mpi::communicator world;
   int const rank = world.rank();
 
-  int snd_buf, rcv_buf = -1;
+  int snd_buf{}, rcv_buf = -1;
   mpi::window<int> win{world, &snd_buf, 1};
   snd_buf = rank;
 
@@ -182,11 +182,11 @@ TEST(MPI_Window, OneSidedGet) {
   EXPECT_EQ(rcv_buf, rank);
 }
 
-TEST(MPI_Window, OneSidedPut) {
+TEST(MPI, WindowOneSidedPut) {
   mpi::communicator world;
   int const rank = world.rank();
 
-  int snd_buf, rcv_buf = -1;
+  int snd_buf{}, rcv_buf = -1;
   mpi::window<int> win{world, &rcv_buf, 1};
   snd_buf = rank;
 
@@ -197,13 +197,13 @@ TEST(MPI_Window, OneSidedPut) {
   EXPECT_EQ(rcv_buf, rank);
 }
 
-TEST(MPI_Window, RingOneSidedGet) {
+TEST(MPI, WindowRingOneSidedGet) {
   mpi::communicator world;
   int const rank = world.rank();
   int const size = world.size();
   int const left = (rank - 1 + size) % size;
 
-  int snd_buf, rcv_buf;
+  int snd_buf{}, rcv_buf{};
   mpi::window<int> win{world, &snd_buf, 1};
   snd_buf = rank;
 
@@ -219,13 +219,13 @@ TEST(MPI_Window, RingOneSidedGet) {
   EXPECT_EQ(sum, (size * (size - 1)) / 2);
 }
 
-TEST(MPI_Window, RingOneSidedPut) {
+TEST(MPI, WindowRingOneSidedPut) {
   mpi::communicator world;
   int const rank  = world.rank();
   int const size  = world.size();
   int const right = (rank + 1) % size;
 
-  int snd_buf, rcv_buf;
+  int snd_buf{}, rcv_buf{};
   mpi::window<int> win{world, &rcv_buf, 1};
   snd_buf = rank;
 
@@ -241,7 +241,7 @@ TEST(MPI_Window, RingOneSidedPut) {
   EXPECT_EQ(sum, (size * (size - 1)) / 2);
 }
 
-TEST(MPI_Window, RingOneSidedAllocShared) {
+TEST(MPI, WindowRingOneSidedAllocShared) {
   mpi::communicator world;
   auto shm           = world.split_shared();
   int const rank_shm = shm.rank();
@@ -264,7 +264,7 @@ TEST(MPI_Window, RingOneSidedAllocShared) {
   EXPECT_EQ(sum, (size_shm * (size_shm - 1)) / 2);
 }
 
-TEST(MPI_Window, RingOneSidedStoreWinAllocSharedSignal) {
+TEST(MPI, WindowRingOneSidedStoreWinAllocSharedSignal) {
   if (not mpi::has_env) {
     // Test doesn't make sense without MPI
     GTEST_SKIP();
@@ -284,9 +284,9 @@ TEST(MPI_Window, RingOneSidedStoreWinAllocSharedSignal) {
   int sum     = 0;
   int snd_buf = rank_shm;
 
-  MPI_Request rq;
+  MPI_Request rq{};
   MPI_Status status;
-  int snd_dummy, rcv_dummy;
+  int snd_dummy{}, rcv_dummy{};
 
   for (int i = 0; i < size_shm; ++i) {
     // ... The local Win_syncs are needed to sync the processor and real memory.
@@ -327,7 +327,7 @@ TEST(MPI_Window, RingOneSidedStoreWinAllocSharedSignal) {
   win.unlock();
 }
 
-TEST(MPI_Window, SharedArray) {
+TEST(MPI, WindowSharedArray) {
   mpi::communicator world;
   auto shm           = world.split_shared();
   int const rank_shm = shm.rank();
@@ -339,8 +339,8 @@ TEST(MPI_Window, SharedArray) {
 
   // Fill array with local rank in parallel by chunking the range into the communicator
   win.fence();
-  auto slice = itertools::chunk_range(0, array_view.size(), shm.size(), shm.rank());
-  for (auto i = slice.first; i < slice.second; ++i) { array_view[i] = i; }
+  auto slice = itertools::chunk_range(0, static_cast<std::ptrdiff_t>(array_view.size()), shm.size(), shm.rank());
+  for (auto i = slice.first; i < slice.second; ++i) { array_view[i] = static_cast<int>(i); }
   win.fence();
 
   // Total sum is just sum of numbers in interval [0, array_size)
@@ -348,7 +348,7 @@ TEST(MPI_Window, SharedArray) {
   EXPECT_EQ(sum, (array_size * (array_size - 1)) / 2);
 }
 
-TEST(MPI_Window, DistributedSharedArray) {
+TEST(MPI, WindowDistributedSharedArray) {
   mpi::communicator world;
   auto shm = world.split_shared();
 
@@ -396,8 +396,8 @@ TEST(MPI_Window, DistributedSharedArray) {
   // Fill array with global index (= local index + global offset)
   // We do this in parallel on each shared memory island by chunking the total range
   win.fence();
-  auto slice = itertools::chunk_range(0, array_view.size(), shm.size(), shm.rank());
-  for (auto i = slice.first; i < slice.second; ++i) { array_view[i] = i + offset; }
+  auto slice = itertools::chunk_range(0, static_cast<std::ptrdiff_t>(array_view.size()), shm.size(), shm.rank());
+  for (auto i = slice.first; i < slice.second; ++i) { array_view[i] = static_cast<int>(i + offset); }
   win.fence();
 
   // Calculate partial sum on head node of each shared memory island and

@@ -16,33 +16,34 @@
 
 /**
  * @file
- * @brief Provides a C++ wrapper class for an @p MPI_Group object.
+ * @brief Provides a C++ wrapper class for an `MPI_Group` object.
  */
 
 #pragma once
 
 #include "./communicator.hpp"
 #include "./environment.hpp"
+#include "./utils.hpp"
 
 #include <mpi.h>
 
-#include <cstdlib>
-#include <unistd.h>
+#include <utility>
+#include <vector>
 
 namespace mpi {
 
   /**
    * @ingroup mpi_essentials
-   * @brief C++ wrapper around @p MPI_Group providing various convenience functions.
+   * @brief C++ wrapper around `MPI_Group` providing various convenience functions.
    *
-   * @details It stores an @p MPI_Group object as its only member which by default is set to @p MPI_GROUP_NULL.
+   * @details It stores an `MPI_Group` object as its only member which by default is set to `MPI_GROUP_NULL`. The
+   * underlying `MPI_Group` object is automatically freed when a group object goes out of scope.
+   *
+   * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
    */
   class group {
-    // Wrapped @p MPI_Group object.
-    MPI_Group _grp = MPI_GROUP_NULL;
-
     public:
-    /// Construct a group with @p MPI_GROUP_NULL.
+    /// Construct a group with `MPI_GROUP_NULL`.
     group() = default;
 
     /// Deleted copy constructor.
@@ -51,72 +52,82 @@ namespace mpi {
     /// Deleted copy assignment operator.
     group &operator=(group const &) = delete;
 
-    /// Move constructor leaves moved-from object with @p MPI_GROUP_NULL.
-    group(group &&other) noexcept : _grp{std::exchange(other._grp, MPI_GROUP_NULL)} {}
+    /// Move constructor leaves moved-from object with `MPI_GROUP_NULL`.
+    group(group &&other) noexcept : grp_{std::exchange(other.grp_, MPI_GROUP_NULL)} {}
 
-    /// Move assignment operator leaves moved-from object with @p MPI_GROUP_NULL.
+    /// Move assignment operator leaves moved-from object with `MPI_GROUP_NULL`.
     group &operator=(group &&rhs) noexcept {
       if (this != std::addressof(rhs)) {
-        this->free();
-        this->_grp = std::exchange(rhs._grp, MPI_GROUP_NULL);
+        free();
+        grp_ = std::exchange(rhs.grp_, MPI_GROUP_NULL);
       }
       return *this;
     }
 
-    /// Destructor
-    virtual ~group() { free(); }
+    /// Destructor calls free() to release the group.
+    ~group() { free(); }
 
     /**
-     * @brief Take ownership of an existing @p MPI_Group object.
-     * @param grp The group to be handled.
+     * @brief Take ownership of an existing `MPI_Group` object.
+     * @param grp `MPI_Group` to be handled.
      */
-    explicit group(MPI_Group grp) : _grp(grp) {}
+    explicit group(MPI_Group grp) : grp_(grp) {}
 
     /**
-     * @brief Create a group from a communicator.
-     * @param c The communicator from which to create a group.
+     * @brief Create a group from a communicator by calling `MPI_Comm_group`.
+     * @param c mpi::communicator from which to create a group.
      */
     explicit group(communicator c) {
-      if (has_env) { MPI_Comm_group(c.get(), &_grp); }
+      if (has_env) check_mpi_call(MPI_Comm_group(c.get(), &grp_), "MPI_Comm_group");
     }
 
-    /// Get the wrapped @p MPI_Group object.
-    [[nodiscard]] MPI_Group get() const noexcept { return _grp; }
+    /// Get the wrapped `MPI_Group` object.
+    [[nodiscard]] MPI_Group get() const noexcept { return grp_; }
 
-    /// Check if the contained @p MPI_Group is @p MPI_GROUP_NULL.
-    [[nodiscard]] bool is_null() const noexcept { return _grp == MPI_GROUP_NULL; }
+    /// Check if the contained `MPI_Group` is `MPI_GROUP_NULL`.
+    [[nodiscard]] bool is_null() const noexcept { return grp_ == MPI_GROUP_NULL; }
 
-    /// Rank of the calling process in the given group.
+    /**
+     * @brief Get the rank of the calling process in the group.
+     * @return The result of `MPI_Group_rank` if mpi::has_env is true, otherwise 0.
+     */
     [[nodiscard]] int rank() const {
-      int rank = 0;
-      if (has_env) { MPI_Group_rank(_grp, &rank); }
-      return rank;
-    }
-
-    /// Size of a group.
-    [[nodiscard]] int size() const {
-      int size = 1;
-      if (has_env) { MPI_Group_size(_grp, &size); }
-      return size;
+      int r = 0;
+      if (has_env) check_mpi_call(MPI_Group_rank(grp_, &r), "MPI_Group_rank");
+      return r;
     }
 
     /**
-     * @brief Produces a group by reordering an existing group and taking only listed members.
+     * @brief Get the size of the communicator.
+     * @return The result of `MPI_Comm_size` if mpi::has_env is true, otherwise 1.
+     */
+    [[nodiscard]] int size() const {
+      int s = 1;
+      if (has_env) check_mpi_call(MPI_Group_size(grp_, &s), "MPI_Group_size");
+      return s;
+    }
+
+    /**
+     * @brief Create a new group by calling `MPI_Group_incl`.
+     *
+     * @details It produces a new group by reordering the existing group and taking only listed members.
+     *
      * @param ranks List of ranks to include in the new group.
      * @return New group containing only the listed members.
      */
-    group include(std::vector<int> const &ranks) const {
+    [[nodiscard]] group include(std::vector<int> const &ranks) const {
       MPI_Group newgroup = MPI_GROUP_NULL;
-      if (has_env) { MPI_Group_incl(_grp, ranks.size(), ranks.data(), &newgroup); }
-      return group(newgroup);
+      if (has_env) check_mpi_call(MPI_Group_incl(grp_, static_cast<int>(ranks.size()), ranks.data(), &newgroup), "MPI_Group_incl");
+      return group{newgroup};
     }
 
-    /// Free the group.
-    void free() {
-      if (has_env) {
-        if (_grp != MPI_GROUP_NULL) { MPI_Group_free(&_grp); }
-      }
+    /// Free the group by calling `MPI_Group_free` (if it is not is_null()).
+    void free() noexcept {
+      if (has_env && !is_null()) MPI_Group_free(&grp_);
     }
+
+    private:
+    MPI_Group grp_ = MPI_GROUP_NULL;
   };
 
 } // namespace mpi

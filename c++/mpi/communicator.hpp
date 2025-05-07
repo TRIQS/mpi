@@ -31,22 +31,21 @@
 
 namespace mpi {
 
+  // Forward declaration.
   class shared_communicator;
 
   /**
    * @ingroup mpi_essentials
    * @brief C++ wrapper around `MPI_Comm` providing various convenience functions.
    *
-   * @details It stores an `MPI_Comm` object as its only member which by default is set to `MPI_COMM_WORLD`.
-   * Note that copying the communicator simply copies the `MPI_Comm` object, without calling `MPI_Comm_dup`.
+   * @details It stores an `MPI_Comm` object as its only member which by default is set to `MPI_COMM_WORLD`. The
+   * underlying `MPI_Comm` object is not freed when a communicator goes out of scope. It is the user's responsibility to
+   * do so, in case it is needed. Note that copying the communicator simply copies the `MPI_Comm` object, without
+   * calling `MPI_Comm_dup`.
    *
    * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
    */
   class communicator {
-    friend class shared_communicator;
-    // Wrapped `MPI_Comm` object.
-    MPI_Comm _com = MPI_COMM_WORLD;
-
     public:
     /// Construct a communicator with `MPI_COMM_WORLD`.
     communicator() = default;
@@ -54,25 +53,24 @@ namespace mpi {
     /**
      * @brief Construct a communicator with a given `MPI_Comm` object.
      * @details The `MPI_Comm` object is copied without calling `MPI_Comm_dup`.
+     * @param c `MPI_Comm` object to wrap.
      */
-    communicator(MPI_Comm c) : _com(c) {}
+    communicator(MPI_Comm c) : com_(c) {}
 
     /// Get the wrapped `MPI_Comm` object.
-    [[nodiscard]] MPI_Comm get() const noexcept { return _com; }
+    [[nodiscard]] MPI_Comm get() const noexcept { return com_; }
 
-    [[nodiscard]] bool is_null() const noexcept { return _com == MPI_COMM_NULL; }
+    /// Check if the contained `MPI_Comm` is `MPI_COMM_NULL`.
+    [[nodiscard]] bool is_null() const noexcept { return com_ == MPI_COMM_NULL; }
 
     /**
      * @brief Get the rank of the calling process in the communicator.
      * @return The result of `MPI_Comm_rank` if mpi::has_env is true, otherwise 0.
      */
     [[nodiscard]] int rank() const {
-      if (has_env) {
-        int num = 0;
-        check_mpi_call(MPI_Comm_rank(_com, &num), "MPI_Comm_rank");
-        return num;
-      } else
-        return 0;
+      int r = 0;
+      if (has_env) check_mpi_call(MPI_Comm_rank(com_, &r), "MPI_Comm_rank");
+      return r;
     }
 
     /**
@@ -80,35 +78,46 @@ namespace mpi {
      * @return The result of `MPI_Comm_size` if mpi::has_env is true, otherwise 1.
      */
     [[nodiscard]] int size() const {
-      if (has_env) {
-        int num = 0;
-        check_mpi_call(MPI_Comm_size(_com, &num), "MPI_Comm_size");
-        return num;
-      } else
-        return 1;
+      int s = 1;
+      if (has_env) check_mpi_call(MPI_Comm_size(com_, &s), "MPI_Comm_size");
+      return s;
     }
 
     /**
      * @brief Split the communicator into disjoint subgroups.
      *
-     * @details Calls `MPI_Comm_split` with the given color and key arguments. See the MPI documentation for more details,
-     * e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_split.3.html">open-mpi docs</a>.
+     * @details Calls `MPI_Comm_split` with the given color and key arguments. See the MPI documentation for more
+     * details, e.g. <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_split.3.html">open-mpi
+     * docs</a>.
      *
-     * @warning This allocates a new communicator object. Make sure to call `free` on the returned communicator when
-     * it is no longer needed.
+     * @warning This allocates a new communicator object. Make sure to call free() on the returned communicator when it
+     * is no longer needed.
      *
+     * @param color Determines which processes are put into the same group.
+     * @param key Determines the rank of the process in the new communicator.
      * @return If mpi::has_env is true, return the split `MPI_Comm` object wrapped in a new mpi::communicator, otherwise
      * return a default constructed mpi::communicator.
      */
     [[nodiscard]] communicator split(int color, int key = 0) const {
-      if (has_env) {
-        communicator c;
-        check_mpi_call(MPI_Comm_split(_com, color, key, &c._com), "MPI_Comm_split");
-        return c;
-      } else
-        return {};
+      communicator c{};
+      if (has_env) check_mpi_call(MPI_Comm_split(com_, color, key, &c.com_), "MPI_Comm_split");
+      return c;
     }
 
+    /**
+     * @brief Partition the communicator into subcommunicators according to their type.
+     *
+     * @details In the MPI3.0 standard the only supported split type is `MPI_COMM_TYPE_SHARED`. OpenMPI (and possibly
+     * other implementations) provide more custom split types, however, they are not portable.
+     *
+     * @warning This allocates a new communicator object. Make sure to call free on the returned communicator when it
+     * is no longer needed.
+     *
+     * @param split_type Type of processes to be grouped together.
+     * @param key Determines the rank of the process in the new communicator.
+     * @return If mpi::has_env is true, return the split `MPI_Comm` object wrapped in a new mpi::communicator, otherwise
+     * return a default constructed mpi::communicator.
+     */
     [[nodiscard]] shared_communicator split_shared(int split_type = MPI_COMM_TYPE_SHARED, int key = 0) const;
 
     /**
@@ -117,19 +126,16 @@ namespace mpi {
      * @details Calls `MPI_Comm_dup` to duplicate the communicator. See the MPI documentation for more details, e.g.
      * <a href="https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Comm_dup.3.html">open-mpi docs</a>.
      *
-     * @warning This allocates a new communicator object. Make sure to call `free` on the returned communicator when
-     * it is no longer needed.
+     * @warning This allocates a new communicator object. Make sure to call free on the returned communicator when it
+     * is no longer needed.
      *
      * @return If mpi::has_env is true, return the duplicated `MPI_Comm` object wrapped in a new mpi::communicator,
      * otherwise return a default constructed mpi::communicator.
      */
     [[nodiscard]] communicator duplicate() const {
-      if (has_env) {
-        communicator c;
-        check_mpi_call(MPI_Comm_dup(_com, &c._com), "MPI_Comm_dup");
-        return c;
-      } else
-        return {};
+      communicator c{};
+      if (has_env) check_mpi_call(MPI_Comm_dup(com_, &c.com_), "MPI_Comm_dup");
+      return c;
     }
 
     /**
@@ -142,18 +148,19 @@ namespace mpi {
      * Does nothing, if mpi::has_env is false.
      */
     void free() {
-      if (has_env) { check_mpi_call(MPI_Comm_free(&_com), "MPI_Comm_free"); }
+      if (has_env && !is_null()) check_mpi_call(MPI_Comm_free(&com_), "MPI_Comm_free");
     }
 
     /**
-     * @brief If mpi::has_env is true, `MPI_Abort` is called with the given error code, otherwise std::abort is called.
+     * @brief If mpi::has_env is true, `MPI_Abort` is called with the given error code, otherwise it calls `std::abort`.
      * @param error_code The error code to pass to `MPI_Abort`.
      */
     void abort(int error_code) const {
-      if (has_env)
-        check_mpi_call(MPI_Abort(_com, error_code), "MPI_Abort");
-      else
+      if (has_env) {
+        check_mpi_call(MPI_Abort(com_, error_code), "MPI_Abort");
+      } else {
         std::abort();
+      }
     }
 
 #ifdef BOOST_MPI_HPP
@@ -165,26 +172,27 @@ namespace mpi {
     /**
      * @brief Barrier synchronization.
      *
-     * @details Does nothing if mpi::has_env is false. Otherwise, it either uses a blocking `MPI_Barrier`
-     * (if the given argument is 0) or a non-blocking `MPI_Ibarrier` call. The given parameter determines
-     * in milliseconds how often each process calls `MPI_Test` to check if all processes have reached the barrier.
+     * @details Does nothing if mpi::has_env is false. Otherwise, it either uses a blocking `MPI_Barrier` (if the given
+     * argument is 0) or a non-blocking `MPI_Ibarrier` call. The given parameter determines in milliseconds how often
+     * each process calls `MPI_Test` to check if all processes have reached the barrier.
+     *
      * This can considerably reduce the CPU load:
-     *     - 1 msec ~ 1% cpu load
-     *     - 10 msec ~ 0.5% cpu load
-     *     - 100 msec ~ 0.01% cpu load
+     * - 1 msec ~ 1% cpu load
+     * - 10 msec ~ 0.5% cpu load
+     * - 100 msec ~ 0.01% cpu load
      *
      * For a very unbalanced load that takes a long time to finish, 1000 msec is a good choice.
      *
-     * @param poll_msec The polling interval in milliseconds. If set to 0, a simple `MPI_Barrier` call is used.
+     * @param poll_msec Polling interval in milliseconds. If set to 0, a simple `MPI_Barrier` call is used.
      */
     void barrier(long poll_msec = 1) const {
       if (has_env) {
         if (poll_msec == 0) {
-          check_mpi_call(MPI_Barrier(_com), "MPI_Barrier");
+          check_mpi_call(MPI_Barrier(com_), "MPI_Barrier");
         } else {
           MPI_Request req{};
           int flag = 0;
-          check_mpi_call(MPI_Ibarrier(_com, &req), "MPI_Ibarrier");
+          check_mpi_call(MPI_Ibarrier(com_, &req), "MPI_Ibarrier");
           while (!flag) {
             check_mpi_call(MPI_Test(&req, &flag, MPI_STATUS_IGNORE), "MPI_Test");
             usleep(poll_msec * 1000);
@@ -192,42 +200,32 @@ namespace mpi {
         }
       }
     }
+
+    private:
+    MPI_Comm com_ = MPI_COMM_WORLD;
   };
 
   /**
    * @ingroup mpi_osc_shm
-   * @brief C++ wrapper around @p MPI_Comm that is a result of the @p split_shared operation.
+   * @brief C++ wrapper around `MPI_Comm` that is a result of the mpi::communicator::split_shared operation.
    *
-   * @details In the plain MPI C API it is not distinguishable whether an @p
-   * MPI_Comm is local to a shared memory island or not. Thus we introduce an
-   * extra type for that whose only purpose is to make that distinction on the
-   * type-level to prevent wrong usage of the shared memory APIs.
+   * @details In the plain MPI C API it is not distinguishable whether an `MPI_Comm` is local to a shared memory island
+   * or not. Thus we introduce an extra type for that whose only purpose is to make that distinction on the type-level
+   * to prevent wrong usage of the shared memory APIs.
    */
   class shared_communicator : public communicator {
     public:
+    // Make the constructors of mpi::communicator accessible.
     using communicator::communicator;
+
+    /// Construct a shared communicator with `MPI_COMM_NULL`.
     shared_communicator() : communicator(MPI_COMM_NULL) {}
   };
 
-  /**
-   * @brief Partition the communicator into subcommunicators according to their type.
-   *
-   * @details In the MPI3.0 standard the only supported split type is @p
-   * MPI_COMM_TYPE_SHARED. OpenMPI (and possibly other implementations) provide
-   * more custom split types, however, they are not portable.
-   *
-   * @param split_type Type of processes to be grouped together.
-   * @param key Control of rank assignment.
-   *
-   * @return New communicator.
-   */
   [[nodiscard]] inline shared_communicator communicator::split_shared(int split_type, int key) const {
-    if (has_env) {
-      shared_communicator c;
-      MPI_Comm_split_type(_com, split_type, key, MPI_INFO_NULL, &c._com);
-      return c;
-    } else
-      return {};
+    shared_communicator c{};
+    if (has_env) check_mpi_call(MPI_Comm_split_type(com_, split_type, key, MPI_INFO_NULL, &c.com_), "MPI_Comm_split_type");
+    return c;
   }
 
 } // namespace mpi
