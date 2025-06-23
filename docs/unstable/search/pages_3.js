@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['4_3a_20provide_20custom_20spezializations_0',['Example 4: Provide custom spezializations',['../ex4.html',1,'']]]
+  ['3_200_0',['Version 1.3.0',['../changelog.html#autotoc_md0',1,'']]],
+  ['3_3a_20custom_20type_20and_20operator_1',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
 ];

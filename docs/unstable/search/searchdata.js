@@ -6,7 +6,7 @@ var indexSectionsWithContent =
   3: "abcdefgimors~",
   4: "h",
   5: "acdehlmou",
-  6: "1234acdehimopstuw",
+  6: "01234acdefghilmopstuvw",
   7: "ms"
 };
 

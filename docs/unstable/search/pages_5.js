@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['c_20projects_0',['Integration in C++ projects',['../integration.html',1,'']]],
-  ['changelog_1',['Changelog',['../changelog.html',1,'']]],
-  ['communicate_20errors_2',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
-  ['custom_20spezializations_3',['Example 4: Provide custom spezializations',['../ex4.html',1,'']]],
-  ['custom_20type_20and_20operator_4',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
+  ['add_5fsubdirectory_0',['add_subdirectory',['../integration.html#add_sub',1,'']]],
+  ['and_20operations_1',['MPI datatypes and operations',['../documentation.html#autotoc_md14',1,'']]],
+  ['and_20operator_2',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
+  ['api_20documentation_3',['API Documentation',['../documentation.html',1,'']]]
 ];
