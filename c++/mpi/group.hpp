@@ -36,8 +36,10 @@ namespace mpi {
    * @ingroup mpi_essentials
    * @brief C++ wrapper around `MPI_Group` providing various convenience functions.
    *
-   * @details It stores an `MPI_Group` object as its only member which by default is set to `MPI_GROUP_NULL`. The
-   * underlying `MPI_Group` object is automatically freed when a group object goes out of scope.
+   * @details It stores an `MPI_Group` object as its only member which by default is set to `MPI_GROUP_NULL`.
+   * The underlying `MPI_Group` object is automatically freed when a group object goes out of scope.
+   *
+   * This class follows move-only semantics and takes ownership of the wrapped `MPI_Group` object.
    *
    * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
    */
@@ -98,8 +100,8 @@ namespace mpi {
     }
 
     /**
-     * @brief Get the size of the communicator.
-     * @return The result of `MPI_Comm_size` if mpi::has_env is true, otherwise 1.
+     * @brief Get the size of the group.
+     * @return The result of `MPI_Group_size` if mpi::has_env is true, otherwise 1.
      */
     [[nodiscard]] int size() const {
       int s = 1;

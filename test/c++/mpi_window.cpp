@@ -19,7 +19,6 @@
 
 #include <array>
 #include <cstddef>
-#include <iterator>
 #include <numeric>
 #include <span>
 #include <utility>
@@ -145,7 +144,7 @@ TEST(MPI, WindowGetAttrSize) {
   mpi::window<int> win{world, &buffer, 1};
 
   MPI_Aint size = win.size();
-  EXPECT_EQ(size, sizeof(int));
+  EXPECT_EQ(size, 1);
 }
 
 TEST(MPI, WindowMoveConstructor) {
@@ -329,18 +328,17 @@ TEST(MPI, WindowRingOneSidedStoreWinAllocSharedSignal) {
 
 TEST(MPI, WindowSharedArray) {
   mpi::communicator world;
-  auto shm           = world.split_shared();
-  int const rank_shm = shm.rank();
+  auto shm = world.split_shared();
 
-  constexpr int const array_size = 23;
+  const int array_size = 23;
 
-  mpi::shared_window<int> win{shm, rank_shm == 0 ? array_size : 0};
+  // Only rank 0 allocates the shared array
+  mpi::shared_window<int> win{shm, shm.rank() == 0 ? array_size : 0};
   std::span array_view{win.base(0), static_cast<std::size_t>(win.size(0))};
 
-  // Fill array with local rank in parallel by chunking the range into the communicator
+  // Fill array in parallel: each rank fills its chunk with array indices
   win.fence();
-  auto slice = itertools::chunk_range(0, static_cast<std::ptrdiff_t>(array_view.size()), shm.size(), shm.rank());
-  for (auto i = slice.first; i < slice.second; ++i) { array_view[i] = static_cast<int>(i); }
+  for (auto i : mpi::chunk(itertools::range(array_size), shm)) { array_view[i] = static_cast<int>(i); }
   win.fence();
 
   // Total sum is just sum of numbers in interval [0, array_size)
@@ -350,70 +348,49 @@ TEST(MPI, WindowSharedArray) {
 
 TEST(MPI, WindowDistributedSharedArray) {
   mpi::communicator world;
-  auto shm = world.split_shared();
+  auto island_comm = world.split_shared();
 
   // Number of total array elements (prime number to make it a bit more exciting)
-  constexpr int const array_size_total = 197;
+  const int array_size_total = 197;
 
-  // Create a communicator between rank0 of all shared memory islands ("head node")
-  auto head = world.split(shm.rank() == 0 ? 0 : MPI_UNDEFINED);
+  // Create communicator of island leaders (rank 0 on each node)
+  bool is_head   = island_comm.rank() == 0;
+  auto head_comm = world.split(is_head ? 0 : MPI_UNDEFINED);
 
-  // Determine number of shared memory islands and broadcast to everyone
-  int head_size = (world.rank() == 0 ? head.size() : -1);
-  mpi::broadcast(head_size, world);
+  // Each world rank gets a chunk of the global array
+  auto [my_start, my_end] = itertools::chunk_range(0, array_size_total, world.size(), world.rank());
+  int my_chunk_size       = static_cast<int>(my_end - my_start);
 
-  // Determine rank in head node communicator and broadcast to all other ranks
-  // on the same shared memory island
-  int head_rank = (head.get() != MPI_COMM_NULL ? head.rank() : -1);
-  mpi::broadcast(head_rank, shm);
+  // Gather all chunk sizes within the island
+  auto island_chunk_sizes = mpi::all_gather(my_chunk_size, island_comm);
+  int island_array_size   = std::accumulate(island_chunk_sizes.begin(), island_chunk_sizes.end(), int{0});
 
-  // Determine number of ranks on each shared memory island and broadcast to everyone
-  std::vector<int> shm_sizes(head_size, 0);
-  if (!head.is_null()) {
-    shm_sizes.at(head_rank) = shm.size();
-    shm_sizes               = mpi::all_reduce(shm_sizes, head);
-  }
-  mpi::broadcast(shm_sizes, world);
+  // Allocate shared array combining all island ranks' chunks
+  mpi::shared_window<int> win{island_comm, is_head ? island_array_size : 0};
+  std::span array_view(win.base(0), island_array_size);
 
-  // Chunk the total array such that each rank has approximately the same number
-  // of array elements
-  std::vector<int> array_sizes(head_size, 0);
-  for (auto &&[shm_size, array_size] : itertools::zip(shm_sizes, array_sizes)) { array_size = array_size_total / world.size() * shm_size; }
-  // Distribute the remainder evenly over the islands to reduce load imbalance
-  for (auto i : itertools::range(array_size_total % world.size())) { array_sizes.at(i % array_sizes.size()) += 1; }
+  // Calculate offset within the island's shared array
+  int my_offset = std::accumulate(island_chunk_sizes.begin(), island_chunk_sizes.begin() + island_comm.rank(), int{0});
 
-  EXPECT_EQ(array_size_total, std::accumulate(array_sizes.begin(), array_sizes.end(), int{0}));
-
-  // Determine the global index offset on the current shared memory island
-  auto begin = array_sizes.begin();
-  std::advance(begin, head_rank);
-  std::ptrdiff_t offset = std::accumulate(array_sizes.begin(), begin, std::ptrdiff_t{0});
-
-  // Allocate memory
-  mpi::shared_window<int> win{shm, shm.rank() == 0 ? array_sizes.at(head_rank) : 0};
-  std::span array_view{win.base(0), static_cast<std::size_t>(win.size(0))};
-
-  // Fill array with global index (= local index + global offset)
-  // We do this in parallel on each shared memory island by chunking the total range
+  // Each rank fills its chunk with global indices
   win.fence();
-  auto slice = itertools::chunk_range(0, static_cast<std::ptrdiff_t>(array_view.size()), shm.size(), shm.rank());
-  for (auto i = slice.first; i < slice.second; ++i) { array_view[i] = static_cast<int>(i + offset); }
+  auto my_chunk = array_view.subspan(my_offset, my_chunk_size);
+  for (int i = 0; i < my_chunk_size; ++i) { my_chunk[i] = static_cast<int>(my_start + i); }
   win.fence();
 
-  // Calculate partial sum on head node of each shared memory island and
-  // all_reduce the partial sums into a total sum over the head node
-  // communicator and broadcast result to everyone
-  std::vector<int> partial_sum(head_size, 0);
-  int sum = 0;
-  if (!head.is_null()) {
-    partial_sum[head_rank] = std::accumulate(array_view.begin(), array_view.end(), int{0});
-    partial_sum            = mpi::all_reduce(partial_sum, head);
-    sum                    = std::accumulate(partial_sum.begin(), partial_sum.end(), int{0});
-  }
-  mpi::broadcast(sum, world);
+  // Partial sum over my chunk
+  int my_sum = std::accumulate(my_chunk.begin(), my_chunk.end(), int{0});
+
+  // Partial sum over each island
+  int island_sum = mpi::reduce(my_sum, island_comm);
+
+  // Calculate Total sum on head ranks
+  int total_sum = 0;
+  if (is_head) { total_sum = mpi::reduce(island_sum, head_comm); }
+  mpi::broadcast(total_sum, world);
 
   // Total sum is just sum of numbers in interval [0, array_size_total)
-  EXPECT_EQ(sum, (array_size_total * (array_size_total - 1)) / 2);
+  EXPECT_EQ(total_sum, (array_size_total * (array_size_total - 1)) / 2);
 }
 
 MPI_TEST_MAIN;

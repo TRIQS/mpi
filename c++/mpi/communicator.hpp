@@ -55,13 +55,13 @@ namespace mpi {
      * @details The `MPI_Comm` object is copied without calling `MPI_Comm_dup`.
      * @param c `MPI_Comm` object to wrap.
      */
-    communicator(MPI_Comm c) : com_(c) {}
+    communicator(MPI_Comm c) : comm_(c) {}
 
     /// Get the wrapped `MPI_Comm` object.
-    [[nodiscard]] MPI_Comm get() const noexcept { return com_; }
+    [[nodiscard]] MPI_Comm get() const noexcept { return comm_; }
 
     /// Check if the contained `MPI_Comm` is `MPI_COMM_NULL`.
-    [[nodiscard]] bool is_null() const noexcept { return com_ == MPI_COMM_NULL; }
+    [[nodiscard]] bool is_null() const noexcept { return comm_ == MPI_COMM_NULL; }
 
     /**
      * @brief Get the rank of the calling process in the communicator.
@@ -69,7 +69,7 @@ namespace mpi {
      */
     [[nodiscard]] int rank() const {
       int r = 0;
-      if (has_env) check_mpi_call(MPI_Comm_rank(com_, &r), "MPI_Comm_rank");
+      if (has_env) check_mpi_call(MPI_Comm_rank(comm_, &r), "MPI_Comm_rank");
       return r;
     }
 
@@ -79,7 +79,7 @@ namespace mpi {
      */
     [[nodiscard]] int size() const {
       int s = 1;
-      if (has_env) check_mpi_call(MPI_Comm_size(com_, &s), "MPI_Comm_size");
+      if (has_env) check_mpi_call(MPI_Comm_size(comm_, &s), "MPI_Comm_size");
       return s;
     }
 
@@ -100,7 +100,7 @@ namespace mpi {
      */
     [[nodiscard]] communicator split(int color, int key = 0) const {
       communicator c{};
-      if (has_env) check_mpi_call(MPI_Comm_split(com_, color, key, &c.com_), "MPI_Comm_split");
+      if (has_env) check_mpi_call(MPI_Comm_split(comm_, color, key, &c.comm_), "MPI_Comm_split");
       return c;
     }
 
@@ -134,7 +134,7 @@ namespace mpi {
      */
     [[nodiscard]] communicator duplicate() const {
       communicator c{};
-      if (has_env) check_mpi_call(MPI_Comm_dup(com_, &c.com_), "MPI_Comm_dup");
+      if (has_env) check_mpi_call(MPI_Comm_dup(comm_, &c.comm_), "MPI_Comm_dup");
       return c;
     }
 
@@ -148,7 +148,7 @@ namespace mpi {
      * Does nothing, if mpi::has_env is false.
      */
     void free() {
-      if (has_env && !is_null()) check_mpi_call(MPI_Comm_free(&com_), "MPI_Comm_free");
+      if (has_env && !is_null()) check_mpi_call(MPI_Comm_free(&comm_), "MPI_Comm_free");
     }
 
     /**
@@ -157,7 +157,7 @@ namespace mpi {
      */
     void abort(int error_code) const {
       if (has_env) {
-        check_mpi_call(MPI_Abort(com_, error_code), "MPI_Abort");
+        check_mpi_call(MPI_Abort(comm_, error_code), "MPI_Abort");
       } else {
         std::abort();
       }
@@ -165,8 +165,8 @@ namespace mpi {
 
 #ifdef BOOST_MPI_HPP
     // Conversion to and from boost communicator, Keep for backward compatibility
-    inline operator boost::mpi::communicator() const { return boost::mpi::communicator(_com, boost::mpi::comm_duplicate); }
-    inline communicator(boost::mpi::communicator c) : _com(c) {}
+    inline operator boost::mpi::communicator() const { return boost::mpi::communicator(comm_, boost::mpi::comm_duplicate); }
+    inline communicator(boost::mpi::communicator c) : comm_(c) {}
 #endif // BOOST_MPI_HPP
 
     /**
@@ -188,11 +188,11 @@ namespace mpi {
     void barrier(long poll_msec = 1) const {
       if (has_env) {
         if (poll_msec == 0) {
-          check_mpi_call(MPI_Barrier(com_), "MPI_Barrier");
+          check_mpi_call(MPI_Barrier(comm_), "MPI_Barrier");
         } else {
           MPI_Request req{};
           int flag = 0;
-          check_mpi_call(MPI_Ibarrier(com_, &req), "MPI_Ibarrier");
+          check_mpi_call(MPI_Ibarrier(comm_, &req), "MPI_Ibarrier");
           while (!flag) {
             check_mpi_call(MPI_Test(&req, &flag, MPI_STATUS_IGNORE), "MPI_Test");
             usleep(poll_msec * 1000);
@@ -202,7 +202,7 @@ namespace mpi {
     }
 
     private:
-    MPI_Comm com_ = MPI_COMM_WORLD;
+    MPI_Comm comm_ = MPI_COMM_WORLD;
   };
 
   /**
@@ -224,7 +224,7 @@ namespace mpi {
 
   [[nodiscard]] inline shared_communicator communicator::split_shared(int split_type, int key) const {
     shared_communicator c{};
-    if (has_env) check_mpi_call(MPI_Comm_split_type(com_, split_type, key, MPI_INFO_NULL, &c.com_), "MPI_Comm_split_type");
+    if (has_env) check_mpi_call(MPI_Comm_split_type(comm_, split_type, key, MPI_INFO_NULL, &c.comm_), "MPI_Comm_split_type");
     return c;
   }
 

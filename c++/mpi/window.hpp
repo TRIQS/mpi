@@ -41,9 +41,6 @@ namespace mpi {
    * @{
    */
 
-  // Forward declaration.
-  template <class BaseType> class shared_window;
-
   /**
    * @brief A C++ wrapper around `MPI_Win` providing convenient memory window management.
    *
@@ -52,6 +49,8 @@ namespace mpi {
    * allocated memory windows.
    *
    * If a base pointer is not specified, the constructor will allocate memory internally.
+   *
+   * This class follows move-only semantics and takes ownership of the wrapped `MPI_Win` object.
    *
    * @tparam BaseType The type of elements stored in the memory window.
    */
@@ -125,9 +124,9 @@ namespace mpi {
       if (has_env) {
         check_mpi_call(MPI_Win_allocate(size_ * sizeof(BaseType), sizeof(BaseType), info, c.get(), &data_, &win_), "MPI_Win_allocate");
       } else {
-        owned_ = true;
         data_  = new BaseType[size_]; // NOLINT (new is fine here)
       }
+      owned_ = true;
     }
 
     /// Convert the window to the wrapped `MPI_Win` object.
@@ -143,7 +142,7 @@ namespace mpi {
      * @brief Release allocated resources owned by the window.
      *
      * @details Before freeing the owned memory or the `MPI_Win` handle, a window must have completed all its
-     * involvement in RMA communications. For that reason we call fence() before `MPI_Win_free`.
+     * involvement in RMA communications. For that reason we call `MPI_Win_fence` before `MPI_Win_free`.
      *
      * The window also must be unlocked if it has been previously locked. However, this cannot be detected and is
      * therefore the responsibility of the user.
@@ -154,7 +153,7 @@ namespace mpi {
     void free() noexcept {
       if (has_env) {
         if (win_ != MPI_WIN_NULL) {
-          fence();
+          MPI_Win_fence(0, win_);
           MPI_Win_free(&win_);
         }
       } else if (owned_) {
@@ -338,14 +337,14 @@ namespace mpi {
     /// Get a pointer to the beginning of the window memory.
     [[nodiscard]] BaseType *base() const { return data_; }
 
-    /// Get the size of the window in bytes.
-    [[nodiscard]] MPI_Aint size() const { return size_ * sizeof(BaseType); }
+    /// Get the size of the window in number of elements.
+    [[nodiscard]] MPI_Aint size() const { return size_; }
 
     /// Get the displacement unit in bytes.
     [[nodiscard]] int disp_unit() const { return sizeof(BaseType); }
 
     /// Get the mpi::communicator associated with the window.
-    [[nodiscard]] communicator get_communicator() const { return comm_.get(); }
+    [[nodiscard]] communicator get_communicator() const { return comm_; }
 
     protected:
     MPI_Win win_{MPI_WIN_NULL};
@@ -364,7 +363,7 @@ namespace mpi {
    */
   template <class BaseType> class shared_window : public window<BaseType> {
     public:
-    ///Construct a shared memory window with `MPI_WIN_NULL`.
+    /// Construct a shared memory window with `MPI_WIN_NULL`.
     shared_window() = default;
 
     /**
@@ -384,19 +383,22 @@ namespace mpi {
       if (has_env) {
         check_mpi_call(MPI_Win_allocate_shared(size_ * sizeof(BaseType), sizeof(BaseType), info, c.get(), &data_, &win_), "MPI_Win_allocate_shared");
       } else {
-        owned_ = true;
         data_  = new BaseType[size_]; // NOLINT (new is fine here)
       }
+      owned_ = true;
     }
 
     /**
      * @brief Query attributes of a shared memory window.
      *
-     * @details Retrieves the size, displacement unit, and a pointer to the beginning of the shared memory region for a
+     * @details Retrieves the byte-size, displacement unit, and a pointer to the beginning of the shared memory region for a
      * specific rank.
      *
+     * When `MPI_PROC_NULL` is passed for the rank, MPI returns information about the memory segment with the lowest rank that has a
+     * non-zero size.
+     *
      * @param rank Rank within the shared communicator.
-     * @return A tuple containing the size in bytes, the displacement unit in bytes and the base pointer.
+     * @return A tuple containing the byte-size, the displacement unit in bytes and the base pointer.
      */
     [[nodiscard]] std::tuple<MPI_Aint, int, void *> query(int rank = MPI_PROC_NULL) const {
       if (has_env) {
