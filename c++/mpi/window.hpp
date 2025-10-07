@@ -301,6 +301,7 @@ namespace mpi {
         auto target_datatype = mpi_type<TargetType>::get();
         check_mpi_call(MPI_Get(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count, target_datatype, win_), "MPI_Get");
       } else {
+        ASSERT(target_rank == 0); // there are no other ranks
         std::copy(data_, data_ + target_count, origin_addr);
       }
     }
@@ -330,6 +331,7 @@ namespace mpi {
         auto target_datatype = mpi_type<TargetType>::get();
         check_mpi_call(MPI_Put(origin_addr, origin_count, origin_datatype, target_rank, target_disp, target_count, target_datatype, win_), "MPI_Put");
       } else {
+        ASSERT(target_rank == 0); // there are no other ranks
         std::copy(origin_addr, origin_addr + origin_count, data_);
       }
     }
