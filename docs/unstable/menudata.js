@@ -44,7 +44,8 @@ var menudata={children:[
 {text:"API Documentation",url:"documentation.html",children:[
 {text:"MPI essentials",url:"group__mpi__essentials.html",children:[
 {text:"communicator",url:"classmpi_1_1communicator.html"},
-{text:"environment",url:"structmpi_1_1environment.html"}]},
+{text:"environment",url:"structmpi_1_1environment.html"},
+{text:"group",url:"classmpi_1_1group.html"}]},
 {text:"MPI datatypes and operations",url:"group__mpi__types__ops.html",children:[
 {text:"Serializable",url:"conceptmpi_1_1_serializable.html"},
 {text:"mpi_type",url:"structmpi_1_1mpi__type.html",children:[
@@ -65,6 +66,10 @@ var menudata={children:[
 {text:"mpi_type<unsigned long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01_4.html"},
 {text:"mpi_type<unsigned long long>",url:"structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html"}]}]},
 {text:"Collective MPI communication",url:"group__coll__comm.html"},
+{text:"MPI one-sided communication and shared memory",url:"group__mpi__osc__shm.html",children:[
+{text:"shared_communicator",url:"classmpi_1_1shared__communicator.html"},
+{text:"window",url:"classmpi_1_1window.html"},
+{text:"shared_window",url:"classmpi_1_1shared__window.html"}]},
 {text:"Event handling",url:"group__event__handling.html",children:[
 {text:"monitor",url:"classmpi_1_1monitor.html"}]},
 {text:"Utilities",url:"group__utilities.html",children:[

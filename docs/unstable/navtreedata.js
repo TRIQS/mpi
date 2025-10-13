@@ -50,7 +50,8 @@ var NAVTREE =
     [ "API Documentation", "documentation.html", [
       [ "MPI essentials", "group__mpi__essentials.html", [
         [ "communicator", "classmpi_1_1communicator.html", null ],
-        [ "environment", "structmpi_1_1environment.html", null ]
+        [ "environment", "structmpi_1_1environment.html", null ],
+        [ "group", "classmpi_1_1group.html", null ]
       ] ],
       [ "MPI datatypes and operations", "group__mpi__types__ops.html", [
         [ "Serializable", "conceptmpi_1_1_serializable.html", null ],
@@ -74,6 +75,11 @@ var NAVTREE =
         ] ]
       ] ],
       [ "Collective MPI communication", "group__coll__comm.html", null ],
+      [ "MPI one-sided communication and shared memory", "group__mpi__osc__shm.html", [
+        [ "shared_communicator", "classmpi_1_1shared__communicator.html", null ],
+        [ "window", "classmpi_1_1window.html", null ],
+        [ "shared_window", "classmpi_1_1shared__window.html", null ]
+      ] ],
       [ "Event handling", "group__event__handling.html", [
         [ "monitor", "classmpi_1_1monitor.html", null ]
       ] ],

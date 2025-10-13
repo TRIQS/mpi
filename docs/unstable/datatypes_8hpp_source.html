@@ -133,163 +133,164 @@ $(function(){initNavTree('datatypes_8hpp_source.html','',''); });
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &lt;tuple&gt;</span></div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">namespace </span>mpi {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type.html">   57</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a> {};</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#define D(T, MPI_TY)                                                                                                                                 \</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor"></span><span class="preprocessor">                                                                                                    \</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">  template &lt;&gt; struct mpi_type&lt;T&gt; {                                                                                                                   \</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">    [[nodiscard]] static MPI_Datatype get() noexcept { return MPI_TY; }                                                                              \</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">  }</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="comment">// mpi_type specialization for various built-in types</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01bool_01_4.html">   66</a></span>  D(<span class="keywordtype">bool</span>, MPI_C_BOOL);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01char_01_4.html">   67</a></span>  D(<span class="keywordtype">char</span>, MPI_CHAR);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01int_01_4.html">   68</a></span>  D(<span class="keywordtype">int</span>, MPI_INT);</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01long_01_4.html">   69</a></span>  D(<span class="keywordtype">long</span>, MPI_LONG);</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01long_01long_01_4.html">   70</a></span>  D(<span class="keywordtype">long</span> <span class="keywordtype">long</span>, MPI_LONG_LONG);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01double_01_4.html">   71</a></span>  D(<span class="keywordtype">double</span>, MPI_DOUBLE);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01float_01_4.html">   72</a></span>  D(<span class="keywordtype">float</span>, MPI_FLOAT);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01std_1_1complex_3_01double_01_4_01_4.html">   73</a></span>  D(std::complex&lt;double&gt;, MPI_C_DOUBLE_COMPLEX);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01unsigned_01long_01_4.html">   74</a></span>  D(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>, MPI_UNSIGNED_LONG);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01unsigned_01int_01_4.html">   75</a></span>  D(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>, MPI_UNSIGNED);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html">   76</a></span>  D(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span>, MPI_UNSIGNED_LONG_LONG);</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#undef D</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> E&gt;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keyword">requires</span>(std::is_enum_v&lt;E&gt;)</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01_e_01_4.html">   85</a></span>  <span class="keyword">struct</span> <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type&lt;E&gt;</a> : <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;std::underlying_type_t&lt;E&gt;&gt; {};</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01const_01_t_01_4.html">   91</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;const T&gt; : <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;T&gt; {};</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">   98</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt; <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#ga3b16e36ff8ecef29e60aa81ab4406328">  104</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type</a>&lt;T, std::void_t&lt;<span class="keyword">decltype</span>(<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type&lt;T&gt;::get</a>())&gt;&gt; = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  <span class="keyword">namespace </span>detail {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="comment">// Helper struct to check if member types are mpi-serializable, i.e. have an associated mpi_type</span></div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">struct </span>serialize_checker {</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>      <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>      <span class="keywordtype">void</span> operator&amp;(T &amp;)</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="keyword">requires</span>(<a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type&lt;T&gt;</a>)</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>      {}</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    };</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  } <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span></div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="foldopen" id="foldopen00123" data-start="{" data-end="}">
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="conceptmpi_1_1_serializable.html">  123</a></span>  <span class="keyword">concept </span><a class="code hl_concept" href="conceptmpi_1_1_serializable.html">Serializable</a> = <span class="keyword">requires</span>(<span class="keyword">const</span> T ac, T a, detail::serialize_checker ar) {</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    { ac.serialize(ar) } -&gt; std::same_as&lt;void&gt;;</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    { a.deserialize(ar) } -&gt; std::same_as&lt;void&gt;;</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  };</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">namespace </span>mpi {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type.html">   58</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a> {};</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#define D(T, MPI_TY)                                                                                                                                 \</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor"></span><span class="preprocessor">                                                                                                    \</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">  template &lt;&gt; struct mpi_type&lt;T&gt; {                                                                                                                   \</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">    [[nodiscard]] static MPI_Datatype get() noexcept { return MPI_TY; }                                                                              \</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">  }</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  <span class="comment">// mpi_type specialization for various built-in types</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01bool_01_4.html">   67</a></span>  D(<span class="keywordtype">bool</span>, MPI_C_BOOL);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01char_01_4.html">   68</a></span>  D(<span class="keywordtype">char</span>, MPI_CHAR);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01int_01_4.html">   69</a></span>  D(<span class="keywordtype">int</span>, MPI_INT);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01long_01_4.html">   70</a></span>  D(<span class="keywordtype">long</span>, MPI_LONG);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01long_01long_01_4.html">   71</a></span>  D(<span class="keywordtype">long</span> <span class="keywordtype">long</span>, MPI_LONG_LONG);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01double_01_4.html">   72</a></span>  D(<span class="keywordtype">double</span>, MPI_DOUBLE);</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01float_01_4.html">   73</a></span>  D(<span class="keywordtype">float</span>, MPI_FLOAT);</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01std_1_1complex_3_01double_01_4_01_4.html">   74</a></span>  D(std::complex&lt;double&gt;, MPI_C_DOUBLE_COMPLEX);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01unsigned_01long_01_4.html">   75</a></span>  D(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>, MPI_UNSIGNED_LONG);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01unsigned_01int_01_4.html">   76</a></span>  D(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>, MPI_UNSIGNED);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01unsigned_01long_01long_01_4.html">   77</a></span>  D(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span>, MPI_UNSIGNED_LONG_LONG);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#undef D</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> E&gt;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">requires</span>(std::is_enum_v&lt;E&gt;)</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01_e_01_4.html">   86</a></span>  <span class="keyword">struct</span> <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type&lt;E&gt;</a> : <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;std::underlying_type_t&lt;E&gt;&gt; {};</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01const_01_t_01_4.html">   92</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;const T&gt; : <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;T&gt; {};</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">   99</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt; <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#ga3b16e36ff8ecef29e60aa81ab4406328">  105</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type</a>&lt;T, std::void_t&lt;<span class="keyword">decltype</span>(<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type&lt;T&gt;::get</a>())&gt;&gt; = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <span class="keyword">namespace </span>detail {</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="comment">// Helper struct to check if member types are mpi-serializable, i.e. have an associated mpi_type</span></div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">struct </span>serialize_checker {</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>      <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>      <span class="keywordtype">void</span> operator&amp;(T &amp;)</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keyword">requires</span>(<a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type&lt;T&gt;</a>)</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>      {}</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    };</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  } <span class="comment">// namespace detail</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="foldopen" id="foldopen00124" data-start="{" data-end="}">
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno"><a class="line" href="conceptmpi_1_1_serializable.html">  124</a></span>  <span class="keyword">concept </span><a class="code hl_concept" href="conceptmpi_1_1_serializable.html">Serializable</a> = <span class="keyword">requires</span>(<span class="keyword">const</span> T ac, T a, detail::serialize_checker ar) {</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    { ac.serialize(ar) } -&gt; std::same_as&lt;void&gt;;</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    { a.deserialize(ar) } -&gt; std::same_as&lt;void&gt;;</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  };</div>
 </div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span></div>
-<div class="foldopen" id="foldopen00140" data-start="{" data-end="}">
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">  140</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Ts&gt; [[nodiscard]] MPI_Datatype <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(std::tuple&lt;Ts...&gt; tup) {</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> N            = <span class="keyword">sizeof</span>...(Ts);</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    std::array&lt;MPI_Datatype, N&gt; types = {<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type&lt;std::remove_reference_t&lt;Ts&gt;</a>&gt;::get()...};</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    <span class="comment">// the number of elements per type (we want 1 per type)</span></div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    std::array&lt;int, N&gt; blocklen;</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; N; ++i) { blocklen[i] = 1; }</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="comment">// displacements of the blocks in bytes w.r.t. to the memory address of the first block</span></div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    std::array&lt;MPI_Aint, N&gt; disp;</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="comment">// initialize displacement array from the tuple element addresses</span></div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    []&lt;<span class="keywordtype">size_t</span>... Is&gt;(std::index_sequence&lt;Is...&gt;, <span class="keyword">auto</span> &amp;t, MPI_Aint *d) {</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>      ((d[Is] = (<span class="keywordtype">char</span> *)&amp;std::get&lt;Is&gt;(t) - (<span class="keywordtype">char</span> *)&amp;std::get&lt;0&gt;(t)), ...);</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>      <span class="comment">// account for non-trivial memory layouts of the tuple elements</span></div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>      <span class="keyword">auto</span> min_el = *std::min_element(d, d + <span class="keyword">sizeof</span>...(Ts));</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>      ((d[Is] -= min_el), ...);</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    }(std::index_sequence_for&lt;Ts...&gt;{}, tup, disp.data());</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="comment">// create and return MPI datatype</span></div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    MPI_Datatype cty{};</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a>(MPI_Type_create_struct(N, blocklen.data(), disp.data(), types.data(), &amp;cty), <span class="stringliteral">&quot;MPI_Type_create_struct&quot;</span>);</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a>(MPI_Type_commit(&amp;cty), <span class="stringliteral">&quot;MPI_Type_commit&quot;</span>);</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="keywordflow">return</span> cty;</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>  }</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span></div>
+<div class="foldopen" id="foldopen00141" data-start="{" data-end="}">
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">  141</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Ts&gt; [[nodiscard]] MPI_Datatype <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(std::tuple&lt;Ts...&gt; tup) {</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> N            = <span class="keyword">sizeof</span>...(Ts);</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    std::array&lt;MPI_Datatype, N&gt; types = {<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type&lt;std::remove_reference_t&lt;Ts&gt;</a>&gt;::get()...};</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    <span class="comment">// the number of elements per type (we want 1 per type)</span></div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    std::array&lt;int, N&gt; blocklen;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; N; ++i) { blocklen[i] = 1; }</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="comment">// displacements of the blocks in bytes w.r.t. to the memory address of the first block</span></div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    std::array&lt;MPI_Aint, N&gt; disp;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <span class="comment">// initialize displacement array from the tuple element addresses</span></div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    []&lt;<span class="keywordtype">size_t</span>... Is&gt;(std::index_sequence&lt;Is...&gt;, <span class="keyword">auto</span> &amp;t, MPI_Aint *d) {</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>      ((d[Is] = (<span class="keywordtype">char</span> *)&amp;std::get&lt;Is&gt;(t) - (<span class="keywordtype">char</span> *)&amp;std::get&lt;0&gt;(t)), ...);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>      <span class="comment">// account for non-trivial memory layouts of the tuple elements</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>      <span class="keyword">auto</span> min_el = *std::min_element(d, d + <span class="keyword">sizeof</span>...(Ts));</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>      ((d[Is] -= min_el), ...);</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    }(std::index_sequence_for&lt;Ts...&gt;{}, tup, disp.data());</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <span class="comment">// create and return MPI datatype</span></div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    MPI_Datatype cty{};</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a>(MPI_Type_create_struct(N, blocklen.data(), disp.data(), types.data(), &amp;cty), <span class="stringliteral">&quot;MPI_Type_create_struct&quot;</span>);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <a class="code hl_function" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">check_mpi_call</a>(MPI_Type_commit(&amp;cty), <span class="stringliteral">&quot;MPI_Type_commit&quot;</span>);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keywordflow">return</span> cty;</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>  }</div>
 </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span></div>
-<div class="foldopen" id="foldopen00169" data-start="{" data-end="};">
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01std_1_1tuple_3_01_ts_8_8_8_01_4_01_4.html">  169</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Ts&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;std::tuple&lt;Ts...&gt;&gt; {</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    [[nodiscard]] <span class="keyword">static</span> MPI_Datatype get() <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>      <span class="keyword">static</span> MPI_Datatype type = <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(std::tuple&lt;Ts...&gt;{});</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>      <span class="keywordflow">return</span> type;</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    }</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>  };</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span></div>
+<div class="foldopen" id="foldopen00170" data-start="{" data-end="};">
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01std_1_1tuple_3_01_ts_8_8_8_01_4_01_4.html">  170</a></span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Ts&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;std::tuple&lt;Ts...&gt;&gt; {</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    [[nodiscard]] <span class="keyword">static</span> MPI_Datatype get() <span class="keyword">noexcept</span> {</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>      <span class="keyword">static</span> MPI_Datatype type = <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(std::tuple&lt;Ts...&gt;{});</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>      <span class="keywordflow">return</span> type;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    }</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>  };</div>
 </div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span></div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <span class="keyword">requires</span>(not <a class="code hl_concept" href="conceptmpi_1_1_serializable.html">Serializable&lt;U&gt;</a>) and <span class="keyword">requires</span>(U u) { tie_data(u); }</div>
-<div class="foldopen" id="foldopen00199" data-start="{" data-end="};">
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01_u_01_4.html">  199</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;U&gt; {</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    [[nodiscard]] <span class="keyword">static</span> MPI_Datatype get() <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>      <span class="keyword">static</span> MPI_Datatype type = <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(tie_data(U{}));</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>      <span class="keywordflow">return</span> type;</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    }</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>  };</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> U&gt;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    <span class="keyword">requires</span>(not <a class="code hl_concept" href="conceptmpi_1_1_serializable.html">Serializable&lt;U&gt;</a>) and <span class="keyword">requires</span>(U u) { tie_data(u); }</div>
+<div class="foldopen" id="foldopen00200" data-start="{" data-end="};">
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01_u_01_4.html">  200</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;U&gt; {</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    [[nodiscard]] <span class="keyword">static</span> MPI_Datatype get() <span class="keyword">noexcept</span> {</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>      <span class="keyword">static</span> MPI_Datatype type = <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(tie_data(U{}));</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>      <span class="keywordflow">return</span> type;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    }</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  };</div>
 </div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>  <span class="keyword">namespace </span>detail {</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="comment">// Archive helper class to obtain MPI custom type info using references to class members.</span></div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keyword">struct </span>mpi_archive {</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>      std::vector&lt;int&gt; block_lengths{};</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>      std::vector&lt;MPI_Aint&gt; displacements{};</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>      std::vector&lt;MPI_Datatype&gt; types{};</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>      MPI_Aint base_address{};</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>      <span class="comment">// Constructor sets the base address of the object.</span></div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>      <span class="keyword">explicit</span> mpi_archive(<span class="keyword">const</span> <span class="keywordtype">void</span> *base) { MPI_Get_address(base, &amp;base_address); }</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>      <span class="comment">// Overloaded operator&amp; to process members to set the block lengths, displacements and MPI types.</span></div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>      <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        <span class="keyword">requires</span>(<a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type&lt;T&gt;</a>)</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>      mpi_archive &amp;<span class="keyword">operator</span>&amp;(<span class="keyword">const</span> T &amp;member) {</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        types.push_back(mpi_type&lt;T&gt;::get());</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        MPI_Aint address{};</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        MPI_Get_address(&amp;member, &amp;address);</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        displacements.push_back(MPI_Aint_diff(address, base_address));</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        block_lengths.push_back(1);</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>      }</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    };</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>  } <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span></div>
-<div class="foldopen" id="foldopen00250" data-start="{" data-end="}">
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#ga312882be87fe6ee2c3617bdc701c42d6">  250</a></span>  <span class="keyword">template</span> &lt;Serializable T&gt; [[nodiscard]] MPI_Datatype <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(<span class="keyword">const</span> T &amp;obj) {</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    detail::mpi_archive ar(&amp;obj);</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    obj.serialize(ar);</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    MPI_Datatype <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>{};</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    MPI_Type_create_struct(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ar.block_lengths.size()), ar.block_lengths.data(), ar.displacements.data(), ar.types.data(), &amp;<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>);</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    MPI_Type_commit(&amp;<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>);</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keywordflow">return</span> <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>  }</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>  <span class="keyword">namespace </span>detail {</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="comment">// Archive helper class to obtain MPI custom type info using references to class members.</span></div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keyword">struct </span>mpi_archive {</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>      std::vector&lt;int&gt; block_lengths{};</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>      std::vector&lt;MPI_Aint&gt; displacements{};</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>      std::vector&lt;MPI_Datatype&gt; types{};</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>      MPI_Aint base_address{};</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>      <span class="comment">// Constructor sets the base address of the object.</span></div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>      <span class="keyword">explicit</span> mpi_archive(<span class="keyword">const</span> <span class="keywordtype">void</span> *base) { MPI_Get_address(base, &amp;base_address); }</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>      <span class="comment">// Overloaded operator&amp; to process members to set the block lengths, displacements and MPI types.</span></div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>      <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        <span class="keyword">requires</span>(<a class="code hl_variable" href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">has_mpi_type&lt;T&gt;</a>)</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>      mpi_archive &amp;<span class="keyword">operator</span>&amp;(<span class="keyword">const</span> T &amp;member) {</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        types.push_back(mpi_type&lt;T&gt;::get());</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        MPI_Aint address{};</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        MPI_Get_address(&amp;member, &amp;address);</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        displacements.push_back(MPI_Aint_diff(address, base_address));</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        block_lengths.push_back(1);</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>      }</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    };</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  } <span class="comment">// namespace detail</span></div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span></div>
+<div class="foldopen" id="foldopen00251" data-start="{" data-end="}">
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno"><a class="line" href="group__mpi__types__ops.html#ga312882be87fe6ee2c3617bdc701c42d6">  251</a></span>  <span class="keyword">template</span> &lt;Serializable T&gt; [[nodiscard]] MPI_Datatype <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(<span class="keyword">const</span> T &amp;obj) {</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    detail::mpi_archive ar(&amp;obj);</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    obj.serialize(ar);</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    MPI_Datatype <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>{};</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    MPI_Type_create_struct(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ar.block_lengths.size()), ar.block_lengths.data(), ar.displacements.data(), ar.types.data(), &amp;<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>);</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    MPI_Type_commit(&amp;<a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>);</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keywordflow">return</span> <a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>  }</div>
 </div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span></div>
-<div class="foldopen" id="foldopen00263" data-start="{" data-end="};">
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01_s_01_4.html">  263</a></span>  <span class="keyword">template</span> &lt;Serializable S&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;S&gt; {</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    [[nodiscard]] <span class="keyword">static</span> MPI_Datatype get() <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>      <span class="keyword">static</span> MPI_Datatype type = <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(S{});</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>      <span class="keywordflow">return</span> type;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    }</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>  };</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span></div>
+<div class="foldopen" id="foldopen00264" data-start="{" data-end="};">
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno"><a class="line" href="structmpi_1_1mpi__type_3_01_s_01_4.html">  264</a></span>  <span class="keyword">template</span> &lt;Serializable S&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structmpi_1_1mpi__type.html">mpi_type</a>&lt;S&gt; {</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    [[nodiscard]] <span class="keyword">static</span> MPI_Datatype get() <span class="keyword">noexcept</span> {</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>      <span class="keyword">static</span> MPI_Datatype type = <a class="code hl_function" href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">get_mpi_type</a>(S{});</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>      <span class="keywordflow">return</span> type;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    }</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>  };</div>
 </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span></div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>} <span class="comment">// namespace mpi</span></div>
-<div class="ttc" id="aconceptmpi_1_1_serializable_html"><div class="ttname"><a href="conceptmpi_1_1_serializable.html">mpi::Serializable</a></div><div class="ttdoc">A concept that checks if objects of a type can be serialized and deserialized.</div><div class="ttdef"><b>Definition</b> <a href="#l00123">datatypes.hpp:123</a></div></div>
-<div class="ttc" id="agroup__mpi__types__ops_html_ga03e748f7909f1e38c43019570c78657d"><div class="ttname"><a href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">mpi::get_mpi_type</a></div><div class="ttdeci">MPI_Datatype get_mpi_type(std::tuple&lt; Ts... &gt; tup)</div><div class="ttdoc">Create a new MPI_Datatype from a tuple.</div><div class="ttdef"><b>Definition</b> <a href="#l00140">datatypes.hpp:140</a></div></div>
-<div class="ttc" id="agroup__mpi__types__ops_html_gac117479a485f170ca920a64ba1e4ac34"><div class="ttname"><a href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">mpi::has_mpi_type</a></div><div class="ttdeci">constexpr bool has_mpi_type</div><div class="ttdoc">Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...</div><div class="ttdef"><b>Definition</b> <a href="#l00098">datatypes.hpp:98</a></div></div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span></div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>} <span class="comment">// namespace mpi</span></div>
+<div class="ttc" id="aconceptmpi_1_1_serializable_html"><div class="ttname"><a href="conceptmpi_1_1_serializable.html">mpi::Serializable</a></div><div class="ttdoc">A concept that checks if objects of a type can be serialized and deserialized.</div><div class="ttdef"><b>Definition</b> <a href="#l00124">datatypes.hpp:124</a></div></div>
+<div class="ttc" id="agroup__mpi__types__ops_html_ga03e748f7909f1e38c43019570c78657d"><div class="ttname"><a href="group__mpi__types__ops.html#ga03e748f7909f1e38c43019570c78657d">mpi::get_mpi_type</a></div><div class="ttdeci">MPI_Datatype get_mpi_type(std::tuple&lt; Ts... &gt; tup)</div><div class="ttdoc">Create a new MPI_Datatype from a tuple.</div><div class="ttdef"><b>Definition</b> <a href="#l00141">datatypes.hpp:141</a></div></div>
+<div class="ttc" id="agroup__mpi__types__ops_html_gac117479a485f170ca920a64ba1e4ac34"><div class="ttname"><a href="group__mpi__types__ops.html#gac117479a485f170ca920a64ba1e4ac34">mpi::has_mpi_type</a></div><div class="ttdeci">constexpr bool has_mpi_type</div><div class="ttdoc">Type trait to check if a type T has a corresponding MPI datatype, i.e. if mpi::mpi_type has been spec...</div><div class="ttdef"><b>Definition</b> <a href="#l00099">datatypes.hpp:99</a></div></div>
 <div class="ttc" id="agroup__utilities_html_gaee34d136ff5a6107c23f96092b8e20ec"><div class="ttname"><a href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec">mpi::check_mpi_call</a></div><div class="ttdeci">void check_mpi_call(int errcode, const std::string &amp;mpi_routine)</div><div class="ttdoc">Check the success of an MPI call.</div><div class="ttdef"><b>Definition</b> <a href="utils_8hpp_source.html#l00051">utils.hpp:51</a></div></div>
-<div class="ttc" id="astructmpi_1_1mpi__type_html"><div class="ttname"><a href="structmpi_1_1mpi__type.html">mpi::mpi_type</a></div><div class="ttdoc">Map C++ datatypes to the corresponding MPI datatypes.</div><div class="ttdef"><b>Definition</b> <a href="#l00057">datatypes.hpp:57</a></div></div>
+<div class="ttc" id="astructmpi_1_1mpi__type_html"><div class="ttname"><a href="structmpi_1_1mpi__type.html">mpi::mpi_type</a></div><div class="ttdoc">Map C++ datatypes to the corresponding MPI datatypes.</div><div class="ttdef"><b>Definition</b> <a href="#l00058">datatypes.hpp:58</a></div></div>
 <div class="ttc" id="autils_8hpp_html"><div class="ttname"><a href="utils_8hpp.html">utils.hpp</a></div><div class="ttdoc">Provides general utilities related to MPI.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

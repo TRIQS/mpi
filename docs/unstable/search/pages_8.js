@@ -2,7 +2,7 @@ var searchData=
 [
   ['errors_0',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
   ['essentials_1',['MPI essentials',['../documentation.html#autotoc_md13',1,'']]],
-  ['event_20handling_2',['Event handling',['../documentation.html#autotoc_md17',1,'']]],
+  ['event_20handling_2',['Event handling',['../documentation.html#autotoc_md18',1,'']]],
   ['example_201_3a_20hello_20world_3',['Example 1: Hello world!',['../ex1.html',1,'']]],
   ['example_202_3a_20use_20monitor_20to_20communicate_20errors_4',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
   ['example_203_3a_20custom_20type_20and_20operator_5',['Example 3: Custom type and operator',['../ex3.html',1,'']]],

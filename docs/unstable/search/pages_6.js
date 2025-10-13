@@ -7,9 +7,10 @@ var searchData=
   ['cmake_20options_4',['Custom CMake options',['../installation.html#cmake_options',1,'']]],
   ['collective_20mpi_20communication_5',['Collective MPI communication',['../documentation.html#autotoc_md15',1,'']]],
   ['communicate_20errors_6',['Example 2: Use monitor to communicate errors',['../ex2.html',1,'']]],
-  ['communication_7',['communication',['../documentation.html#autotoc_md15',1,'Collective MPI communication'],['../documentation.html#autotoc_md16',1,'Lazy MPI communication']]],
-  ['compiling_20the_20examples_8',['Compiling the examples',['../examples.html#compiling',1,'']]],
-  ['custom_20cmake_20options_9',['Custom CMake options',['../installation.html#cmake_options',1,'']]],
-  ['custom_20spezializations_10',['Example 4: Provide custom spezializations',['../ex4.html',1,'']]],
-  ['custom_20type_20and_20operator_11',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
+  ['communication_7',['communication',['../documentation.html#autotoc_md15',1,'Collective MPI communication'],['../documentation.html#autotoc_md17',1,'Lazy MPI communication']]],
+  ['communication_20and_20shared_20memory_8',['MPI one-sided communication and shared memory',['../documentation.html#autotoc_md16',1,'']]],
+  ['compiling_20the_20examples_9',['Compiling the examples',['../examples.html#compiling',1,'']]],
+  ['custom_20cmake_20options_10',['Custom CMake options',['../installation.html#cmake_options',1,'']]],
+  ['custom_20spezializations_11',['Example 4: Provide custom spezializations',['../ex4.html',1,'']]],
+  ['custom_20type_20and_20operator_12',['Example 3: Custom type and operator',['../ex3.html',1,'']]]
 ];

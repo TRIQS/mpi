@@ -112,6 +112,7 @@ MPI essentials</h2>
 <ul>
 <li>The <a class="el" href="structmpi_1_1environment.html" title="RAII class to initialize and finalize MPI.">mpi::environment</a> class is used to initialize and finialize the MPI execution environment. It calls <span class="tt">MPI_Init</span> in its constructor and <span class="tt">MPI_Finalize</span> in its destructor. There should be at most one instance in every program and it is usually created at the very beginning of the <span class="tt">main</span> function.</li>
 <li>The <a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a> class is a simple wrapper around an <span class="tt">MPI_Comm</span> object. Besides storing the <span class="tt">MPI_Comm</span> object, it also provides some convient functions for getting the size of the communicator, the rank of the current process or for splitting an existing communicator.</li>
+<li>The <a class="el" href="classmpi_1_1group.html" title="C++ wrapper around MPI_Group providing various convenience functions.">mpi::group</a> class is a simple wrapper around an <span class="tt">MPI_Group</span> object. Besides storing the <span class="tt">MPI_Group</span> object, it also provides some convient functions for getting the size of the group, the rank of the current process or for splitting the group based on include rules.</li>
 </ul>
 <p>It further contains the convenient function <a class="el" href="group__mpi__essentials.html#gaee54f343fdd8f1712ae521bd8ee69dfc" title="Check if MPI has been initialized.">mpi::is_initialized</a> and the static boolean <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that is true, if one of the environment variables OMPI_COMM_WORLD_RANK,...">mpi::has_env</a>.</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
@@ -127,14 +128,18 @@ Collective MPI communication</h2>
 </div><!-- fragment --><p>Under the hood, the generic <a class="el" href="group__coll__comm.html#gabe5a2bbf0b8121c97f36962450caaa56" title="Generic MPI broadcast.">mpi::broadcast</a> implementation calls the specialized <a class="el" href="group__coll__comm.html#ga452e85429efcccd36141a49b2c7012cb">mpi::mpi_broadcast(std::vector&lt; T &gt;&amp;, mpi::communicator, int)</a>. Other generic functions in <b>mpi</b> work similarly. See the "Functions" section in <a class="el" href="group__coll__comm.html">Collective MPI communication</a> to check which datatypes and MPI operations are supported out of the box.</p>
 <p>In case your datatype is not supported, you are free to provide your own specialization.</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
+MPI one-sided communication and shared memory</h2>
+<p><a class="el" href="group__mpi__osc__shm.html">MPI one-sided communication and shared memory</a> can be used to get data from or put data directly to the memory of another process. This can be done without the involvement of processes that are unaffected by the data transfer, i.e. no collective call is required, only the origin and target process of the data transfer must cooperate.</p>
+<p>Another use-case of <a class="el" href="group__mpi__osc__shm.html">MPI one-sided communication and shared memory</a> is the shared memory aspect by which MPI applications can reduce their memory requirements through the deduplication of replicated data between MPI ranks that are executed on the same SMP node.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
 Lazy MPI communication</h2>
 <p><a class="el" href="group__mpi__lazy.html">Lazy MPI communication</a> can be used to provied collective MPI communication for lazy expression types. Most users probably won't need to use this functionality directly.</p>
 <p>We refer the interested reader to <a href="https://triqs.github.io/nda/latest/group__av__mpi.html">TRIQS/nda</a> for more details.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
 Event handling</h2>
 <p><a class="el" href="group__event__handling.html">Event handling</a> provides the <a class="el" href="classmpi_1_1monitor.html" title="Constructed on top of an MPI communicator, this class helps to monitor and communicate events across ...">mpi::monitor</a> class which can be used to communicate and handle events across multiple processes.</p>
 <p><a class="el" href="ex2.html">Example 2: Use monitor to communicate errors</a> shows a simple use case.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
 Utilities</h2>
 <p><a class="el" href="group__utilities.html">Utilities</a> is a collection of various other tools in <b>mpi</b> which do not fit into any other category above.</p>
 <p>For users, the most useful of them is probably <a class="el" href="group__utilities.html#gaee34d136ff5a6107c23f96092b8e20ec" title="Check the success of an MPI call.">mpi::check_mpi_call</a>. A wrapper function that checks the error code returned by MPI C library routines and throws an exception in case the code is <span class="tt">!= MPI_SUCCESS</span>. </p>
