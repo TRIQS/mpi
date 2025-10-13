@@ -26,6 +26,7 @@ target_link_libraries(${PROJECT_NAME}_c INTERFACE itertools::itertools_c)
 message(STATUS "-------- MPI detection -------------")
 
 set(MPI_CXX_SKIP_MPICXX TRUE CACHE BOOL "If true, the MPI-2 C++ bindings are disabled using definitions.")
+set(MPI_DETERMINE_LIBRARY_VERSION TRUE)
 find_package(MPI REQUIRED COMPONENTS CXX)
 
 # Create an interface target
@@ -51,11 +52,11 @@ if(NOT MPIEXEC_EXECUTABLE)
   set(MPIEXEC_EXECUTABLE ${MPIEXEC} CACHE FILENAME "MPI Executable")
 endif()
 
-# Compatibility to Open-MPI 3.0.0: check whether MPI executable has option --oversubscribe and add it
-execute_process(COMMAND ${MPIEXEC_EXECUTABLE} --oversubscribe ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ls ${MPIEXEC_POSTFLAGS} RESULT_VARIABLE HAS_NO_OVERSUBSCRIBE OUTPUT_QUIET ERROR_QUIET)
-if(NOT HAS_NO_OVERSUBSCRIBE)
+# Open-MPI 3.0+ requires --oversubscribe flag
+if(MPI_CXX_LIBRARY_VERSION_STRING MATCHES "Open MPI v([0-9]+)" AND CMAKE_MATCH_1 GREATER_EQUAL 3)
+  message(STATUS "MPI Version: ${MPI_CXX_LIBRARY_VERSION_STRING}")
   list(APPEND MPIEXEC_PREFLAGS --oversubscribe)
-  set(MPIEXEC_PREFLAGS ${MPIEXEC_PREFLAGS} CACHE STRING "These flags will be directly before the executable that is being run by mpiexec." FORCE)
+  set(MPIEXEC_PREFLAGS ${MPIEXEC_PREFLAGS} CACHE STRING "Flags to pass to mpiexec directly before the executable to run." FORCE)
 endif()
 
 # ========= Static Analyzer Checks ==========
