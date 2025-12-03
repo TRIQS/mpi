@@ -35,13 +35,22 @@ namespace mpi {
    */
 
   /**
-   * @brief Check if MPI has been initialized.
-   * @details It throws an exception in case a call to the MPI C library fails.
+   * @brief Check if MPI has been initialized by calling `MPI_Initialized`.
    * @return True if `MPI_Init` has been called, false otherwise.
    */
   [[nodiscard]] inline bool is_initialized() noexcept {
     int flag = 0;
-    check_mpi_call(MPI_Initialized(&flag), "MPI_Initialized");
+    MPI_Initialized(&flag);
+    return flag;
+  }
+
+  /**
+   * @brief Check if MPI has been finalized by calling `MPI_Finalized`.
+   * @return True if `MPI_Finalize` has been called, false otherwise.
+   */
+  [[nodiscard]] inline bool is_finalized() noexcept {
+    int flag = 0;
+    MPI_Finalized(&flag);
     return flag;
   }
 
@@ -86,11 +95,11 @@ namespace mpi {
     /**
      * @brief Destroy the mpi environment object by calling `MPI_Finalize`.
      *
-     * @details Checks first if the program is run with an MPI runtime environment. Called automatically when the
-     * environment object goes out of scope.
+     * @details Checks first if the program is run with an MPI runtime environment and if it has not been finalized
+     * before to avoid errors.
      */
     ~environment() {
-      if (has_env) check_mpi_call(MPI_Finalize(), "MPI_Finalize");
+      if (has_env && !is_finalized()) MPI_Finalize();
     }
   };
 
