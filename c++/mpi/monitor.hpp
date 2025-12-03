@@ -60,33 +60,6 @@ namespace mpi {
       int event = 0;
     };
 
-    // MPI communicator.
-    mpi::communicator comm;
-
-    // Future objects stored on the root process for local events on non-root processes.
-    std::vector<future> root_futures;
-
-    // MPI request for the broadcasting done on the root process in case an event has occurred on any rank.
-    MPI_Request req_ibcast_any{};
-
-    // MPI request for the broadcasting done on the root process in case an event has occurred on all ranks.
-    MPI_Request req_ibcast_all{};
-
-    // MPI request for the sending done on non-root processes.
-    MPI_Request req_isent{};
-
-    // Set to 1, if a local event has occurred on this process.
-    int local_event = 0;
-
-    // Set to 1, if an event has occurred on any process.
-    int any_event = 0;
-
-    // Set to 1, if an event has occurred on all processes.
-    int all_events = 0;
-
-    // Set to true, if finialize_communications() has been called.
-    bool finalized = false;
-
     public:
     /**
      * @brief Construct a monitor on top of a given mpi::communicator.
@@ -101,16 +74,16 @@ namespace mpi {
      *
      * @param c mpi::communicator.
      */
-    monitor(mpi::communicator c) : comm(c.duplicate()) {
-      if (comm.rank() == 0) {
-        root_futures.resize(c.size() - 1);
+    monitor(mpi::communicator c) : comm_(c.duplicate()) {
+      if (comm_.rank() == 0) {
+        root_futures_.resize(c.size() - 1);
         for (int rank = 1; rank < c.size(); ++rank) {
-          check_mpi_call(MPI_Irecv(&(root_futures[rank - 1].event), 1, MPI_INT, rank, rank, comm.get(), &(root_futures[rank - 1].request)),
+          check_mpi_call(MPI_Irecv(&(root_futures_[rank - 1].event), 1, MPI_INT, rank, rank, comm_.get(), &(root_futures_[rank - 1].request)),
                          "MPI_Irecv");
         }
       } else {
-        check_mpi_call(MPI_Ibcast(&any_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_any), "MPI_Ibcast");
-        check_mpi_call(MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all), "MPI_Ibcast");
+        check_mpi_call(MPI_Ibcast(&any_event_, 1, MPI_INT, 0, comm_.get(), &req_ibcast_any_), "MPI_Ibcast");
+        check_mpi_call(MPI_Ibcast(&all_events_, 1, MPI_INT, 0, comm_.get(), &req_ibcast_all_), "MPI_Ibcast");
       }
     }
 
@@ -136,16 +109,16 @@ namespace mpi {
      */
     void report_local_event() {
       // prevent sending multiple signals
-      if (local_event or finalized) { return; }
+      if (local_event_ or finalized_) { return; }
 
       // a local event has occurred
-      local_event = 1;
-      if (comm.rank() == 0) {
+      local_event_ = 1;
+      if (comm_.rank() == 0) {
         // on root process, check all other nodes and perform necessary broadcasts
         root_check_nodes_and_bcast();
       } else {
         // on non-root processes, let the root process know about the local event
-        check_mpi_call(MPI_Isend(&local_event, 1, MPI_INT, 0, comm.rank(), comm.get(), &req_isent), "MPI_Isend");
+        check_mpi_call(MPI_Isend(&local_event_, 1, MPI_INT, 0, comm_.rank(), comm_.get(), &req_isent_), "MPI_Isend");
       }
     }
 
@@ -166,24 +139,24 @@ namespace mpi {
      */
     [[nodiscard]] bool event_on_any_rank() {
       // if final_communications() has already been called, any_event == 0 if no event has occurred, otherwise it is 1
-      if (finalized) return any_event;
+      if (finalized_) return any_event_;
 
       // if a local event has occurred, we return true
-      if (local_event) return true;
+      if (local_event_) return true;
 
       // on the root process, we first check the status of all non-root processes, perform the necessary broadcasts and
       // return true if an event has occurred
-      if (comm.rank() == 0) {
+      if (comm_.rank() == 0) {
         root_check_nodes_and_bcast();
-        return any_event;
+        return any_event_;
       }
 
       // on non-root processes, we check the status of the corresponding broadcast and return true if an event has
       // occurred
       MPI_Status status;
       int has_received = 0;
-      check_mpi_call(MPI_Test(&req_ibcast_any, &has_received, &status), "MPI_Test");
-      return has_received and any_event;
+      check_mpi_call(MPI_Test(&req_ibcast_any_, &has_received, &status), "MPI_Test");
+      return has_received and any_event_;
     }
 
     /**
@@ -202,21 +175,21 @@ namespace mpi {
     [[nodiscard]] bool event_on_all_ranks() {
       // if final_communications() has already been called, all_events == 0 if an event has not occurred on every
       // process, otherwise it is 1
-      if (finalized) return all_events;
+      if (finalized_) return all_events_;
 
       // on the root process, we first check the status of all non-root processes, perform the necessary broadcasts and
       // return true if an event has occurred on all of them
-      if (comm.rank() == 0) {
+      if (comm_.rank() == 0) {
         root_check_nodes_and_bcast();
-        return all_events;
+        return all_events_;
       }
 
       // on non-root processes, we check the status of the broadcast and return true if an event has occurred on all
       // processes
       MPI_Status status;
       int has_received = 0;
-      check_mpi_call(MPI_Test(&req_ibcast_all, &has_received, &status), "MPI_Test");
-      return has_received and all_events;
+      check_mpi_call(MPI_Test(&req_ibcast_all_, &has_received, &status), "MPI_Test");
+      return has_received and all_events_;
     }
 
     /**
@@ -229,41 +202,41 @@ namespace mpi {
      */
     void finalize_communications() {
       // prevent multiple calls
-      if (finalized) return;
+      if (finalized_) return;
 
-      if (comm.rank() == 0) {
+      if (comm_.rank() == 0) {
         // on root process, wait for all non-root processes to finish their MPI_Isend calls
         while (root_check_nodes_and_bcast()) {
           usleep(100); // 100 us (micro seconds)
         }
         // and perform broadcasts in case they have not been done yet
-        if (not any_event) { check_mpi_call(MPI_Ibcast(&any_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_any), "MPI_Ibcast"); }
-        if (not all_events) { check_mpi_call(MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all), "MPI_Ibcast"); }
+        if (not any_event_) { check_mpi_call(MPI_Ibcast(&any_event_, 1, MPI_INT, 0, comm_.get(), &req_ibcast_any_), "MPI_Ibcast"); }
+        if (not all_events_) { check_mpi_call(MPI_Ibcast(&all_events_, 1, MPI_INT, 0, comm_.get(), &req_ibcast_all_), "MPI_Ibcast"); }
       } else {
         // on non-root processes, perform MPI_Isend call in case it has not been done yet
-        if (not local_event) { check_mpi_call(MPI_Isend(&local_event, 1, MPI_INT, 0, comm.rank(), comm.get(), &req_isent), "MPI_Isend"); }
+        if (not local_event_) { check_mpi_call(MPI_Isend(&local_event_, 1, MPI_INT, 0, comm_.rank(), comm_.get(), &req_isent_), "MPI_Isend"); }
       }
 
       // all nodes wait for the broadcasts to be completed
       MPI_Status status_any, status_all;
-      check_mpi_call(MPI_Wait(&req_ibcast_any, &status_any), "MPI_Wait");
-      check_mpi_call(MPI_Wait(&req_ibcast_all, &status_all), "MPI_Wait");
+      check_mpi_call(MPI_Wait(&req_ibcast_any_, &status_any), "MPI_Wait");
+      check_mpi_call(MPI_Wait(&req_ibcast_all_, &status_all), "MPI_Wait");
 
       // free the communicator
-      comm.free();
-      finalized = true;
+      comm_.free();
+      finalized_ = true;
     }
 
     private:
     // Root process checks the status of all non-root processes, performs necessary broadcasts and returns a boolean
     // that is true if at least one non-root process has not performed its MPI_Isend call yet.
     bool root_check_nodes_and_bcast() {
-      EXPECTS(!finalized);
-      EXPECTS(comm.rank() == 0);
+      EXPECTS(!finalized_);
+      EXPECTS(comm_.rank() == 0);
       bool any      = false;
       bool all      = true;
       bool finished = true;
-      for (auto &[request, rank_event] : root_futures) {
+      for (auto &[request, rank_event] : root_futures_) {
         MPI_Status status;
         int rank_received = 0;
         check_mpi_call(MPI_Test(&request, &rank_received, &status), "MPI_Test");
@@ -271,16 +244,44 @@ namespace mpi {
         all &= (rank_received and rank_event);
         finished &= rank_received;
       }
-      if (not any_event and (any or local_event)) {
-        any_event = 1;
-        check_mpi_call(MPI_Ibcast(&any_event, 1, MPI_INT, 0, comm.get(), &req_ibcast_any), "MPI_Ibcast");
+      if (not any_event_ and (any or local_event_)) {
+        any_event_ = 1;
+        check_mpi_call(MPI_Ibcast(&any_event_, 1, MPI_INT, 0, comm_.get(), &req_ibcast_any_), "MPI_Ibcast");
       }
-      if (not all_events and all and local_event) {
-        all_events = 1;
-        check_mpi_call(MPI_Ibcast(&all_events, 1, MPI_INT, 0, comm.get(), &req_ibcast_all), "MPI_Ibcast");
+      if (not all_events_ and all and local_event_) {
+        all_events_ = 1;
+        check_mpi_call(MPI_Ibcast(&all_events_, 1, MPI_INT, 0, comm_.get(), &req_ibcast_all_), "MPI_Ibcast");
       }
       return not finished;
     }
+
+    private:
+    // MPI communicator.
+    mpi::communicator comm_;
+
+    // Future objects stored on the root process for local events on non-root processes.
+    std::vector<future> root_futures_;
+
+    // MPI request for the broadcasting done on the root process in case an event has occurred on any rank.
+    MPI_Request req_ibcast_any_{};
+
+    // MPI request for the broadcasting done on the root process in case an event has occurred on all ranks.
+    MPI_Request req_ibcast_all_{};
+
+    // MPI request for the sending done on non-root processes.
+    MPI_Request req_isent_{};
+
+    // Set to 1, if a local event has occurred on this process.
+    int local_event_ = 0;
+
+    // Set to 1, if an event has occurred on any process.
+    int any_event_ = 0;
+
+    // Set to 1, if an event has occurred on all processes.
+    int all_events_ = 0;
+
+    // Set to true, if finialize_communications() has been called.
+    bool finalized_ = false;
   };
 
 } // namespace mpi
