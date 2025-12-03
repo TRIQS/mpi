@@ -33,7 +33,7 @@ include(FetchContent)
 FetchContent_Declare(
   mpi
   GIT_REPOSITORY https://github.com/TRIQS/mpi.git
-  GIT_TAG        1.3.x
+  GIT_TAG        2.0.x
 )
 FetchContent_MakeAvailable(mpi)
 

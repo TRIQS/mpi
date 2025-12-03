@@ -4,20 +4,7 @@
 
 In this example, we show how to implement the standard `Hello world` program using **mpi**.
 
-```cpp
-#include <mpi/mpi.hpp>
-#include <iostream>
-
-int main(int argc, char *argv[]) {
-  // initialize MPI environment and communicator
-  mpi::environment env(argc, argv);
-  mpi::communicator world;
-
-  // get rank and greet world
-  int rank = world.rank();
-  std::cout << "Hello from processor " << rank << "\n";
-}
-```
+@include ex1.cpp
 
 Output (depends on the number of processes and the order is arbitrary):
 

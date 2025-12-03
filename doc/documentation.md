@@ -28,12 +28,14 @@ If you are looking for a specific function, class, etc., try using the search ba
   Besides storing the `MPI_Group` object, it also provides some convient functions for getting the size of the
   group, the rank of the current process or for splitting the group based on include rules.
 
-It further contains the convenient function mpi::is_initialized and the static boolean mpi::has_env.
+It further contains the convenient functions mpi::is_initialized and mpi::is_finalized and the static boolean 
+mpi::has_env.
 
 ## MPI datatypes and operations
 
 @ref mpi_types_ops map various C++ datatypes to MPI datatypes and help the user with registering their own datatypes to
 be used in MPI communications.
+
 Furthermore, it offers tools to simplify the creation of custom MPI operations usually required in `MPI_Reduce` or
 `MPI_Accumulate` functions.
 
@@ -70,13 +72,6 @@ the origin and target process of the data transfer must cooperate.
 Another use-case of @ref mpi_osc_shm is the shared memory aspect by which
 MPI applications can reduce their memory requirements through the deduplication
 of replicated data between MPI ranks that are executed on the same SMP node.
-
-## Lazy MPI communication
-
-@ref mpi_lazy can be used to provied collective MPI communication for lazy expression types.
-Most users probably won't need to use this functionality directly.
-
-We refer the interested reader to [TRIQS/nda](https://triqs.github.io/nda/latest/group__av__mpi.html) for more details.
 
 ## Event handling
 
