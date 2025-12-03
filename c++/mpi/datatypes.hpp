@@ -96,15 +96,10 @@ namespace mpi {
   /**
    * @brief Type trait to check if a type `T` has a corresponding MPI datatype, i.e. if mpi::mpi_type has been
    * specialized.
-   * @tparam `T` Type to be checked.
-   */
-  template <typename T, typename = void> constexpr bool has_mpi_type = false;
-
-  /**
-   * @brief Specialization of mpi::has_mpi_type for types which have a corresponding MPI datatype.
+   *
    * @tparam T Type to be checked.
    */
-  template <typename T> constexpr bool has_mpi_type<T, std::void_t<decltype(mpi_type<T>::get())>> = true;
+  template <typename T> constexpr bool has_mpi_type = requires { mpi_type<T>::get(); };
 
   namespace detail {
 
