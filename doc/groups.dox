@@ -3,31 +3,7 @@
  * @brief Simplify the initialization/finalization of an MPI environment and the usage of an `MPI_Comm` object
  * by wrapping it in a C++ class.
  *
- * @details A typical `Hello world!` program using mpi::environment and mpi::communicator is as easy as:
- *
- * @code{.cpp}
- * #include <mpi/communicator.hpp>
- * #include <iostream>
- *
- * int main(int argc, char** argv) {
- *   // initialize MPI environment
- *   mpi::environment env(argc, argv);
- *   mpi::communicator world;
- *
- *   // get rank and greet world
- *   int rank = world.rank();
- *   std::cout << "Hello from processor " << rank << "\n";
- * }
- * @endcode
- *
- * Output (depends on the number of processes and the order is arbitrary):
- *
- * ```
- * Hello from processor 2
- * Hello from processor 3
- * Hello from processor 0
- * Hello from processor 1
- * ```
+ * @details A typical `Hello world!` program using mpi::environment and mpi::communicator can be found in @ref ex1.
  */
 
 /**
@@ -37,10 +13,10 @@
  *
  * @details The following functionality is provided:
  *
- * - mpi::mpi_type and its specializations let **mpi** know that a certain type `T` can be used in MPI communications.
- * The user is allowed to implement their own MPI compatible types and provide a specializtion of mpi::mpi_type.
- * - mpi::get_mpi_type maps a given C++ type to its corresponding MPI datatype and mpi::has_mpi_type checks if a given
- * type has a corresponding MPI datatype.
+ * - mpi::mpi_type and its specializations let **mpi** know that a certain type C++ `T` can be used in MPI 
+ * communications. The user is allowed to implement their own MPI compatible types and provide a specializtion of 
+ * mpi::mpi_type. Its static member function `get` maps the C++ type `T` to its corresponding MPI datatype.
+ * - mpi::has_mpi_type checks if a given type has a corresponding MPI datatype.
  * - mpi::map_add and mpi::map_C_function can help the user to implement custom MPI operations.
  *
  * See @ref ex3 for a detailed example.
@@ -101,45 +77,11 @@
  */
 
 /**
- * @defgroup mpi_lazy Lazy MPI communication
- * @brief Allow specific types to use lazy MPI communication.
- *
- * @details Please look at the MPI interface in the [nda library](https://triqs.github.io/nda/latest/group__av__mpi.html)
- * for more details.
- */
-
-/**
  * @defgroup event_handling Event handling
  * @brief Communicate and handle events across multiple processes.
  *
- * @details A typical use case for the mpi::monitor class could be to monitor and communicate exceptions:
- *
- * @code{.cpp}
- * // initialize monitor
- * mpi::monitor monitor(world);
- * ...
- *
- * // loop as long as everything is fine
- * while (!monitor.event_on_any_rank()) {
- *   try {
- *      // do some work
- *      ...
- *   } catch (my_exception const &e) {
- *     // report an exception
- *     monitor.report_local_event();
- *   }
- * }
- *
- * // finalize communications and check if the computation finished due to an exception
- * monitor.finalize_communications();
- * if (!monitor.event_on_any_rank()) {
- *    // do some clean up and maybe stop the program
- *    ...
- * }
- *
- * // everything went smoothly
- * ...
- * @endcode
+ * @details A typical use case for the mpi::monitor class could be to monitor and communicate exceptions. A simple
+ * example can be found in @ref ex2.
  */
 
 /**

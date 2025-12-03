@@ -11,7 +11,7 @@
 
 All examples have been compiled on a MacBook Pro with an Apple M2 Max chip and [open-mpi](https://www.open-mpi.org/)
 5.0.1.
-We further used clang 19.1.7 together with cmake 3.31.5.
+We further used clang 21.1.2 together with cmake 4.1.2.
 
 Assuming that the actual example code is in a file `main.cpp`, the following generic `CMakeLists.txt` should work for
 all examples:
@@ -31,7 +31,7 @@ include (FetchContent)
 FetchContent_Declare(
   mpi
   GIT_REPOSITORY https://github.com/TRIQS/mpi.git
-  GIT_TAG        1.3.x
+  GIT_TAG        2.0.x
 )
 FetchContent_MakeAvailable(mpi)
 

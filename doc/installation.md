@@ -13,11 +13,15 @@ into your own C++ project.
 
 @section dependencies Dependencies
 
-The dependencies of **mpi** are as follows:
+The dependencies of the C++ **mpi** library are as follows:
 
-* gcc version 12 or later OR clang version 15 or later OR IntelLLVM (icx) 2023.1.0 or later
-* CMake version 3.20 or later (for installation or integration into an existing project via CMake)
-* a working MPI implementation (openmpi and Intel MPI are tested)
+* C++20 compatible compiler 
+* CMake version 3.20
+* MPI library
+
+We do not provide explicit version requirements.
+Instead, we refer the user to the **mpi** CI builds on [GitHub Actions](https://github.com/TRIQS/mpi/actions), where 
+recent OS, MPI and compiler versions are tested.
 
 @section install_steps Installation steps
 
