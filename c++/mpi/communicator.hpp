@@ -38,12 +38,15 @@ namespace mpi {
    * @ingroup mpi_essentials
    * @brief C++ wrapper around `MPI_Comm` providing various convenience functions.
    *
-   * @details It stores an `MPI_Comm` object as its only member which by default is set to `MPI_COMM_WORLD`. The
-   * underlying `MPI_Comm` object is not freed when a communicator goes out of scope. It is the user's responsibility to
-   * do so, in case it is needed. Note that copying the communicator simply copies the `MPI_Comm` object, without
-   * calling `MPI_Comm_dup`.
-   *
-   * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
+   * @details It stores an `MPI_Comm` object as its only member which by default is set to `MPI_COMM_WORLD`. 
+   * 
+   * The underlying `MPI_Comm` object is not freed when a communicator goes out of scope. It is the user's 
+   * responsibility to do so, in case it is needed.
+   * 
+   * All functions that make direct calls to the MPI C API check their success with mpi::check_mpi_call.
+   * 
+   * @note Copying the communicator simply copies the `MPI_Comm` object, without calling `MPI_Comm_dup`. Use duplicate()
+   * or split() if a new communicator is needed.
    */
   class communicator {
     public:
@@ -51,8 +54,7 @@ namespace mpi {
     communicator() = default;
 
     /**
-     * @brief Construct a communicator with a given `MPI_Comm` object.
-     * @details The `MPI_Comm` object is copied without calling `MPI_Comm_dup`.
+     * @brief Construct a communicator by wrapping a given `MPI_Comm` object.
      * @param c `MPI_Comm` object to wrap.
      */
     communicator(MPI_Comm c) : comm_(c) {}

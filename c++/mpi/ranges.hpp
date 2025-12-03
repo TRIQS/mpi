@@ -58,8 +58,8 @@ namespace mpi {
    * from the input range on the root process to all other processes.
    * - Otherwise, it calls mpi::broadcast for each element separately.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the input range size is equal
-   * on all processes.
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call and it expects that the input range 
+   * size is equal on all processes.
    *
    * @tparam R `std::ranges::sized_range` type.
    * @param rg Range to be broadcasted (into).
@@ -102,7 +102,7 @@ namespace mpi {
    *   - If the input and output ranges point to the same data, the reduction is done in place.
    * - Otherwise, it calls mpi::reduce_into for each input-output element pair separately.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call and it expects
    * - that the input range size on all processes and the output range size on receiving processes are equal and
    * - that either all or none of the receiving processes choose the in place option.
    *
@@ -192,7 +192,7 @@ namespace mpi {
    * be scattered into chunks of the specified size. Then, instead of single elements, the chunks are distributed evenly
    * across the processes in the communicator.
    *
-   * It throws an exception if call to the MPI C library fails and it expects
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call and it expects
    * - that the number of elements to be scattered is equal on all processes,
    * - that the size of the input range on the root process is equal the number of elements to be scattered and
    * - that the output range size is equal the number of elements to be received on all processes.
@@ -260,8 +260,8 @@ namespace mpi {
    * This is the inverse operation of mpi::scatter_range. The numbers of elements to be gathered do not have to be equal
    * on all processes.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the output range sizes on
-   * receiving processes is the number of elements to be gathered.
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call and it expects that the output range 
+   * sizes on receiving processes is the number of elements to be gathered.
    *
    * @note In place gathering is not supported.
    *

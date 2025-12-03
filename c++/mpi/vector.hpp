@@ -60,7 +60,7 @@ namespace mpi {
   /**
    * @brief Implementation of an MPI reduce for a `std::vector`.
    *
-   * @details It first constructs the output vector with its value type equal to the return type of
+   * @details It first constructs the output vector with its value type equal to the return type of 
    * `reduce(std::declval<T>())`. On receiving ranks, the output vector is then resized to the size of the input vector.
    * On non-receiving ranks, the output vector is always empty.
    *

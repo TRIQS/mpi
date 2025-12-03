@@ -37,7 +37,7 @@ namespace mpi {
    * @brief Constructed on top of an MPI communicator, this class helps to monitor and communicate events across
    * multiple processes.
    *
-   * @details The root process (rank == 0) monitors all other processes. If a process encounters an event, it sends a
+   * @details The root process (`rank == 0`) monitors all other processes. If a process encounters an event, it sends a
    * message to the root process by calling monitor::report_local_event. The root process then broadcasts this
    * information to all other processes.
    *
@@ -48,7 +48,7 @@ namespace mpi {
    * It uses a duplicate communicator to not interfere with other MPI communications. The communicator is freed in the
    * `finalize_communications` function (which is called in the destructor if not called before).
    *
-   * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
+   * All functions that make direct calls to the MPI C API check their success with mpi::check_mpi_call.
    */
   class monitor {
     // Future struct for non-blocking MPI communication.
@@ -93,7 +93,7 @@ namespace mpi {
      *
      * @details The communicator is duplicated to not interfere with other MPI communications.
      *
-     * The root process (rank == 0) performs a non-blocking receive for every non-root process and waits for a
+     * The root process (`rank == 0`) performs a non-blocking receive for every non-root process and waits for a
      * non-root process to send a message that an event has occurred.
      *
      * Non-root processes make two non-blocking broadcast calls and wait for the root process to broadcast a message in
@@ -124,7 +124,7 @@ namespace mpi {
     ~monitor() { finalize_communications(); }
 
     /**
-     * @brief Report a local event to the root process (rank == 0).
+     * @brief Report a local event to the root process (`rank == 0`).
      *
      * @details This function can be called on any process in case a local event has occurred.
      *
@@ -159,7 +159,7 @@ namespace mpi {
      * - if an event has occurred on some other process which has already been reported to the root process and
      * broadcasted to all other processes.
      *
-     * On the root process (rank == 0), it checks the status of all non-root processes and performs the necessary
+     * On the root process (`rank == 0`), it checks the status of all non-root processes and performs the necessary
      * broadcasts in case they have not been done yet.
      *
      * @return True, if an event has occurred on any process.
@@ -194,7 +194,7 @@ namespace mpi {
      * It returns true, if an event has occurred on all processes which has already been reported to the root process
      * and broadcasted to all other processes.
      *
-     * On the root process (rank == 0), it checks the status of all non-root processes and performs the necessary
+     * On the root process (`rank == 0`), it checks the status of all non-root processes and performs the necessary
      * broadcasts in case it has not been done yet.
      *
      * @return True, if an event has occurred on all processes.

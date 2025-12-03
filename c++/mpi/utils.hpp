@@ -35,15 +35,12 @@ namespace mpi {
 
   /**
    * @brief Check the success of an MPI call.
+   * 
    * @details It checks if the given error code returned by an MPI routine is equal to `MPI_SUCCESS`. If it isn't, it
    * throws an exception.
    *
-   * It is intended to simply wrap any calls to the MPI C library:
-   * @code{.cpp}
-   * int value = 5;
-   * int result = 0;
-   * check_mpi_call(MPI_Allreduce(&value, &result, 1, mpi::mpi_type<int>::get(), MPI_MAX, comm.get()), "MPI_Allreduce");
-   * @endcode
+   * @note MPI routines only return an error code if the error handler is set to `MPI_ERRORS_RETURN`. By default, it 
+   * uses `MPI_ERRORS_ARE_FATAL`, which aborts the program in case of an error.
    *
    * @param errcode Error code returned by an MPI routine.
    * @param mpi_routine Name of the MPI routine used in the error message.

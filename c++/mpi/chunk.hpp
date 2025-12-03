@@ -32,41 +32,48 @@
 namespace mpi {
 
   /**
-   * @ingroup utilities
+   * @addtogroup utilities
+   * @{
+   */
+
+  /**
    * @brief Get the length of the i<sup>th</sup> subrange after splitting the integer range `[0, end)` as evenly as
    * possible across `n` subranges.
    *
-   * @details The optional parameter `min_size` can be used to first divide the range into equal parts of size
+   * @details The optional parameter `min_size` can be used to first divide the range into equal parts of size 
    * `min_size` before distributing them as evenly as possible across the number of specified subranges.
    *
    * It is expected that `min_size > 0` and that `min_size` is a divisor of `end`.
    *
    * @param end End of the integer range `[0, end)`.
-   * @param nranges Number of subranges.
+   * @param n Number of subranges.
    * @param i Index of the subrange of interest.
    * @param min_size Minimum size of the subranges.
    * @return Length of the i<sup>th</sup> subrange.
    */
-  [[nodiscard]] inline long chunk_length(long end, int nranges, int i, long min_size = 1) {
+  [[nodiscard]] inline long chunk_length(long end, int n, int i, long min_size = 1) {
     EXPECTS_WITH_MESSAGE(min_size > 0 && end % min_size == 0, "Error in mpi::chunk_length: min_size must be a divisor of end");
-    auto [node_begin, node_end] = itertools::chunk_range(0, end / min_size, nranges, i);
+    auto [node_begin, node_end] = itertools::chunk_range(0, end / min_size, n, i);
     return (node_end - node_begin) * min_size;
   }
 
   /**
-   * @ingroup utilities
-   * @brief Divide a given range as evenly as possible across the MPI processes in a communicator and get the subrange
-   * assigned to the calling process.
+   * @brief Divide a given range as evenly as possible across the MPI processes in a communicator.
+   * 
+   * @details It calculates the subrange assigned to the calling process based on its rank in the given communicator and
+   * returns it as a slice of the original range.
    *
    * @tparam R Range type.
    * @param rg Range to divide.
    * @param c mpi::communicator.
-   * @return An itertools::sliced range assigned to the calling process.
+   * @return An `itertools::sliced` range assigned to the calling process.
    */
   template <typename R> [[nodiscard]] auto chunk(R &&rg, communicator c = {}) {
     auto total_size           = itertools::distance(std::cbegin(rg), std::cend(rg));
     auto [start_idx, end_idx] = itertools::chunk_range(0, total_size, c.size(), c.rank());
     return itertools::slice(std::forward<R>(rg), start_idx, end_idx);
   }
+
+  /** @} */
 
 } // namespace mpi

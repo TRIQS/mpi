@@ -27,6 +27,7 @@
 #include "./datatypes.hpp"
 #include "./environment.hpp"
 #include "./generic_communication.hpp"
+#include "./group.hpp"
 #include "./monitor.hpp"
 #include "./operators.hpp"
 #include "./optional.hpp"

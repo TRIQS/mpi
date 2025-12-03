@@ -46,10 +46,12 @@ namespace mpi {
   }
 
   /**
-   * @brief Boolean variable that is true, if one of the environment variables `OMPI_COMM_WORLD_RANK`, `PMI_RANK`,
-   * `PMIX_RANK`, `CRAY_MPICH_VERSION` or `FORCE_MPI_INIT` is set, false otherwise.
+   * @brief Boolean variable that checkes if there is an active MPI runtime environment.
    *
-   * @details The environment variables are set, when a program is executed with `mpirun`, `mpiexec`, or `srun`.
+   * @details It is true if one of the environment variables `OMPI_COMM_WORLD_RANK`, `PMI_RANK`, `CRAY_MPICH_VERSION`,
+   * `PMIX_RANK` or `FORCE_MPI_INIT` is set, false otherwise.
+   * 
+   * @note The environment variables are set, when a program is executed with `mpirun` or `mpiexec`.
    */
   static const bool has_env = []() {
     if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr or std::getenv("PMIX_RANK") != nullptr
@@ -64,8 +66,6 @@ namespace mpi {
    *
    * @details Calls `MPI_Init` upon construction and `MPI_Finalize` upon destruction i.e. when the environment object
    * goes out of scope. If mpi::has_env is false, this struct does nothing.
-   *
-   * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
    */
   struct environment {
     /**
@@ -73,6 +73,8 @@ namespace mpi {
      *
      * @details Checks first if the program is run with an MPI runtime environment and if it has not been initialized
      * before to avoid errors.
+     * 
+     * Direct calls the MPI C API are checked for success with mpi::check_mpi_call.
      *
      * @param argc Number of command line arguments.
      * @param argv Command line arguments.
