@@ -65,7 +65,7 @@ namespace mpi {
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
-  template <typename T> [[gnu::always_inline]] void broadcast(T &&x, communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
+  template <typename T> void broadcast(T &&x, communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
     mpi_broadcast(x, c, root);
   }
 
@@ -87,8 +87,8 @@ namespace mpi {
    * @return Result of the specialized `mpi_reduce` call.
    */
   template <typename T>
-  [[gnu::always_inline]] decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, // NOLINT (forwarding is not needed)
-                                               MPI_Op op = MPI_SUM) {
+  decltype(auto) reduce(T &&x, communicator c = {}, int root = 0, bool all = false, // NOLINT (forwarding is not needed)
+                        MPI_Op op = MPI_SUM) {
     if constexpr (requires { mpi_reduce(x, c, root, all, op); }) {
       return mpi_reduce(x, c, root, all, op);
     } else {
@@ -114,8 +114,8 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    */
   template <typename T>
-  [[gnu::always_inline]] void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, // NOLINT (forwarding is not needed)
-                                              MPI_Op op = MPI_SUM) {
+  void reduce_in_place(T &&x, communicator c = {}, int root = 0, bool all = false, // NOLINT (forwarding is not needed)
+                       MPI_Op op = MPI_SUM) {
     mpi_reduce_into(x, x, c, root, all, op);
   }
 
@@ -137,8 +137,8 @@ namespace mpi {
    * @param op `MPI_Op` used in the reduction.
    */
   template <typename T1, typename T2>
-  [[gnu::always_inline]] void reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0, // NOLINT (forwarding is not needed)
-                                          bool all = false, MPI_Op op = MPI_SUM) {
+  void reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0, // NOLINT (forwarding is not needed)
+                   bool all = false, MPI_Op op = MPI_SUM) {
     mpi_reduce_into(x_in, x_out, c, root, all, op);
   }
 
@@ -157,8 +157,7 @@ namespace mpi {
    * @param root Rank of the root process.
    * @return Result of the specialized `mpi_scatter` call.
    */
-  template <typename T>
-  [[gnu::always_inline]] decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
+  template <typename T> decltype(auto) scatter(T &&x, mpi::communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
     if constexpr (requires { mpi_scatter(x, c, root); }) {
       return mpi_scatter(x, c, root);
     } else {
@@ -184,7 +183,7 @@ namespace mpi {
    * @param root Rank of the root process.
    */
   template <typename T1, typename T2>
-  [[gnu::always_inline]] void scatter_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
+  void scatter_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0) { // NOLINT (forwarding is not needed)
     mpi_scatter_into(x_in, x_out, c, root);
   }
 
@@ -204,8 +203,7 @@ namespace mpi {
    * @param all Should all processes receive the result of the gather.
    * @return Result of the specialized `mpi_gather` call.
    */
-  template <typename T>
-  [[gnu::always_inline]] decltype(auto) gather(T &&x, communicator c = {}, int root = 0, bool all = false) { // NOLINT (forwarding is not needed)
+  template <typename T> decltype(auto) gather(T &&x, communicator c = {}, int root = 0, bool all = false) { // NOLINT (forwarding is not needed)
     if constexpr (requires { mpi_gather(x, c, root, all); }) {
       return mpi_gather(x, c, root, all);
     } else {
@@ -232,8 +230,8 @@ namespace mpi {
    * @param all Should all processes receive the result of the gather.
    */
   template <typename T1, typename T2>
-  [[gnu::always_inline]] void gather_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0, // NOLINT (forwarding is not needed)
-                                          bool all = false) {
+  void gather_into(T1 &&x_in, T2 &&x_out, communicator c = {}, int root = 0, // NOLINT (forwarding is not needed)
+                   bool all = false) {
     mpi_gather_into(x_in, x_out, c, root, all);
   }
 
@@ -241,8 +239,7 @@ namespace mpi {
    * @brief Generic MPI all-reduce.
    * @details It simply calls mpi::reduce with `all = true`.
    */
-  template <typename T>
-  [[gnu::always_inline]] decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
+  template <typename T> decltype(auto) all_reduce(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
     return reduce(x, c, 0, true, op);
   }
 
@@ -250,8 +247,7 @@ namespace mpi {
    * @brief Generic MPI all-reduce in place.
    * @details It simply calls mpi::reduce_in_place with `all = true`.
    */
-  template <typename T>
-  [[gnu::always_inline]] void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
+  template <typename T> void all_reduce_in_place(T &&x, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
     reduce_in_place(x, c, 0, true, op);
   }
 
@@ -260,7 +256,7 @@ namespace mpi {
    * @details It simply calls mpi::reduce_into with `all = true`.
    */
   template <typename T1, typename T2>
-  [[gnu::always_inline]] void all_reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
+  void all_reduce_into(T1 &&x_in, T2 &&x_out, communicator c = {}, MPI_Op op = MPI_SUM) { // NOLINT (forwarding is not needed)
     return reduce_into(x_in, x_out, c, 0, true, op);
   }
 
@@ -268,7 +264,7 @@ namespace mpi {
    * @brief Generic MPI all-gather.
    * @details It simply calls mpi::gather with `all = true`.
    */
-  template <typename T> [[gnu::always_inline]] decltype(auto) all_gather(T &&x, communicator c = {}) { // NOLINT (forwarding is not needed)
+  template <typename T> decltype(auto) all_gather(T &&x, communicator c = {}) { // NOLINT (forwarding is not needed)
     return gather(x, c, 0, true);
   }
 
@@ -276,8 +272,7 @@ namespace mpi {
    * @brief Generic MPI all-gather that gathers directly into an existing output object.
    * @details It simply calls mpi::gather_into with `all = true`.
    */
-  template <typename T1, typename T2>
-  [[gnu::always_inline]] void all_gather_into(T1 &&x_in, T2 &&x_out, communicator c = {}) { // NOLINT (forwarding is not needed)
+  template <typename T1, typename T2> void all_gather_into(T1 &&x_in, T2 &&x_out, communicator c = {}) { // NOLINT (forwarding is not needed)
     return gather_into(x_in, x_out, c, 0, true);
   }
 
