@@ -307,7 +307,7 @@ namespace mpi {
    * @details If mpi::has_env is false or if the communicator size is < 2, it does nothing. Otherwise, it calls
    * `MPI_Bcast`.
    *
-   * It throws an exception in case the call to the MPI C library fails.
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call.
    *
    * @tparam T Type to be broadcasted.
    * @param x Object to be broadcasted (into).
@@ -330,7 +330,7 @@ namespace mpi {
    * @details If mpi::has_env is false or if the communicator size is < 2, it returns a copy of the input object.
    * Otherwise, it calls `MPI_Allreduce` or `MPI_Reduce` with a default constructed output object.
    *
-   * It throws an exception in case the call to the MPI C library fails.
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call.
    *
    * @tparam T Type to be reduced.
    * @param x Object to be reduced.
@@ -365,8 +365,8 @@ namespace mpi {
    * If mpi::has_env is false or if the communicator size is < 2, it either does nothing (in place) or copies the input
    * into the output object. Otherwise, it calls `MPI_Allreduce` or `MPI_Reduce` (with `MPI_IN_PLACE`).
    *
-   * It throws an exception in case the call to the MPI C library fails and it is expected that either all or none of
-   * the receiving processes choose the in place option.
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call and it is expected that either all or 
+   * none of the receiving processes choose the in place option.
    *
    * @tparam T Type to be reduced.
    * @param x_in Object to be reduced.
@@ -429,10 +429,10 @@ namespace mpi {
    * corresponding MPI datatype.
    *
    * @details If mpi::has_env is false or if the communicator size is < 2, it copies the input object into the range.
-   * Otherwise, it calls `MPI_Allgather` or `MPI_Gather.
+   * Otherwise, it calls `MPI_Allgather` or `MPI_Gather`.
    *
-   * It throws an exception in case a call to the MPI C library fails and it expects that the range size on receiving
-   * processes is equal the communicator size.
+   * Direct calls the MPI C API are checked for success with mpi::check_mpi_call and it expects that the range size on 
+   * receiving processes is equal the communicator size.
    *
    * @tparam T Type to be gathered.
    * @tparam R MPICompatibleRange type to be gathered into.

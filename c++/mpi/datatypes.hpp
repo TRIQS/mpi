@@ -45,7 +45,9 @@ namespace mpi {
    * @brief Map C++ datatypes to the corresponding MPI datatypes.
    *
    * @details C++ types which have a corresponding MPI datatype should specialize this struct. It is assumed that it
-   * has a static member function `get` which returns the `MPI_Datatype` object for a given C++ type. For example:
+   * has a static member function `get` which returns the `MPI_Datatype` object for a given C++ type.
+   *
+   * For example:
    *
    * @code{.cpp}
    * template <> struct mpi_type<int> {
@@ -58,7 +60,7 @@ namespace mpi {
   template <typename T> struct mpi_type {};
 
 #define D(T, MPI_TY)                                                                                                                                 \
-  /** @brief Specialization of mpi_type for T. */                                                                                                    \
+  /** @brief Specialization of mpi_type for `T`. */                                                                                                  \
   template <> struct mpi_type<T> {                                                                                                                   \
     [[nodiscard]] static MPI_Datatype get() noexcept { return MPI_TY; }                                                                              \
   }
@@ -132,7 +134,7 @@ namespace mpi {
    * @details The tuple element types must have corresponding MPI datatypes, i.e. they must have mpi::mpi_type
    * specializtions. It uses `MPI_Type_create_struct` to create a new datatype consisting of the tuple element types.
    *
-   * It throws an exception in case a call to the MPI C library fails.
+   * The success of MPI calls is checked with mpi::check_mpi_call.
    *
    * @tparam Ts Tuple element types.
    * @param tup Tuple object.
@@ -164,7 +166,7 @@ namespace mpi {
   }
 
   /**
-   * @brief Specialization of mpi::mpi_type for std::tuple.
+   * @brief Specialization of mpi::mpi_type for `std::tuple`.
    * @tparam Ts Tuple element types.
    */
   template <typename... Ts> struct mpi_type<std::tuple<Ts...>> {
@@ -177,8 +179,8 @@ namespace mpi {
   /**
    * @brief Create an `MPI_Datatype` from some struct.
    *
-   * @details It is assumed that there is a free function `tie_data` which returns a tuple containing the data
-   * members of the given type. The intended use is as a base class for a specialization of mpi::mpi_type:
+   * @details It is assumed that there is a free function `tie_data` which returns a tuple containing the data members 
+   * of the given type:
    *
    * @code{.cpp}
    * // type to use for MPI communication
@@ -234,8 +236,8 @@ namespace mpi {
   /**
    * @brief Create an `MPI_Datatype` from a serializable type.
    *
-   * @details It is assumed that the type has a member function `serialize`
-   * which feeds all its class members into an archive using the `operator&`.
+   * @details It is assumed that the type has a member function `serialize` which feeds all its class members into an 
+   * archive using the `operator&`.
    *
    * @code{.cpp}
    * // type to use for MPI communication
@@ -243,6 +245,7 @@ namespace mpi {
    *   double x;
    *   int y;
    *   void serialize(auto& ar) const { ar & x & y; }
+   *   void deserialize(auto& ar) { ar & x & y; }
    * };
    * @endcode
    *

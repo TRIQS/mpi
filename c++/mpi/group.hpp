@@ -36,12 +36,12 @@ namespace mpi {
    * @ingroup mpi_essentials
    * @brief C++ wrapper around `MPI_Group` providing various convenience functions.
    *
-   * @details It stores an `MPI_Group` object as its only member which by default is set to `MPI_GROUP_NULL`.
-   * The underlying `MPI_Group` object is automatically freed when a group object goes out of scope.
+   * @details It stores an `MPI_Group` object as its only member which by default is set to `MPI_GROUP_NULL`. The 
+   * underlying `MPI_Group` object is automatically freed when a group object goes out of scope.
    *
    * This class follows move-only semantics and takes ownership of the wrapped `MPI_Group` object.
    *
-   * All functions that make direct calls to the MPI C library throw an exception in case the call fails.
+   * All functions that make direct calls to the MPI C API, except free(), check their success with mpi::check_mpi_call.
    */
   class group {
     public:

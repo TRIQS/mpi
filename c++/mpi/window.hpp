@@ -51,6 +51,8 @@ namespace mpi {
    * If a base pointer is not specified, the constructor will allocate memory internally.
    *
    * This class follows move-only semantics and takes ownership of the wrapped `MPI_Win` object.
+   * 
+   * All functions that make direct calls to the MPI C API, except free(), check their success with mpi::check_mpi_call.
    *
    * @tparam BaseType The type of elements stored in the memory window.
    */
@@ -124,7 +126,7 @@ namespace mpi {
       if (has_env) {
         check_mpi_call(MPI_Win_allocate(size_ * sizeof(BaseType), sizeof(BaseType), info, c.get(), &data_, &win_), "MPI_Win_allocate");
       } else {
-        data_  = new BaseType[size_]; // NOLINT (new is fine here)
+        data_ = new BaseType[size_]; // NOLINT (new is fine here)
       }
       owned_ = true;
     }
@@ -360,6 +362,8 @@ namespace mpi {
    * @brief A C++ wrapper around `MPI_Win` representing a shared memory window.
    *
    * @details This class provides an interface for creating and managing an MPI shared memory window.
+   * 
+   * All functions that make direct calls to the MPI C API check their success with mpi::check_mpi_call.
    *
    * @tparam BaseType The type of elements stored in the shared memory window.
    */
@@ -385,7 +389,7 @@ namespace mpi {
       if (has_env) {
         check_mpi_call(MPI_Win_allocate_shared(size_ * sizeof(BaseType), sizeof(BaseType), info, c.get(), &data_, &win_), "MPI_Win_allocate_shared");
       } else {
-        data_  = new BaseType[size_]; // NOLINT (new is fine here)
+        data_ = new BaseType[size_]; // NOLINT (new is fine here)
       }
       owned_ = true;
     }
@@ -393,11 +397,11 @@ namespace mpi {
     /**
      * @brief Query attributes of a shared memory window.
      *
-     * @details Retrieves the byte-size, displacement unit, and a pointer to the beginning of the shared memory region for a
-     * specific rank.
+     * @details Retrieves the byte-size, displacement unit, and a pointer to the beginning of the shared memory region 
+     * for a specific rank.
      *
-     * When `MPI_PROC_NULL` is passed for the rank, MPI returns information about the memory segment with the lowest rank that has a
-     * non-zero size.
+     * When `MPI_PROC_NULL` is passed for the rank, MPI returns information about the memory segment with the lowest 
+     * rank that has a non-zero size.
      *
      * @param rank Rank within the shared communicator.
      * @return A tuple containing the byte-size, the displacement unit in bytes and the base pointer.

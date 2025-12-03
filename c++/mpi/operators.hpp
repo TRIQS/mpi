@@ -37,7 +37,7 @@ namespace mpi {
    *
    * @details The binary function must have the following signature `(T const&, T const&) -> T`.
    *
-   * It throws an exception in case a call to the MPI C library fails.
+   * The success of MPI calls is checked with mpi::check_mpi_call.
    *
    * @tparam T Type on which the binary function operates.
    * @tparam F Binary function pointer to be mapped.
@@ -55,8 +55,10 @@ namespace mpi {
   }
 
   namespace detail {
+
     // Generic addition. FIXME Convert to lambda, requires gcc 13.2+
     template <typename T> T generic_add(T const &lhs, T const &rhs) { return lhs + rhs; }
+
   } // namespace detail
 
   /**
