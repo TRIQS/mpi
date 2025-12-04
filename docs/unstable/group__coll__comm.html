@@ -163,7 +163,7 @@ requires (std::same_as&lt;std::remove_cvref_t&lt;std::ranges::range_value_t&lt;R
 <tr class="memitem:gaad92b65d7516582a284fac742c4f430e" id="r_gaad92b65d7516582a284fac742c4f430e"><td class="memTemplParams" colspan="2">template&lt;typename T, std::size_t N&gt; </td></tr>
 <tr class="memitem:gaad92b65d7516582a284fac742c4f430e template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaad92b65d7516582a284fac742c4f430e">mpi::mpi_broadcast</a> (std::array&lt; T, N &gt; &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:gaad92b65d7516582a284fac742c4f430e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a <span class="tt">std::array</span>.  <br /></td></tr>
-<tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a" id="r_ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a" id="r_ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="memTemplParams" colspan="2">template&lt;std::default_initializable T&gt; </td></tr>
 <tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga81d6d44ba2b2a98ed9f7f04d9c2dd15a">mpi::mpi_broadcast</a> (std::optional&lt; T &gt; &amp;opt, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a <span class="tt">std::optional</span>.  <br /></td></tr>
 <tr class="memitem:gab331d0f1361f69228665b60f3262588a" id="r_gab331d0f1361f69228665b60f3262588a"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
@@ -190,9 +190,6 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="memitem:ga2f4b9c71fd7e8d418c69a25bc1eb267b" id="r_ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="memTemplParams" colspan="2">template&lt;typename T, std::size_t N&gt; </td></tr>
 <tr class="memitem:ga2f4b9c71fd7e8d418c69a25bc1eb267b template"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga2f4b9c71fd7e8d418c69a25bc1eb267b">mpi::mpi_reduce</a> (std::array&lt; T, N &gt; const &amp;arr, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga2f4b9c71fd7e8d418c69a25bc1eb267b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::array</span>.  <br /></td></tr>
-<tr class="memitem:ga717d4d20585b4cf66209f2d1a403488c" id="r_ga717d4d20585b4cf66209f2d1a403488c"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:ga717d4d20585b4cf66209f2d1a403488c template"><td class="memItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga717d4d20585b4cf66209f2d1a403488c">mpi::mpi_reduce</a> (std::optional&lt; T &gt; const &amp;opt, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga717d4d20585b4cf66209f2d1a403488c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::optional</span>.  <br /></td></tr>
 <tr class="memitem:ga596d7bf8804da7049839279e1670fcff" id="r_ga596d7bf8804da7049839279e1670fcff"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
 <tr class="memitem:ga596d7bf8804da7049839279e1670fcff template"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga596d7bf8804da7049839279e1670fcff">mpi::mpi_reduce</a> (std::pair&lt; T1, T2 &gt; const &amp;p, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga596d7bf8804da7049839279e1670fcff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::pair</span>.  <br /></td></tr>
@@ -206,7 +203,7 @@ requires (<a class="el" href="group__mpi__types__ops.html#gac117479a485f170ca920
 <tr class="memitem:ga37d49289f9fee5e9a755e554c86edaa3" id="r_ga37d49289f9fee5e9a755e554c86edaa3"><td class="memTemplParams" colspan="2">template&lt;typename T1, std::size_t N1, typename T2, std::size_t N2&gt; </td></tr>
 <tr class="memitem:ga37d49289f9fee5e9a755e554c86edaa3 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga37d49289f9fee5e9a755e554c86edaa3">mpi::mpi_reduce_into</a> (std::array&lt; T1, N1 &gt; const &amp;arr_in, std::array&lt; T2, N2 &gt; &amp;arr_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga37d49289f9fee5e9a755e554c86edaa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::array</span> that reduces directly into an existing output array.  <br /></td></tr>
-<tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3" id="r_ga8cd55671363dd9f78d1c24eed31566f3"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
+<tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3" id="r_ga8cd55671363dd9f78d1c24eed31566f3"><td class="memTemplParams" colspan="2">template&lt;typename T1, std::default_initializable T2&gt; </td></tr>
 <tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga8cd55671363dd9f78d1c24eed31566f3">mpi::mpi_reduce_into</a> (std::optional&lt; T1 &gt; const &amp;opt_in, std::optional&lt; T2 &gt; &amp;opt_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga8cd55671363dd9f78d1c24eed31566f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::optional</span> that reduces directly into a given output optional.  <br /></td></tr>
 <tr class="memitem:ga93e46bb67503a6b4604882dc9cf48e81" id="r_ga93e46bb67503a6b4604882dc9cf48e81"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
@@ -812,7 +809,7 @@ template&lt;typename T, std::size_t N&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T&gt; </div>
+template&lt;std::default_initializable T&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void mpi::mpi_broadcast </td>
@@ -838,7 +835,7 @@ template&lt;typename T&gt; </div>
 <p>It first broadcasts a flag indicating whether the optional has a value. If the root's optional has a value, the value is broadcast to all other processes. If the root's optional is empty, all other processes reset their optional to empty.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>Value type of the optional. </td></tr>
+    <tr><td class="paramname">T</td><td>Value type of the optional (must be default constructible). </td></tr>
   </table>
   </dd>
 </dl>
@@ -1234,7 +1231,7 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <a id="ga2f4b9c71fd7e8d418c69a25bc1eb267b" name="ga2f4b9c71fd7e8d418c69a25bc1eb267b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2f4b9c71fd7e8d418c69a25bc1eb267b">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[1/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2f4b9c71fd7e8d418c69a25bc1eb267b">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1297,71 +1294,8 @@ template&lt;typename T, std::size_t N&gt; </div>
 
 </div>
 </div>
-<a id="ga717d4d20585b4cf66209f2d1a403488c" name="ga717d4d20585b4cf66209f2d1a403488c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga717d4d20585b4cf66209f2d1a403488c">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[2/5]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::optional&lt; T &gt; mpi::mpi_reduce </td>
-          <td>(</td>
-          <td class="paramtype">std::optional&lt; T &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmpi_1_1communicator.html">communicator</a></td>          <td class="paramname"><span class="paramname"><em>c</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>all</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">MPI_Op</td>          <td class="paramname"><span class="paramname"><em>op</em></span><span class="paramdefsep"> = </span><span class="paramdefval">MPI_SUM</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p><code>#include &lt;<a class="el" href="optional_8hpp.html">mpi/optional.hpp</a>&gt;</code></p>
-
-<p>Implementation of an MPI reduce for a <span class="tt">std::optional</span>. </p>
-<p>All ranks must have consistent has_value state (all have values or all are empty). If this condition is violated, a <span class="tt">std::runtime_error</span> is thrown.</p>
-<p>If all optionals have values, the values are reduced and returned in an optional. If all optionals are empty, an empty optional is returned.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Value type of the optional. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">opt</td><td><span class="tt">std::optional</span> to reduce. </td></tr>
-    <tr><td class="paramname">c</td><td><a class="el" href="classmpi_1_1communicator.html" title="C++ wrapper around MPI_Comm providing various convenience functions.">mpi::communicator</a>. </td></tr>
-    <tr><td class="paramname">root</td><td>Rank of the root process. </td></tr>
-    <tr><td class="paramname">all</td><td>Should all processes receive the result of the reduction. </td></tr>
-    <tr><td class="paramname">op</td><td><span class="tt">MPI_Op</span> used in the reduction. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd><span class="tt">std::optional</span> containing the result of the reduction. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="optional_8hpp_source.html#l00083">83</a> of file <a class="el" href="optional_8hpp_source.html">optional.hpp</a>.</p>
-
-</div>
-</div>
 <a id="ga596d7bf8804da7049839279e1670fcff" name="ga596d7bf8804da7049839279e1670fcff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga596d7bf8804da7049839279e1670fcff">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[3/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga596d7bf8804da7049839279e1670fcff">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1424,7 +1358,7 @@ template&lt;typename T1, typename T2&gt; </div>
 </div>
 </div>
 <a id="ga6f289495a232fb35118cb9ed26c5ae31" name="ga6f289495a232fb35118cb9ed26c5ae31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6f289495a232fb35118cb9ed26c5ae31">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[4/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f289495a232fb35118cb9ed26c5ae31">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1487,7 +1421,7 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <a id="gab133dac60af76a9b16bc0d6983601a1f" name="gab133dac60af76a9b16bc0d6983601a1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab133dac60af76a9b16bc0d6983601a1f">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[5/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gab133dac60af76a9b16bc0d6983601a1f">&#9670;&#160;</a></span>mpi_reduce() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1626,7 +1560,7 @@ template&lt;typename T1, std::size_t N1, typename T2, std::size_t N2&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T1, typename T2&gt; </div>
+template&lt;typename T1, std::default_initializable T2&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void mpi::mpi_reduce_into </td>
@@ -1664,12 +1598,12 @@ template&lt;typename T1, typename T2&gt; </div>
 <p><code>#include &lt;<a class="el" href="optional_8hpp.html">mpi/optional.hpp</a>&gt;</code></p>
 
 <p>Implementation of an MPI reduce for a <span class="tt">std::optional</span> that reduces directly into a given output optional. </p>
-<p>All ranks must have consistent has_value state (all have values or all are empty). If this condition is violated, a <span class="tt">std::runtime_error</span> is thrown.</p>
-<p>If all input optionals have values, the values are reduced into the output optional on all ranks, but only root (or all ranks if <span class="tt">all</span> is true) receives the meaningful result. If all input optionals are empty, the output optional is reset to empty on all ranks.</p>
+<p>All ranks must have consistent has_value state (all have values or all are empty).</p>
+<p>If all input optionals have values, the values are reduced into the output optional. If all input optionals are empty, the output optional is reset to empty. On non-receiving ranks, the output optional is left untouched.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T1</td><td>Value type of the optional to be reduced. </td></tr>
-    <tr><td class="paramname">T2</td><td>Value type of the optional to be reduced into. </td></tr>
+    <tr><td class="paramname">T2</td><td>Value type of the optional to be reduced into (must be default constructible). </td></tr>
   </table>
   </dd>
 </dl>
@@ -1685,7 +1619,7 @@ template&lt;typename T1, typename T2&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="optional_8hpp_source.html#l00115">115</a> of file <a class="el" href="optional_8hpp_source.html">optional.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="optional_8hpp_source.html#l00083">83</a> of file <a class="el" href="optional_8hpp_source.html">optional.hpp</a>.</p>
 
 </div>
 </div>

@@ -105,11 +105,10 @@ $(function(){initNavTree('optional_8hpp.html','',''); });
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="communicator_8hpp_source.html">./communicator.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="generic__communication_8hpp_source.html">./generic_communication.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="macros_8hpp_source.html">./macros.hpp</a>&quot;</code><br />
 <code>#include &lt;mpi.h&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
-<code>#include &lt;stdexcept&gt;</code><br />
-<code>#include &lt;type_traits&gt;</code><br />
-<code>#include &lt;utility&gt;</code><br />
+<code>#include &lt;concepts&gt;</code><br />
 </div><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides an MPI broadcast and reduce for <span class="tt">std::optional</span>. </p>
 
@@ -119,13 +118,10 @@ $(function(){initNavTree('optional_8hpp.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a" id="r_ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a" id="r_ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="memTemplParams" colspan="2">template&lt;std::default_initializable T&gt; </td></tr>
 <tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga81d6d44ba2b2a98ed9f7f04d9c2dd15a">mpi::mpi_broadcast</a> (std::optional&lt; T &gt; &amp;opt, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
 <tr class="memdesc:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a <span class="tt">std::optional</span>.  <br /></td></tr>
-<tr class="memitem:ga717d4d20585b4cf66209f2d1a403488c" id="r_ga717d4d20585b4cf66209f2d1a403488c"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:ga717d4d20585b4cf66209f2d1a403488c template"><td class="memItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga717d4d20585b4cf66209f2d1a403488c">mpi::mpi_reduce</a> (std::optional&lt; T &gt; const &amp;opt, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
-<tr class="memdesc:ga717d4d20585b4cf66209f2d1a403488c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::optional</span>.  <br /></td></tr>
-<tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3" id="r_ga8cd55671363dd9f78d1c24eed31566f3"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
+<tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3" id="r_ga8cd55671363dd9f78d1c24eed31566f3"><td class="memTemplParams" colspan="2">template&lt;typename T1, std::default_initializable T2&gt; </td></tr>
 <tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga8cd55671363dd9f78d1c24eed31566f3">mpi::mpi_reduce_into</a> (std::optional&lt; T1 &gt; const &amp;opt_in, std::optional&lt; T2 &gt; &amp;opt_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
 <tr class="memdesc:ga8cd55671363dd9f78d1c24eed31566f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::optional</span> that reduces directly into a given output optional.  <br /></td></tr>
 </table>
