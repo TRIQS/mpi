@@ -23,13 +23,12 @@
 
 #include "./communicator.hpp"
 #include "./generic_communication.hpp"
+#include "./macros.hpp"
 
 #include <mpi.h>
 
 #include <optional>
-#include <stdexcept>
-#include <type_traits>
-#include <utility>
+#include <concepts>
 
 namespace mpi {
 
@@ -45,12 +44,13 @@ namespace mpi {
    * value, the value is broadcast to all other processes. If the root's optional is empty, all other processes reset
    * their optional to empty.
    *
-   * @tparam T Value type of the optional.
+   * @tparam T Value type of the optional (must be default constructible).
    * @param opt `std::optional` to broadcast.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
    */
-  template <typename T> void mpi_broadcast(std::optional<T> &opt, communicator c = {}, int root = 0) {
+  template <std::default_initializable T>
+  void mpi_broadcast(std::optional<T> &opt, communicator c = {}, int root = 0) {
     bool has_val = opt.has_value();
     broadcast(has_val, c, root);
 
@@ -63,47 +63,15 @@ namespace mpi {
   }
 
   /**
-   * @brief Implementation of an MPI reduce for a `std::optional`.
-   *
-   * @details All ranks must have consistent has_value state (all have values or all are empty). If this condition is
-   * violated, a `std::runtime_error` is thrown.
-   *
-   * If all optionals have values, the values are reduced and returned in an optional. If all optionals are empty, an
-   * empty optional is returned.
-   *
-   * @tparam T Value type of the optional.
-   * @param opt `std::optional` to reduce.
-   * @param c mpi::communicator.
-   * @param root Rank of the root process.
-   * @param all Should all processes receive the result of the reduction.
-   * @param op `MPI_Op` used in the reduction.
-   * @return `std::optional` containing the result of the reduction.
-   */
-  template <typename T>
-  std::optional<T> mpi_reduce(std::optional<T> const &opt, communicator c = {}, int root = 0, bool all = false, MPI_Op op = MPI_SUM) {
-    // Verify consistency: sum of has_value should be 0 or c.size()
-    int has_val = opt.has_value() ? 1 : 0;
-    int total   = mpi::all_reduce(has_val, c, MPI_SUM);
-    if (total != 0 && total != c.size()) {
-      throw std::runtime_error("mpi::reduce for std::optional requires all ranks to have consistent has_value state");
-    }
-
-    if (opt.has_value()) return reduce(*opt, c, root, all, op);
-    else return {};
-  }
-
-  /**
    * @brief Implementation of an MPI reduce for a `std::optional` that reduces directly into a given output optional.
    *
-   * @details All ranks must have consistent has_value state (all have values or all are empty). If this condition is
-   * violated, a `std::runtime_error` is thrown.
+   * @details All ranks must have consistent has_value state (all have values or all are empty).
    *
-   * If all input optionals have values, the values are reduced into the output optional on all ranks, but only root
-   * (or all ranks if `all` is true) receives the meaningful result. If all input optionals are empty, the output
-   * optional is reset to empty on all ranks.
+   * If all input optionals have values, the values are reduced into the output optional. If all input optionals are
+   * empty, the output optional is reset to empty. On non-receiving ranks, the output optional is left untouched.
    *
    * @tparam T1 Value type of the optional to be reduced.
-   * @tparam T2 Value type of the optional to be reduced into.
+   * @tparam T2 Value type of the optional to be reduced into (must be default constructible).
    * @param opt_in `std::optional` to reduce.
    * @param opt_out `std::optional` to reduce into.
    * @param c mpi::communicator.
@@ -111,20 +79,24 @@ namespace mpi {
    * @param all Should all processes receive the result of the reduction.
    * @param op `MPI_Op` used in the reduction.
    */
-  template <typename T1, typename T2>
+  template <typename T1, std::default_initializable T2>
   void mpi_reduce_into(std::optional<T1> const &opt_in, std::optional<T2> &opt_out, communicator c = {}, int root = 0, bool all = false,
                        MPI_Op op = MPI_SUM) {
     // Verify consistency
-    int has_val = opt_in.has_value() ? 1 : 0;
-    int total   = mpi::all_reduce(has_val, c, MPI_SUM);
-    if (total != 0 && total != c.size()) {
-      throw std::runtime_error("mpi::reduce_into for std::optional requires all ranks to have consistent has_value state");
-    }
+    EXPECTS_WITH_MESSAGE(all_equal<int>(opt_in.has_value(), c),
+                         "mpi::reduce_into for std::optional requires all ranks to have consistent has_value state");
+
+    bool const receives = (c.rank() == root || all);
 
     if (opt_in.has_value()) {
-      if (!opt_out.has_value()) opt_out.emplace();
-      reduce_into(*opt_in, *opt_out, c, root, all, op);
-    } else {
+      if (receives) {
+        if (!opt_out.has_value()) opt_out.emplace();
+        reduce_into(*opt_in, *opt_out, c, root, all, op);
+      } else {
+        T2 dummy;
+        reduce_into(*opt_in, dummy, c, root, all, op);
+      }
+    } else if (receives) {
       opt_out.reset();
     }
   }
