@@ -29,6 +29,7 @@
 #include "./generic_communication.hpp"
 #include "./monitor.hpp"
 #include "./operators.hpp"
+#include "./optional.hpp"
 #include "./pair.hpp"
 #include "./ranges.hpp"
 #include "./string.hpp"
