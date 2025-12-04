@@ -11,6 +11,7 @@ var dir_671877b97d006ed14109ce92ec0cdea9 =
     [ "monitor.hpp", "monitor_8hpp.html", null ],
     [ "mpi.hpp", "mpi_8hpp.html", null ],
     [ "operators.hpp", "operators_8hpp.html", "operators_8hpp" ],
+    [ "optional.hpp", "optional_8hpp.html", "optional_8hpp" ],
     [ "pair.hpp", "pair_8hpp.html", "pair_8hpp" ],
     [ "ranges.hpp", "ranges_8hpp.html", "ranges_8hpp" ],
     [ "string.hpp", "string_8hpp.html", "string_8hpp" ],

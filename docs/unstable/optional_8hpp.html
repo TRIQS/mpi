@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.15.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TRIQS/mpi: mpi/macros.hpp</title>
+<title>TRIQS/mpi: mpi/optional.hpp</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -74,7 +74,7 @@ $(function() {
   </div>
 </div>
 <script type="text/javascript">
-$(function(){initNavTree('macros_8hpp.html','',''); });
+$(function(){initNavTree('optional_8hpp.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -100,17 +100,35 @@ $(function(){initNavTree('macros_8hpp.html','',''); });
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">macros.hpp</div></div>
+  <div class="headertitle"><div class="title">optional.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;iostream&gt;</code><br />
-<code>#include &lt;exception&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="communicator_8hpp_source.html">./communicator.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="generic__communication_8hpp_source.html">./generic_communication.hpp</a>&quot;</code><br />
+<code>#include &lt;mpi.h&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;utility&gt;</code><br />
 </div><a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Macros used in the mpi library. </p>
+<div class="textblock"><p>Provides an MPI broadcast and reduce for <span class="tt">std::optional</span>. </p>
 
-<p class="definition">Definition in file <a class="el" href="macros_8hpp_source.html">macros.hpp</a>.</p>
+<p class="definition">Definition in file <a class="el" href="optional_8hpp_source.html">optional.hpp</a>.</p>
 </div>
-<p><a href="macros_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="optional_8hpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a" id="r_ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga81d6d44ba2b2a98ed9f7f04d9c2dd15a">mpi::mpi_broadcast</a> (std::optional&lt; T &gt; &amp;opt, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0)</td></tr>
+<tr class="memdesc:ga81d6d44ba2b2a98ed9f7f04d9c2dd15a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI broadcast for a <span class="tt">std::optional</span>.  <br /></td></tr>
+<tr class="memitem:ga717d4d20585b4cf66209f2d1a403488c" id="r_ga717d4d20585b4cf66209f2d1a403488c"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:ga717d4d20585b4cf66209f2d1a403488c template"><td class="memItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga717d4d20585b4cf66209f2d1a403488c">mpi::mpi_reduce</a> (std::optional&lt; T &gt; const &amp;opt, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga717d4d20585b4cf66209f2d1a403488c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::optional</span>.  <br /></td></tr>
+<tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3" id="r_ga8cd55671363dd9f78d1c24eed31566f3"><td class="memTemplParams" colspan="2">template&lt;typename T1, typename T2&gt; </td></tr>
+<tr class="memitem:ga8cd55671363dd9f78d1c24eed31566f3 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__coll__comm.html#ga8cd55671363dd9f78d1c24eed31566f3">mpi::mpi_reduce_into</a> (std::optional&lt; T1 &gt; const &amp;opt_in, std::optional&lt; T2 &gt; &amp;opt_out, <a class="el" href="classmpi_1_1communicator.html">communicator</a> c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</td></tr>
+<tr class="memdesc:ga8cd55671363dd9f78d1c24eed31566f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of an MPI reduce for a <span class="tt">std::optional</span> that reduces directly into a given output optional.  <br /></td></tr>
+</table>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
@@ -124,7 +142,7 @@ $(function(){initNavTree('macros_8hpp.html','',''); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>mpi</b></li><li class="navelem"><a href="macros_8hpp.html">macros.hpp</a></li>
+    <li class="navelem"><b>mpi</b></li><li class="navelem"><a href="optional_8hpp.html">optional.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
   </ul>
 </div>

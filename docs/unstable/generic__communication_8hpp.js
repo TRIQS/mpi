@@ -11,7 +11,6 @@ var generic__communication_8hpp =
     [ "mpi::gather_into", "group__coll__comm.html#ga20d1b068815d57325f8d6361ee2f741d", null ],
     [ "mpi::mpi_broadcast", "group__coll__comm.html#ga7b441294b27fb668e3876294ba7fdc03", null ],
     [ "mpi::mpi_gather", "group__coll__comm.html#gabd9f5c06e3b17b8468e703ca79ec7691", null ],
-    [ "mpi::mpi_gather_into", "group__coll__comm.html#ga595770e22204da1535cf1d23ad3f574d", null ],
     [ "mpi::mpi_reduce", "group__coll__comm.html#gab133dac60af76a9b16bc0d6983601a1f", null ],
     [ "mpi::mpi_reduce_into", "group__coll__comm.html#ga0251d7bc15e5fcf50fe4393b99f02289", null ],
     [ "mpi::reduce", "group__coll__comm.html#ga8eaee05122bf70f15de0731b889e3949", null ],
