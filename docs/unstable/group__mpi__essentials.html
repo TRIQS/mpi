@@ -145,7 +145,7 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ga590f450f6987d3e6c0398048515856b1" id="r_ga590f450f6987d3e6c0398048515856b1"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga590f450f6987d3e6c0398048515856b1">mpi::has_env</a></td></tr>
-<tr class="memdesc:ga590f450f6987d3e6c0398048515856b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boolean variable that is true, if one of the environment variables <span class="tt">OMPI_COMM_WORLD_RANK</span>, <span class="tt">PMI_RANK</span>, <span class="tt">CRAY_MPICH_VERSION</span> or <span class="tt">FORCE_MPI_INIT</span> is set, false otherwise.  <br /></td></tr>
+<tr class="memdesc:ga590f450f6987d3e6c0398048515856b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boolean variable that is true, if one of the environment variables <span class="tt">OMPI_COMM_WORLD_RANK</span>, <span class="tt">PMI_RANK</span>, <span class="tt">PMIX_RANK</span>, <span class="tt">CRAY_MPICH_VERSION</span> or <span class="tt">FORCE_MPI_INIT</span> is set, false otherwise.  <br /></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="gaee54f343fdd8f1712ae521bd8ee69dfc" name="gaee54f343fdd8f1712ae521bd8ee69dfc"></a>
@@ -203,15 +203,15 @@ Variables</h2></td></tr>
 
 <p><code>#include &lt;<a class="el" href="environment_8hpp.html">mpi/environment.hpp</a>&gt;</code></p>
 <b>Initial value:</b><div class="fragment"><div class="line">= []() {</div>
-<div class="line">    <span class="keywordflow">if</span> (std::getenv(<span class="stringliteral">&quot;OMPI_COMM_WORLD_RANK&quot;</span>) != <span class="keyword">nullptr</span> or std::getenv(<span class="stringliteral">&quot;PMI_RANK&quot;</span>) != <span class="keyword">nullptr</span> or std::getenv(<span class="stringliteral">&quot;CRAY_MPICH_VERSION&quot;</span>) != <span class="keyword">nullptr</span></div>
-<div class="line">        or std::getenv(<span class="stringliteral">&quot;FORCE_MPI_INIT&quot;</span>) != <span class="keyword">nullptr</span>)</div>
+<div class="line">    <span class="keywordflow">if</span> (std::getenv(<span class="stringliteral">&quot;OMPI_COMM_WORLD_RANK&quot;</span>) != <span class="keyword">nullptr</span> or std::getenv(<span class="stringliteral">&quot;PMI_RANK&quot;</span>) != <span class="keyword">nullptr</span> or std::getenv(<span class="stringliteral">&quot;PMIX_RANK&quot;</span>) != <span class="keyword">nullptr</span></div>
+<div class="line">        or std::getenv(<span class="stringliteral">&quot;CRAY_MPICH_VERSION&quot;</span>) != <span class="keyword">nullptr</span> or std::getenv(<span class="stringliteral">&quot;FORCE_MPI_INIT&quot;</span>) != <span class="keyword">nullptr</span>)</div>
 <div class="line">      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">    <span class="keywordflow">else</span></div>
 <div class="line">      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">  }()</div>
 </div><!-- fragment -->
-<p>Boolean variable that is true, if one of the environment variables <span class="tt">OMPI_COMM_WORLD_RANK</span>, <span class="tt">PMI_RANK</span>, <span class="tt">CRAY_MPICH_VERSION</span> or <span class="tt">FORCE_MPI_INIT</span> is set, false otherwise. </p>
-<p>The environment variables are set, when a program is executed with <span class="tt">mpirun</span> or <span class="tt">mpiexec</span>. </p>
+<p>Boolean variable that is true, if one of the environment variables <span class="tt">OMPI_COMM_WORLD_RANK</span>, <span class="tt">PMI_RANK</span>, <span class="tt">PMIX_RANK</span>, <span class="tt">CRAY_MPICH_VERSION</span> or <span class="tt">FORCE_MPI_INIT</span> is set, false otherwise. </p>
+<p>The environment variables are set, when a program is executed with <span class="tt">mpirun</span>, <span class="tt">mpiexec</span>, or <span class="tt">srun</span>. </p>
 
 <p class="definition">Definition at line <a class="el" href="environment_8hpp_source.html#l00054">54</a> of file <a class="el" href="environment_8hpp_source.html">environment.hpp</a>.</p>
 
