@@ -43,14 +43,14 @@ namespace mpi {
   }
 
   /**
-   * @brief Boolean variable that is true, if one of the environment variables `OMPI_COMM_WORLD_RANK`,
-   * `PMI_RANK`, `CRAY_MPICH_VERSION` or `FORCE_MPI_INIT` is set, false otherwise.
+   * @brief Boolean variable that is true, if one of the environment variables `OMPI_COMM_WORLD_RANK`, `PMI_RANK`,
+   * `PMIX_RANK`, `CRAY_MPICH_VERSION` or `FORCE_MPI_INIT` is set, false otherwise.
    *
-   * @details The environment variables are set, when a program is executed with `mpirun` or `mpiexec`.
+   * @details The environment variables are set, when a program is executed with `mpirun`, `mpiexec`, or `srun`.
    */
   static const bool has_env = []() {
-    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr or std::getenv("CRAY_MPICH_VERSION") != nullptr
-        or std::getenv("FORCE_MPI_INIT") != nullptr)
+    if (std::getenv("OMPI_COMM_WORLD_RANK") != nullptr or std::getenv("PMI_RANK") != nullptr or std::getenv("PMIX_RANK") != nullptr
+        or std::getenv("CRAY_MPICH_VERSION") != nullptr or std::getenv("FORCE_MPI_INIT") != nullptr)
       return true;
     else
       return false;
