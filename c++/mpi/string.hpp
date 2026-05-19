@@ -66,7 +66,7 @@ namespace mpi {
    */
   inline void mpi_gather_into(std::string const &s_in, std::string &s_out, communicator c = {}, int root = 0, bool all = false) {
     auto const gather_size = mpi::all_reduce(s_in.size(), c);
-    if ((c.rank() == root || all) && s_out.size() != s_in.size()) s_out.resize(gather_size);
+    if ((c.rank() == root || all) && s_out.size() != gather_size) s_out.resize(gather_size);
     gather_range(s_in, s_out, c, root, all);
   }
 
