@@ -8,9 +8,9 @@ var searchData=
   ['all_5freduce_5',['all_reduce',['../group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca',1,'mpi']]],
   ['all_5freduce_5fin_5fplace_6',['all_reduce_in_place',['../group__coll__comm.html#ga85d54c696e3628d4c4cb00144b21af77',1,'mpi']]],
   ['all_5freduce_5finto_7',['all_reduce_into',['../group__coll__comm.html#gac610f83627269677d2d54ec85239d41c',1,'mpi']]],
-  ['and_20operations_8',['and operations',['../group__mpi__types__ops.html',1,'MPI datatypes and operations'],['../documentation.html#autotoc_md14',1,'MPI datatypes and operations']]],
+  ['and_20operations_8',['and operations',['../group__mpi__types__ops.html',1,'MPI datatypes and operations'],['../documentation.html#autotoc_md17',1,'MPI datatypes and operations']]],
   ['and_20operator_9',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
-  ['and_20shared_20memory_10',['and shared memory',['../group__mpi__osc__shm.html',1,'MPI one-sided communication and shared memory'],['../documentation.html#autotoc_md16',1,'MPI one-sided communication and shared memory']]],
+  ['and_20shared_20memory_10',['and shared memory',['../group__mpi__osc__shm.html',1,'MPI one-sided communication and shared memory'],['../documentation.html#autotoc_md19',1,'MPI one-sided communication and shared memory']]],
   ['api_20documentation_11',['API Documentation',['../documentation.html',1,'']]],
   ['array_2ehpp_12',['array.hpp',['../array_8hpp.html',1,'']]]
 ];

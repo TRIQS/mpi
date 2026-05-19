@@ -45,7 +45,7 @@ var NAVTREE =
       [ "Example 1: Hello world!", "ex1.html", null ],
       [ "Example 2: Use monitor to communicate errors", "ex2.html", null ],
       [ "Example 3: Custom type and operator", "ex3.html", null ],
-      [ "Example 4: Provide custom spezializations", "ex4.html", null ]
+      [ "Example 4: Provide custom specializations", "ex4.html", null ]
     ] ],
     [ "API Documentation", "documentation.html", [
       [ "MPI essentials", "group__mpi__essentials.html", [
@@ -98,6 +98,6 @@ var NAVTREEINDEX =
 "array_8hpp.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronization';
-var SYNCOFFMSG = 'click to enable panel synchronization';
-var LISTOFALLMEMBERS = 'List of all members';
+const SYNCONMSG = 'click to disable panel synchronization';
+const SYNCOFFMSG = 'click to enable panel synchronization';
+const LISTOFALLMEMBERS = 'List of all members';

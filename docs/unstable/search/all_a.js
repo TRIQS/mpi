@@ -4,7 +4,7 @@ var searchData=
   ['fetchcontent_1',['FetchContent',['../integration.html#fetch',1,'']]],
   ['finalize_5fcommunications_2',['finalize_communications',['../classmpi_1_1monitor.html#a3df005fea16b138d4e65edf0c5361f7e',1,'mpi::monitor']]],
   ['find_5fpackage_3',['find_package',['../integration.html#find_package',1,'']]],
-  ['fixes_4',['fixes',['../changelog.html#autotoc_md7',1,'']]],
+  ['fixes_4',['fixes',['../changelog.html#autotoc_md10',1,'']]],
   ['flush_5',['flush',['../classmpi_1_1window.html#ab6548416f49ce24fb5bac6914e0a6ee1',1,'mpi::window']]],
   ['free_6',['free',['../classmpi_1_1communicator.html#a899052bb4c6f8e335e7a96ec2959d3b2',1,'mpi::communicator::free()'],['../classmpi_1_1group.html#a304273091a2e547e9604c33028c2fede',1,'mpi::group::free()'],['../classmpi_1_1window.html#abbe2c1bc64e4eb376852fb649d6723c3',1,'mpi::window::free()']]]
 ];

@@ -40,7 +40,7 @@ var menudata={children:[
 {text:"Example 1: Hello world!",url:"ex1.html"},
 {text:"Example 2: Use monitor to communicate errors",url:"ex2.html"},
 {text:"Example 3: Custom type and operator",url:"ex3.html"},
-{text:"Example 4: Provide custom spezializations",url:"ex4.html"}]},
+{text:"Example 4: Provide custom specializations",url:"ex4.html"}]},
 {text:"API Documentation",url:"documentation.html",children:[
 {text:"MPI essentials",url:"group__mpi__essentials.html",children:[
 {text:"communicator",url:"classmpi_1_1communicator.html"},

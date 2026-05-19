@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['4_3a_20provide_20custom_20spezializations_0',['Example 4: Provide custom spezializations',['../ex4.html',1,'']]]
+  ['4_3a_20provide_20custom_20specializations_0',['Example 4: Provide custom specializations',['../ex4.html',1,'']]]
 ];
