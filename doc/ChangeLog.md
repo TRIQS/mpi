@@ -1,5 +1,40 @@
 @page changelog Changelog
 
+## Version 2.0.0
+
+This is version 2.0.0 of mpi, a high-level C++ interface to the [Message Passing Interface].
+
+We thank all contributors: Thomas Hahn, Alexander Hampel, Dominik Kiese, Henri Menke, Dylan Simon, Hugo U.R. Strand, Nils Wentzell
+
+Find below an itemized list of changes in this release.
+
+### General
+* Fix bug in mpi_gather_into for strings
+* Remove [[gnu::always_inline]] attributes to avoid gcc warnings
+* Add is_finalized function and do not use check_mpi_call in noexcept functions
+* Add PMIX_RANK to MPI environment detection
+* Add MPI support for std::optional
+* Fix issue #30: Adjust oversubscribe by using mpi library version check instead of execute_process
+* Add a multi-node CI job for MPI Shared Memory
+* Add MPI one-sided communication with windows, groups, and shared memory
+* Remove redundant Dockerfile.build
+* Remove lazy.hpp
+* Improve collective communications
+* Create custom mpi types for serializable custom types
+* Use universal references in generic communciations
+* Add mpi_broadcast, mpi_reduce_in_place and mpi_reduce for std::array
+* Add collective communications for general contiguous and sized ranges
+* Add an all_equal function to generic_communication.hpp
+* Add check_mpi_call function and wrap all MPI calls in it
+* Generalize monitor class
+* Add duplicate and free functions to communicator
+
+### doc
+* Move code in overview.md to example folder
+* Add example codes to doc folder and make sure they compile
+* Add FI support notice to README.md
+
+
 ## Version 1.3.0
 
 This is version 1.3.0 of mpi, a high-level C++ interface to the [Message Passing Interface].
