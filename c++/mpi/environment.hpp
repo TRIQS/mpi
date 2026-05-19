@@ -55,7 +55,7 @@ namespace mpi {
   }
 
   /**
-   * @brief Boolean variable that checkes if there is an active MPI runtime environment.
+   * @brief Boolean variable that checks if there is an active MPI runtime environment.
    *
    * @details It is true if one of the environment variables `OMPI_COMM_WORLD_RANK`, `PMI_RANK`, `CRAY_MPICH_VERSION`,
    * `PMIX_RANK` or `FORCE_MPI_INIT` is set, false otherwise.

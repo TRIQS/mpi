@@ -99,7 +99,7 @@ namespace mpi {
   }
 
   /**
-   * @brief Generic in place MPI reduce.
+   * @brief Generic in-place MPI reduce.
    *
    * @details We call mpi::reduce_into with the given object as the input and output argument.
    *

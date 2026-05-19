@@ -13,20 +13,25 @@ If you are looking for a specific function, class, etc., try using the search ba
 
 ## MPI essentials
 
-@ref mpi_essentials provide the user with two classes necessary for any MPI program:
+@ref mpi_essentials provides the user with the classes that are necessary for any MPI program:
 
-* The mpi::environment class is used to initialize and finialize the MPI execution environment.
+* The mpi::environment class is used to initialize and finalize the MPI execution environment.
   It calls `MPI_Init` in its constructor and `MPI_Finalize` in its destructor.
   There should be at most one instance in every program and it is usually created at the very beginning of the `main`
   function.
 
 * The mpi::communicator class is a simple wrapper around an `MPI_Comm` object.
-  Besides storing the `MPI_Comm` object, it also provides some convient functions for getting the size of the
-  communicator, the rank of the current process or for splitting an existing communicator.
+  Besides storing the `MPI_Comm` object, it also provides convenient functions for getting the size of the communicator
+  and the rank of the current process (mpi::communicator::size, mpi::communicator::rank), for creating new
+  communicators (mpi::communicator::split, mpi::communicator::split_shared, mpi::communicator::duplicate), for freeing
+  them (mpi::communicator::free) and for synchronization (mpi::communicator::barrier, which supports a polling interval
+  to reduce CPU load) or aborting (mpi::communicator::abort).
+  The mpi::shared_communicator subtype is returned by mpi::communicator::split_shared and exists at the type level so
+  that shared-memory APIs cannot be called on regular communicators by accident.
 
 * The mpi::group class is a simple wrapper around an `MPI_Group` object.
-  Besides storing the `MPI_Group` object, it also provides some convient functions for getting the size of the
-  group, the rank of the current process or for splitting the group based on include rules.
+  Besides storing the `MPI_Group` object, it also provides convenient functions for getting the size of the group, the
+  rank of the current process and for creating a sub-group from a list of ranks via mpi::group::include.
 
 It further contains the convenient functions mpi::is_initialized and mpi::is_finalized and the static boolean 
 mpi::has_env.
@@ -62,6 +67,17 @@ See the "Functions" section in @ref coll_comm to check which datatypes and MPI o
 
 In case your datatype is not supported, you are free to provide your own specialization.
 
+A reduction reads similarly. The following sums an integer across all ranks and returns the result on rank 0:
+
+```cpp
+mpi::communicator world;
+int sum = mpi::reduce(world.rank(), world);
+// on rank 0: sum == 0 + 1 + ... + (size - 1)
+// on other ranks: sum is default constructed
+```
+
+Use mpi::all_reduce (or pass `all = true`) if every rank needs the result.
+
 ## MPI one-sided communication and shared memory
 
 @ref mpi_osc_shm can be used to get data from or put data directly to the memory
@@ -69,9 +85,16 @@ of another process.  This can be done without the involvement of processes that
 are unaffected by the data transfer, i.e. no collective call is required, only
 the origin and target process of the data transfer must cooperate.
 
+This is provided through the move-only class template mpi::window, which wraps `MPI_Win` and exposes the usual
+synchronization (fence / flush / sync / lock-unlock / post-start-complete-wait) and data-movement (get / put) primitives.
+
 Another use-case of @ref mpi_osc_shm is the shared memory aspect by which
 MPI applications can reduce their memory requirements through the deduplication
 of replicated data between MPI ranks that are executed on the same SMP node.
+
+For this use case the library provides mpi::shared_window, an `MPI_Win_allocate_shared`-backed specialization built on
+top of a mpi::shared_communicator. The per-rank base pointer and byte size can be retrieved with
+mpi::shared_window::query.
 
 ## Event handling
 
@@ -84,6 +107,14 @@ processes.
 
 @ref utilities is a collection of various other tools in **mpi** which do not fit into any other category above.
 
-For users, the most useful of them is probably mpi::check_mpi_call.
-A wrapper function that checks the error code returned by MPI C library routines and throws an exception in case the
-code is `!= MPI_SUCCESS`.
+For users, the most useful entries are:
+
+* mpi::check_mpi_call wraps a return code from an MPI C-library routine and throws a `std::runtime_error` if it is
+  `!= MPI_SUCCESS`. It is used internally by every direct MPI call in the library.
+
+* mpi::chunk and mpi::chunk_length distribute a range across the processes of a communicator. mpi::chunk takes a range
+  and returns the slice assigned to the calling rank; mpi::chunk_length is the integer-range variant and accepts an
+  optional `min_size` granularity.
+
+* mpi::MPICompatibleRange is the concept that gates the contiguous-buffer fast paths in the generic range
+  communication functions: it holds for contiguous, sized ranges whose value type has a corresponding mpi::mpi_type.

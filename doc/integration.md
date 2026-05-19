@@ -42,7 +42,7 @@ add_executable(my_executable main.cpp)
 target_link_libraries(my_executable mpi::mpi_c)
 ```
 
-Note that the above will also build [goolgetest](https://github.com/google/googletest) and the unit tests for **mpi**.
+Note that the above will also build [googletest](https://github.com/google/googletest) and the unit tests for **mpi**.
 To disable this, you can put `set(Build_Tests OFF CACHE BOOL "" FORCE)` before fetching the content or by specifying
 `-DBuild_Tests=OFF` on the command line.
 
@@ -77,7 +77,7 @@ $ source path_to_install_dir/share/mpi/mpivars.sh
 
 @subsection add_sub add_subdirectory
 
-You can also integrate **mpi** into our CMake project by placing the entire source tree in a subdirectory and call
+You can also integrate **mpi** into your CMake project by placing the entire source tree in a subdirectory and call
 `add_subdirectory()`:
 
 ```cmake
@@ -96,6 +96,6 @@ Here, it is assumed that the **mpi** source tree is in a subdirectory `deps/mpi`
 
 @section other Other
 
-Since **mpi** is header-only, you can also simply copy the relevant files directly into our project.
+Since **mpi** is header-only, you can also simply copy the relevant files directly into your project.
 For example, you could place the `c++/mpi` directory from the **mpi** source tree into the include path of your project.
 You can then build or compile it with any available method.

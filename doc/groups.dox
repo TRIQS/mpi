@@ -1,9 +1,16 @@
 /**
  * @defgroup mpi_essentials MPI essentials
- * @brief Simplify the initialization/finalization of an MPI environment and the usage of an `MPI_Comm` object
- * by wrapping it in a C++ class.
+ * @brief Simplify the initialization/finalization of an MPI environment and the usage of `MPI_Comm` and `MPI_Group`
+ * objects by wrapping them in C++ classes.
  *
- * @details A typical `Hello world!` program using mpi::environment and mpi::communicator can be found in @ref ex1.
+ * @details This group provides the building blocks needed by virtually every MPI program:
+ * - mpi::environment is an RAII wrapper that calls `MPI_Init` in its constructor and `MPI_Finalize` in its destructor.
+ * - mpi::communicator wraps `MPI_Comm` and adds convenience methods for rank/size, splitting, duplicating, barrier
+ * synchronization (with optional polling to reduce CPU load) and aborting. mpi::shared_communicator is a distinct
+ * subtype returned by mpi::communicator::split_shared to make shared-memory APIs type-safe.
+ * - mpi::group wraps `MPI_Group` with move-only semantics and supports creating sub-groups via mpi::group::include.
+ *
+ * A typical `Hello world!` program using mpi::environment and mpi::communicator can be found in @ref ex1.
  */
 
 /**
@@ -13,10 +20,14 @@
  *
  * @details The following functionality is provided:
  *
- * - mpi::mpi_type and its specializations let **mpi** know that a certain type C++ `T` can be used in MPI 
- * communications. The user is allowed to implement their own MPI compatible types and provide a specializtion of 
+ * - mpi::mpi_type and its specializations let **mpi** know that a certain C++ type `T` can be used in MPI
+ * communications. The user is allowed to implement their own MPI compatible types and provide a specialization of
  * mpi::mpi_type. Its static member function `get` maps the C++ type `T` to its corresponding MPI datatype.
  * - mpi::has_mpi_type checks if a given type has a corresponding MPI datatype.
+ * - For aggregate types, providing a free function `tie_data` that returns a `std::tuple` of the data members is
+ * enough to make the type MPI-compatible: a specialization of mpi::mpi_type is then synthesized automatically (see
+ * @ref ex3). Internally this uses mpi::get_mpi_type, which builds an `MPI_Datatype` from a `std::tuple` via
+ * `MPI_Type_create_struct`.
  * - mpi::map_add and mpi::map_C_function can help the user to implement custom MPI operations.
  *
  * See @ref ex3 for a detailed example.
@@ -28,27 +39,30 @@
  * gather, scatter).
  *
  * @details **mpi** provides several generic collective communications routines as well as specializations for certain
- * common types. The generic functions usually simply forward the call to one of the specializations (`mpi_broadcast`,
- * `mpi_gather`, `mpi_gather_into`, `mpi_reduce`, `mpi_reduce_into`, `mpi_scatter` or `mpi_scatter_into`) using ADL but
- * can also perform some additional checks. It is therefore recommended to always use the generic versions when
+ * common types. The generic functions usually simply forward the call to one of the specializations (`%mpi_broadcast`,
+ * `%mpi_gather`, `%mpi_gather_into`, `%mpi_reduce`, `%mpi_reduce_into`, `%mpi_scatter` or `%mpi_scatter_into`) using 
+ * ADL but can also perform some additional checks. It is therefore recommended to always use the generic versions when
  * possible.
  *
  * Here is a short overview of the available generic functions:
- * - mpi::broadcast: Calls the specialization `mpi_broadcast`.
- * - mpi::gather: Calls the specialization `mpi_gather` if it is implemented. Otherwise, it calls mpi::gather_into with
+ * - mpi::broadcast: Calls the specialization `%mpi_broadcast`.
+ * - mpi::gather: Calls the specialization `%mpi_gather` if it is implemented. Otherwise, it calls mpi::gather_into with
  * a default constructed output object.
- * - mpi::gather_into: Calls the specialization `mpi_gather_into`.
- * - mpi::reduce: Calls the specialization `mpi_reduce` if it is implemented. Otherwise, it calls mpi::reduce_into with
+ * - mpi::gather_into: Calls the specialization `%mpi_gather_into`.
+ * - mpi::reduce: Calls the specialization `%mpi_reduce` if it is implemented. Otherwise, it calls mpi::reduce_into with
  * a default constructed output object.
- * - mpi::reduce_in_place: Calls the specialization `mpi_reduce_into` with the same input and output object.
- * - mpi::reduce_into: Calls the specialization `mpi_reduce_into`.
- * - mpi::scatter: Calls the specialization `mpi_scatter` if it is implemented. Otherwise, it calls mpi::scatter_into
+ * - mpi::reduce_in_place: Calls the specialization `%mpi_reduce_into` with the same input and output object.
+ * - mpi::reduce_into: Calls the specialization `%mpi_reduce_into`.
+ * - mpi::scatter: Calls the specialization `%mpi_scatter` if it is implemented. Otherwise, it calls mpi::scatter_into
  * with a default constructed output object.
- * - mpi::scatter_into: Calls the specialization `mpi_scatter_into`.
+ * - mpi::scatter_into: Calls the specialization `%mpi_scatter_into`.
  *
  * In case, all processes should receive the result of the MPI operation, one can use the convenience functions
  * mpi::all_gather, mpi::all_gather_into, mpi::all_reduce, mpi::all_reduce_in_place or mpi::all_reduce_into. They
  * forward the given arguments to their "non-all" counterparts with the `all` argument set to true.
+ *
+ * The related helper mpi::all_equal checks whether a given value is equal across all ranks (useful for guarding
+ * preconditions in collective wrappers).
  *
  * **mpi** provides various specializations for several types. For example,
  * - for MPI compatible types, i.e. for types that have a corresponding mpi::mpi_type, it provides an
@@ -57,9 +71,25 @@
  * @ref "mpi::mpi_reduce_into(T const &, T &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce_into",
  * @ref "mpi::mpi_gather(T const &, mpi::communicator, int, bool)" "mpi_gather" and an
  * @ref "mpi::mpi_gather_into(T const &, R &&, mpi::communicator, int, bool)" "mpi_gather_into".
- * - for strings, it provides an @ref "mpi::mpi_broadcast(std::string &, mpi::communicator, int)" "mpi_broadcast"
+ * - for `std::string`, it provides an @ref "mpi::mpi_broadcast(std::string &, mpi::communicator, int)" "mpi_broadcast"
  * and an @ref "mpi::mpi_gather_into(std::string const &, std::string &, mpi::communicator, int, bool)"
  * "mpi_gather_into".
+ * - for `std::vector`, it provides an
+ * @ref "mpi::mpi_broadcast(std::vector< T > &, mpi::communicator, int)" "mpi_broadcast",
+ * @ref "mpi::mpi_reduce(std::vector< T > const &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce",
+ * @ref "mpi::mpi_reduce_into(std::vector< T1 > const &, std::vector< T2 > &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce_into",
+ * @ref "mpi::mpi_scatter_into(std::vector< T > const &, std::vector< T > &, mpi::communicator, int)" "mpi_scatter_into" and an
+ * @ref "mpi::mpi_gather_into(std::vector< T > const &, std::vector< T > &, mpi::communicator, int, bool)" "mpi_gather_into".
+ * - for `std::array`, it provides an
+ * @ref "mpi::mpi_broadcast(std::array< T, N > &, mpi::communicator, int)" "mpi_broadcast",
+ * @ref "mpi::mpi_reduce(std::array< T, N > const &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce" and an
+ * @ref "mpi::mpi_reduce_into(std::array< T1, N1 > const &, std::array< T2, N2 > &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce_into".
+ * - for `std::pair`, it provides an
+ * @ref "mpi::mpi_broadcast(std::pair< T1, T2 > &, mpi::communicator, int)" "mpi_broadcast" and an
+ * @ref "mpi::mpi_reduce(std::pair< T1, T2 > const &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce".
+ * - for `std::optional`, it provides an
+ * @ref "mpi::mpi_broadcast(std::optional< T > &, mpi::communicator, int)" "mpi_broadcast" and an
+ * @ref "mpi::mpi_reduce_into(std::optional< T1 > const &, std::optional< T2 > &, mpi::communicator, int, bool, MPI_Op)" "mpi_reduce_into".
  *
  * Users are encouraged to implement their own specializations for their custom types or in case a specialization is
  * missing (see e.g. @ref ex4).
@@ -73,7 +103,16 @@
  * @defgroup mpi_osc_shm MPI one-sided communication and shared memory
  * @brief Abstraction over the `MPI_Win` object that facilitates remote memory access and node-local shared memory.
  *
- * @details The primary usage is the shared memory to deduplicate data that is shared by all MPI ranks.
+ * @details Two move-only class templates are provided:
+ * - mpi::window wraps `MPI_Win` for generic one-sided communication. It either takes ownership of a user-provided
+ * buffer or allocates one internally via `MPI_Win_allocate`. Data movement is done with mpi::window::get and
+ * mpi::window::put; synchronization is done with mpi::window::fence, mpi::window::flush, mpi::window::sync,
+ * mpi::window::lock / mpi::window::unlock (passive target) or mpi::window::post / mpi::window::start /
+ * mpi::window::complete / mpi::window::wait (general active target).
+ * - mpi::shared_window is a `MPI_Win_allocate_shared`-backed specialization built on top of mpi::shared_communicator.
+ * It is intended for deduplicating large read-mostly data across MPI ranks that share an SMP node. The per-rank
+ * shared base pointer, byte size and displacement unit can be retrieved with mpi::shared_window::query (or the
+ * convenience accessors mpi::shared_window::base, mpi::shared_window::size and mpi::shared_window::disp_unit).
  */
 
 /**
@@ -86,5 +125,14 @@
 
 /**
  * @defgroup utilities Utilities
- * @brief Some other utilities used in the mpi library.
+ * @brief Miscellaneous helpers used throughout the mpi library.
+ *
+ * @details The most user-facing entries are:
+ * - mpi::check_mpi_call: thin wrapper that turns a non-`MPI_SUCCESS` return code into a `std::runtime_error`. Used
+ * internally by every direct MPI C-API call in the library.
+ * - mpi::chunk and mpi::chunk_length: split a range across the processes of a communicator as evenly as possible.
+ * mpi::chunk returns the slice assigned to the calling rank; mpi::chunk_length is the integer-range variant with an
+ * optional `min_size` granularity.
+ * - mpi::MPICompatibleRange: concept that holds for contiguous, sized ranges whose value type satisfies
+ * mpi::has_mpi_type. This is what enables the fast paths in the generic range communication functions.
  */

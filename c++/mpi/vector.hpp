@@ -136,7 +136,7 @@ namespace mpi {
    * @param v_out `std::vector` to gather into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
-   * @param all Should all processes receive the result.
+   * @param all Should all processes receive the result of the gather.
    */
   template <typename T> void mpi_gather_into(std::vector<T> const &v_in, std::vector<T> &v_out, communicator c = {}, int root = 0, bool all = false) {
     auto const gather_size = mpi::all_reduce(v_in.size(), c);
