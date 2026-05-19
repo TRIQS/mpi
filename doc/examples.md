@@ -5,7 +5,7 @@
 - @ref ex1 "Example 1: Hello world!"
 - @ref ex2 "Example 2: Use monitor to communicate errors"
 - @ref ex3 "Example 3: Custom type and operator"
-- @ref ex4 "Example 4: Provide custom spezializations"
+- @ref ex4 "Example 4: Provide custom specializations"
 
 @section compiling Compiling the examples
 

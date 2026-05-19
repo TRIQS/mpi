@@ -62,7 +62,7 @@ namespace mpi {
    * @param s_out `std::string` to gather into.
    * @param c mpi::communicator.
    * @param root Rank of the root process.
-   * @param all Should all processes receive the result.
+   * @param all Should all processes receive the result of the gather.
    */
   inline void mpi_gather_into(std::string const &s_in, std::string &s_out, communicator c = {}, int root = 0, bool all = false) {
     auto const gather_size = mpi::all_reduce(s_in.size(), c);

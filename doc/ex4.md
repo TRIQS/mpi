@@ -1,4 +1,4 @@
-@page ex4 Example 4: Provide custom spezializations
+@page ex4 Example 4: Provide custom specializations
 
 [TOC]
 
@@ -15,8 +15,8 @@ Reduced vector: 4 8 12 16 20
 Note that by providing a simple `mpi_reduce_into` for our custom `foo` type, we are able to reduce a `std::vector` of
 `foo` objects without any additional work.
 
-Under the hood, each `foo` object is reduced spearately using the above specialization.
+Under the hood, each `foo` object is reduced separately using the above specialization.
 For large amounts of data or in performance critical code sections, this might not be desired.
-In such a case, it is usally better to make the type MPI compatible such that the reduction can be done with a single
+In such a case, it is usually better to make the type MPI compatible such that the reduction can be done with a single
 call to MPI C library.
 See @ref ex3 for more details.

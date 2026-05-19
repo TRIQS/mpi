@@ -127,7 +127,7 @@ namespace mpi {
    * @brief Create a new `MPI_Datatype` from a tuple.
    *
    * @details The tuple element types must have corresponding MPI datatypes, i.e. they must have mpi::mpi_type
-   * specializtions. It uses `MPI_Type_create_struct` to create a new datatype consisting of the tuple element types.
+   * specializations. It uses `MPI_Type_create_struct` to create a new datatype consisting of the tuple element types.
    *
    * The success of MPI calls is checked with mpi::check_mpi_call.
    *

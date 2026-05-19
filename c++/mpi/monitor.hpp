@@ -280,7 +280,7 @@ namespace mpi {
     // Set to 1, if an event has occurred on all processes.
     int all_events_ = 0;
 
-    // Set to true, if finialize_communications() has been called.
+    // Set to true, if finalize_communications() has been called.
     bool finalized_ = false;
   };
 

@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 in the MPI standard.
 
 The main purpose of the library is to simplify the most common tasks like initializing/finalizing the MPI execution
-environment or performing non-blocking collective communications.
+environment or performing collective communications.
 
 For more advanced tasks, the user can always resort to the underlying MPI C-implementation.
 
