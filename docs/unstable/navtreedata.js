@@ -88,6 +88,7 @@ var NAVTREE =
       ] ],
       [ "File List", "files.html", "files" ]
     ] ],
+    [ "Sanitizer builds and Open MPI 5+", "sanitizers.html", null ],
     [ "Changelog", "changelog.html", null ],
     [ "Issues", "issues.html", null ]
   ] ]

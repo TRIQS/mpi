@@ -1,12 +1,7 @@
 var searchData=
 [
-  ['in_20c_20projects_0',['Integration in C++ projects',['../integration.html',1,'']]],
-  ['include_1',['include',['../classmpi_1_1group.html#a43d74dc0193950103541945bf61efa4f',1,'mpi::group']]],
-  ['installation_2',['Installation',['../installation.html',1,'']]],
-  ['installation_20steps_3',['Installation steps',['../installation.html#install_steps',1,'']]],
-  ['integration_20in_20c_20projects_4',['Integration in C++ projects',['../integration.html',1,'']]],
-  ['is_5ffinalized_5',['is_finalized',['../group__mpi__essentials.html#gafc5a163214422d021199075377cd1292',1,'mpi']]],
-  ['is_5finitialized_6',['is_initialized',['../group__mpi__essentials.html#gaee54f343fdd8f1712ae521bd8ee69dfc',1,'mpi']]],
-  ['is_5fnull_7',['is_null',['../classmpi_1_1communicator.html#ac7584aba836c5af942a9f1323ace9abd',1,'mpi::communicator::is_null()'],['../classmpi_1_1group.html#a0ed8544d1b382c90d0786a9d1351fd62',1,'mpi::group::is_null()']]],
-  ['issues_8',['Issues',['../issues.html',1,'']]]
+  ['handling_0',['handling',['../group__event__handling.html',1,'Event handling'],['../documentation.html#autotoc_md20',1,'Event handling']]],
+  ['has_5fenv_1',['has_env',['../group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1',1,'mpi']]],
+  ['has_5fmpi_5ftype_2',['has_mpi_type',['../group__mpi__types__ops.html#ga44de7d8c13a47e297331b0a1109be006',1,'mpi']]],
+  ['hello_20world_3',['Example 1: Hello world!',['../ex1.html',1,'']]]
 ];

@@ -75,5 +75,6 @@ var menudata={children:[
 {text:"Utilities",url:"group__utilities.html",children:[
 {text:"MPICompatibleRange",url:"conceptmpi_1_1_m_p_i_compatible_range.html"}]},
 {text:"File List",url:"files.html"}]},
+{text:"Sanitizer builds and Open MPI 5+",url:"sanitizers.html"},
 {text:"Changelog",url:"changelog.html"},
 {text:"Issues",url:"issues.html"}]}
