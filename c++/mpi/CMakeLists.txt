@@ -52,11 +52,31 @@ if(NOT MPIEXEC_EXECUTABLE)
   set(MPIEXEC_EXECUTABLE ${MPIEXEC} CACHE FILENAME "MPI Executable")
 endif()
 
-# Open-MPI 3.0+ requires --oversubscribe flag
-if(MPI_CXX_LIBRARY_VERSION_STRING MATCHES "Open MPI v([0-9]+)" AND CMAKE_MATCH_1 GREATER_EQUAL 3)
+# Open-MPI specific MPIEXEC_PREFLAGS tweaks. Downstream add_test() calls
+# already thread ${MPIEXEC_PREFLAGS} to mpiexec, so this reaches all of them.
+# We rebuild MPIEXEC_PREFLAGS from scratch each configure to keep reconfigures
+# idempotent (list(APPEND) on a cached value would otherwise duplicate flags).
+if(MPI_CXX_LIBRARY_VERSION_STRING MATCHES "Open MPI v([0-9]+)")
   message(STATUS "MPI Version: ${MPI_CXX_LIBRARY_VERSION_STRING}")
-  list(APPEND MPIEXEC_PREFLAGS --oversubscribe)
-  set(MPIEXEC_PREFLAGS ${MPIEXEC_PREFLAGS} CACHE STRING "Flags to pass to mpiexec directly before the executable to run." FORCE)
+  set(MPI_OMPI_MAJOR_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "Detected Open MPI major version (only set when Open MPI is detected)")
+
+  set(_mpi_preflags "")
+
+  # Open-MPI 3+ requires --oversubscribe.
+  if(MPI_OMPI_MAJOR_VERSION GREATER_EQUAL 3)
+    list(APPEND _mpi_preflags --oversubscribe)
+  endif()
+
+  # Open-MPI 5+ routes through UCX by default; UCX's libucm malloc hooks
+  # collide with LLVM sanitizer interceptors and SEGV inside MPI_Init. See
+  # doc/sanitizers.md. Probing via $CACHE{...} works even before downstream
+  # projects declare option(ASAN ...).
+  if(MPI_OMPI_MAJOR_VERSION GREATER_EQUAL 5 AND ($CACHE{ASAN} OR $CACHE{UBSAN} OR $CACHE{MSAN} OR $CACHE{TSAN}))
+    list(APPEND _mpi_preflags --mca pml ob1 --mca btl self,vader --mca osc ^ucx)
+    message(STATUS "Sanitizer + Open MPI ${MPI_OMPI_MAJOR_VERSION}.x detected: appending '--mca pml ob1 --mca btl self,vader --mca osc ^ucx' to MPIEXEC_PREFLAGS to avoid UCX/sanitizer SEGV")
+  endif()
+
+  set(MPIEXEC_PREFLAGS "${_mpi_preflags}" CACHE STRING "Flags to pass to mpiexec directly before the executable to run." FORCE)
 endif()
 
 # ========= Static Analyzer Checks ==========

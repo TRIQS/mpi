@@ -65,6 +65,7 @@
       </tab>
       <tab type="filelist" visible="yes" title="" intro=""/>
     </tab>
+    <tab type="user" url="@ref sanitizers" title="Sanitizer builds and Open MPI 5+"/>
     <tab type="user" url="@ref changelog" title="Changelog"/>
     <tab type="user" url="@ref issues" title="Issues"/>
   </navindex>

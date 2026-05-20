@@ -35,7 +35,18 @@ set(@PROJECT_NAME@_WITH_DOCUMENTATION @Build_Documentation@ CACHE BOOL "Was @PRO
 set(MPIEXEC_EXECUTABLE @MPIEXEC_EXECUTABLE@ CACHE STRING "Executable for running MPI programs.")
 set(MPIEXEC_NUMPROC_FLAG @MPIEXEC_NUMPROC_FLAG@ CACHE STRING "Flag to pass to mpiexec before giving it the number of processors to run on.")
 set(MPIEXEC_MAX_NUMPROCS @MPIEXEC_MAX_NUMPROCS@ CACHE STRING "Flag to pass to mpiexec to set the number of mpi ranks to run on.")
-set(MPIEXEC_PREFLAGS @MPIEXEC_PREFLAGS@ CACHE STRING "Flags to pass to mpiexec directly before the executable to run.")
 set(MPIEXEC_POSTFLAGS @MPIEXEC_POSTFLAGS@ CACHE STRING "Flags to pass to mpiexec after other flags.")
+
+# Rebuild MPIEXEC_PREFLAGS from the baked-in base each configure to keep
+# reconfigures idempotent (mirrors the logic in c++/mpi/CMakeLists.txt).
+set(_mpi_preflags @MPIEXEC_PREFLAGS@)
+set(_mpi_ompi_major "@MPI_OMPI_MAJOR_VERSION@")
+if(_mpi_ompi_major GREATER_EQUAL 5 AND ($CACHE{ASAN} OR $CACHE{UBSAN} OR $CACHE{MSAN} OR $CACHE{TSAN}))
+  list(APPEND _mpi_preflags --mca pml ob1 --mca btl self,vader --mca osc ^ucx)
+  message(STATUS "Sanitizer + Open MPI ${_mpi_ompi_major}.x detected: appending '--mca pml ob1 --mca btl self,vader --mca osc ^ucx' to MPIEXEC_PREFLAGS to avoid UCX/sanitizer SEGV")
+endif()
+set(MPIEXEC_PREFLAGS "${_mpi_preflags}" CACHE STRING "Flags to pass to mpiexec directly before the executable to run." FORCE)
+unset(_mpi_preflags)
+unset(_mpi_ompi_major)
 
 endif()
