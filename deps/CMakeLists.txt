@@ -60,5 +60,4 @@ external_dependency(itertools
   GIT_REPO https://github.com/TRIQS/itertools
   VERSION 1.3
   GIT_TAG unstable
-
 )
