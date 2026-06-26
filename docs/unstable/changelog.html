@@ -157,20 +157,30 @@ General</h3>
 <li>Add check_mpi_call function and wrap all MPI calls in it</li>
 <li>Generalize monitor class</li>
 <li>Add duplicate and free functions to communicator</li>
+<li>Auto-detect sanitizer builds on Open MPI 5+ and append <span class="tt">--mca pml ob1 --mca btl self,vader --mca osc ^ucx</span> to MPIEXEC_PREFLAGS to work around the UCX/sanitizer SEGV in MPI_Init</li>
 </ul>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
+cmake</h3>
+<ul>
+<li>Bump the minimum required CMake version to 3.22</li>
+<li>Update Clang warning suppressions to silence C++26 / c2y extension warnings</li>
+<li>Rebuild MPIEXEC_PREFLAGS idempotently on reconfigure</li>
+<li>Fix the Debian-package architecture variable name (CPACK_DEBIAN_PACKAGE_ARCHITECTURE)</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
 doc</h3>
 <ul>
 <li>Move code in overview.md to example folder</li>
 <li>Add example codes to doc folder and make sure they compile</li>
 <li>Add FI support notice to README.md</li>
+<li>Add doc/sanitizers.md documenting sanitizer builds and the Open MPI 5+ UCX workaround</li>
 </ul>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
 Version 1.3.0</h2>
 <p>This is version 1.3.0 of mpi, a high-level C++ interface to the [Message Passing Interface].</p>
 <p>We thank all contributors: Thomas Hahn, Alexander Hampel, Henri Menke, Dylan Simon, Hugo U.R. Strand, Nils Wentzell</p>
 <p>Find below an itemized list of changes in this release.</p>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
 General</h3>
 <ul>
 <li>Clean up detail namespace to consistently contain implementation details</li>
@@ -187,7 +197,7 @@ General</h3>
 <li>Fix #8 to restore compatibility against MPICH</li>
 <li>Make sure to specialize mpi_type&lt;..&gt; also for constant builtin types</li>
 </ul>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
 cmake</h3>
 <ul>
 <li>Remove python and cpp2py dependencies</li>
@@ -195,19 +205,19 @@ cmake</h3>
 <li>Set policy CMP0144 to new</li>
 <li>Export MPIEXEC_MAX_NUMPROCS variable</li>
 </ul>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
 doc</h3>
 <ul>
 <li>Add documentation to the C++ source code files</li>
 <li>Remove any sphinx related files and switch to doxygen to generate documentation</li>
 <li>Build and deploy documentation with GitHub Actions</li>
 </ul>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
 Version 1.2.0</h2>
 <p>This is version 1.2.0 of mpi, a high-level C++ interface to the [Message Passing Interface].</p>
 <p>We thank all contributors: Thomas Hahn, Alexander Hampel, Dylan Simon, Hugo U.R. Strand, Nils Wentzell</p>
 <p>Find below an itemized list of changes in this release.</p>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
 General</h3>
 <ul>
 <li>Force mpi initialization when FORCE_MPI_INIT is set in environment</li>
@@ -215,7 +225,7 @@ General</h3>
 <li>Fix compiler warnings</li>
 <li>clang-format all source files</li>
 </ul>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
 cmake</h3>
 <ul>
 <li>Add compiler warnings for IntelLLVM</li>
@@ -224,7 +234,7 @@ cmake</h3>
 <li>Remove redundant PythonSupport check</li>
 <li>Update Findsanitizer.cmake to include TSAN and MSAN</li>
 </ul>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
 fixes</h3>
 <ul>
 <li>Make sure to specialize mpi_type&lt;..&gt; also for constant builtin types</li>
@@ -233,12 +243,12 @@ fixes</h3>
 <li>Protect <a class="el" href="structmpi_1_1environment.html" title="RAII class to initialize and finalize MPI.">mpi::environment</a> construction outside of mpirun</li>
 <li>Demote MPI CXX types to C</li>
 </ul>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md12"></a>
 Version 1.1.0</h2>
 <p>This is version 1.1.0 of mpi, a high-level C++ interface to the [Message Passing Interface].</p>
 <p>We thank all contributors: Philipp Dumitrescu, Alexander Hampel, Olivier Parcollet, Dylan Simon, Nils Wentzell</p>
 <p>Find below an itemized list of changes in this release.</p>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md12"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md13"></a>
 General</h3>
 <ul>
 <li>Add <a class="el" href="classmpi_1_1monitor.html" title="Constructed on top of an MPI communicator, this class helps to monitor and communicate events across ...">mpi::monitor</a> class to allow stopping all ranks when exception is thrown on any one of them</li>
@@ -260,13 +270,13 @@ General</h3>
 <li>Type bool should be associated with MPI_CXX_BOOL</li>
 <li>Use MPI_CXX_DOUBLE_COMPLEX over Fortran-specific type MPI_DOUBLE_COMPLEX</li>
 </ul>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md13"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
 doc</h3>
 <ul>
 <li>Add link to reference doc to README.md</li>
 <li>Minor doc cleanups for doxygen generation, add Doxyfile and update .gitignore</li>
 </ul>
-<h3 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
 cmake</h3>
 <ul>
 <li>Do not run mpi_monitor as nompi test</li>
@@ -274,7 +284,7 @@ cmake</h3>
 <li>Use unstable branch of itertools</li>
 <li>Bump Version number to 1.1.0</li>
 </ul>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
 Version 1.0.0</h2>
 <p>mpi is a high-level C++ interface to the [Message Passing Interface].</p>
 <p>This is the initial release for this project. </p>

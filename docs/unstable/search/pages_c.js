@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['general_0',['General',['../changelog.html#autotoc_md1',1,'General'],['../changelog.html#autotoc_md4',1,'General'],['../changelog.html#autotoc_md8',1,'General'],['../changelog.html#autotoc_md12',1,'General']]]
+  ['general_0',['General',['../changelog.html#autotoc_md1',1,'General'],['../changelog.html#autotoc_md5',1,'General'],['../changelog.html#autotoc_md9',1,'General'],['../changelog.html#autotoc_md13',1,'General']]]
 ];

@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('documentation.
 <div class="textblock"><p><b>mpi</b> implements various high-level C++ wrappers around their low-level C counterparts. It is not intended as a full replacement for the C implementation. Instead it tries to help the user with the most common tasks like initializing and finalizing an <a class="el" href="structmpi_1_1environment.html" title="mpi::environment">MPI environment</a> or sending data via <a class="el" href="group__coll__comm.html" title="Collective MPI communication">collective communications</a>.</p>
 <p>The following provides a detailed reference documentation grouped into logical units.</p>
 <p>If you are looking for a specific function, class, etc., try using the search bar in the top left corner.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
 MPI essentials</h2>
 <p><a class="el" href="group__mpi__essentials.html" title="MPI essentials">MPI essentials</a> provides the user with the classes that are necessary for any MPI program:</p>
 <ul>
@@ -142,11 +142,11 @@ MPI essentials</h2>
 <li>The <a class="el" href="classmpi_1_1group.html" title="C++ wrapper around MPI_Group providing various convenience functions.">mpi::group</a> class is a simple wrapper around an <span class="tt">MPI_Group</span> object. Besides storing the <span class="tt">MPI_Group</span> object, it also provides convenient functions for getting the size of the group, the rank of the current process and for creating a sub-group from a list of ranks via <a class="el" href="classmpi_1_1group.html#a43d74dc0193950103541945bf61efa4f" title="Create a new group by calling MPI_Group_incl.">mpi::group::include</a>.</li>
 </ul>
 <p>It further contains the convenient functions <a class="el" href="group__mpi__essentials.html#gaee54f343fdd8f1712ae521bd8ee69dfc" title="Check if MPI has been initialized by calling MPI_Initialized.">mpi::is_initialized</a> and <a class="el" href="group__mpi__essentials.html#gafc5a163214422d021199075377cd1292" title="Check if MPI has been finalized by calling MPI_Finalized.">mpi::is_finalized</a> and the static boolean <a class="el" href="group__mpi__essentials.html#ga590f450f6987d3e6c0398048515856b1" title="Boolean variable that checks if there is an active MPI runtime environment.">mpi::has_env</a>.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
 MPI datatypes and operations</h2>
 <p><a class="el" href="group__mpi__types__ops.html" title="MPI datatypes and operations">MPI datatypes and operations</a> map various C++ datatypes to MPI datatypes and help the user with registering their own datatypes to be used in MPI communications.</p>
 <p>Furthermore, it offers tools to simplify the creation of custom MPI operations usually required in <span class="tt">MPI_Reduce</span> or <span class="tt">MPI_Accumulate</span> functions.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
 Collective MPI communication</h2>
 <p><b>mpi</b> provides several generic <a class="el" href="group__coll__comm.html" title="Collective MPI communication">Collective MPI communication</a>. They offer a much simpler interface than their MPI C library analogs. For example, the following broadcasts a <span class="tt">std::vector&lt;double&gt;</span> from the process with rank 0 to all others:</p>
 <div class="fragment"><div class="line"><a class="code hl_function" href="group__coll__comm.html#gabe5a2bbf0b8121c97f36962450caaa56">mpi::broadcast</a>(vec);</div>
@@ -164,17 +164,17 @@ Collective MPI communication</h2>
 <div class="ttc" id="aclassmpi_1_1communicator_html_a784752e4df5190e553066e57551554a9"><div class="ttname"><a href="classmpi_1_1communicator.html#a784752e4df5190e553066e57551554a9">mpi::communicator::rank</a></div><div class="ttdeci">int rank() const</div><div class="ttdoc">Get the rank of the calling process in the communicator.</div><div class="ttdef"><b>Definition</b> <a href="communicator_8hpp_source.html#l00072">communicator.hpp:72</a></div></div>
 <div class="ttc" id="agroup__coll__comm_html_ga8eaee05122bf70f15de0731b889e3949"><div class="ttname"><a href="group__coll__comm.html#ga8eaee05122bf70f15de0731b889e3949">mpi::reduce</a></div><div class="ttdeci">decltype(auto) reduce(T &amp;&amp;x, communicator c={}, int root=0, bool all=false, MPI_Op op=MPI_SUM)</div><div class="ttdoc">Generic MPI reduce.</div><div class="ttdef"><b>Definition</b> <a href="generic__communication_8hpp_source.html#l00090">generic_communication.hpp:90</a></div></div>
 </div><!-- fragment --><p>Use <a class="el" href="group__coll__comm.html#gabda7358ee96ff22cfdc37b73630406ca" title="Generic MPI all-reduce.">mpi::all_reduce</a> (or pass <span class="tt">all = true</span>) if every rank needs the result.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
 MPI one-sided communication and shared memory</h2>
 <p><a class="el" href="group__mpi__osc__shm.html" title="MPI one-sided communication and shared memory">MPI one-sided communication and shared memory</a> can be used to get data from or put data directly to the memory of another process. This can be done without the involvement of processes that are unaffected by the data transfer, i.e. no collective call is required, only the origin and target process of the data transfer must cooperate.</p>
 <p>This is provided through the move-only class template <a class="el" href="classmpi_1_1window.html" title="A C++ wrapper around MPI_Win providing convenient memory window management.">mpi::window</a>, which wraps <span class="tt">MPI_Win</span> and exposes the usual synchronization (fence / flush / sync / lock-unlock / post-start-complete-wait) and data-movement (get / put) primitives.</p>
 <p>Another use-case of <a class="el" href="group__mpi__osc__shm.html" title="MPI one-sided communication and shared memory">MPI one-sided communication and shared memory</a> is the shared memory aspect by which MPI applications can reduce their memory requirements through the deduplication of replicated data between MPI ranks that are executed on the same SMP node.</p>
 <p>For this use case the library provides <a class="el" href="classmpi_1_1shared__window.html" title="A C++ wrapper around MPI_Win representing a shared memory window.">mpi::shared_window</a>, an <span class="tt">MPI_Win_allocate_shared</span>-backed specialization built on top of a <a class="el" href="classmpi_1_1shared__communicator.html" title="C++ wrapper around MPI_Comm that is a result of the mpi::communicator::split_shared operation.">mpi::shared_communicator</a>. The per-rank base pointer and byte size can be retrieved with <a class="el" href="classmpi_1_1shared__window.html#a680dee01ec42cbfb5230f92a5b9ca78e" title="Query attributes of a shared memory window.">mpi::shared_window::query</a>.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
 Event handling</h2>
 <p><a class="el" href="group__event__handling.html" title="Event handling">Event handling</a> provides the <a class="el" href="classmpi_1_1monitor.html" title="Constructed on top of an MPI communicator, this class helps to monitor and communicate events across ...">mpi::monitor</a> class which can be used to communicate and handle events across multiple processes.</p>
 <p><a class="el" href="ex2.html" title="Example 2: Use monitor to communicate errors">Example 2: Use monitor to communicate errors</a> shows a simple use case.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
 Utilities</h2>
 <p><a class="el" href="group__utilities.html" title="Utilities">Utilities</a> is a collection of various other tools in <b>mpi</b> which do not fit into any other category above.</p>
 <p>For users, the most useful entries are:</p>

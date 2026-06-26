@@ -3,7 +3,7 @@ var searchData=
   ['gather_0',['gather',['../group__coll__comm.html#gad8079c5141a34385a430bb467e79ab0e',1,'mpi']]],
   ['gather_5finto_1',['gather_into',['../group__coll__comm.html#ga20d1b068815d57325f8d6361ee2f741d',1,'mpi']]],
   ['gather_5frange_2',['gather_range',['../group__coll__comm.html#ga8750ff5d165d2a9b2006cf3302ea6921',1,'mpi']]],
-  ['general_3',['General',['../changelog.html#autotoc_md1',1,'General'],['../changelog.html#autotoc_md4',1,'General'],['../changelog.html#autotoc_md8',1,'General'],['../changelog.html#autotoc_md12',1,'General']]],
+  ['general_3',['General',['../changelog.html#autotoc_md1',1,'General'],['../changelog.html#autotoc_md5',1,'General'],['../changelog.html#autotoc_md9',1,'General'],['../changelog.html#autotoc_md13',1,'General']]],
   ['generic_5fcommunication_2ehpp_4',['generic_communication.hpp',['../generic__communication_8hpp.html',1,'']]],
   ['get_5',['get',['../classmpi_1_1communicator.html#ac0af4ecaeecae0ebc6c24aeef58f930e',1,'mpi::communicator::get()'],['../classmpi_1_1group.html#acc41d0a31efcde5c1739be187ea0b149',1,'mpi::group::get()'],['../classmpi_1_1window.html#a5170566724b9999a28984d1eb707c605',1,'mpi::window::get(OriginType *origin_addr, int origin_count, int target_rank, MPI_Aint target_disp=0, int target_count=-1) const']]],
   ['get_5fcommunicator_6',['get_communicator',['../classmpi_1_1window.html#af66d2f7ef1a29b8553c40f7ebd2d1fde',1,'mpi::window::get_communicator()'],['../classmpi_1_1shared__window.html#a0a4eba3b06b8215cb0a37e74dc7d6f38',1,'mpi::shared_window::get_communicator()']]],

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['one_20sided_20communication_20and_20shared_20memory_0',['one sided communication and shared memory',['../group__mpi__osc__shm.html',1,'MPI one-sided communication and shared memory'],['../documentation.html#autotoc_md19',1,'MPI one-sided communication and shared memory']]],
+  ['one_20sided_20communication_20and_20shared_20memory_0',['one sided communication and shared memory',['../group__mpi__osc__shm.html',1,'MPI one-sided communication and shared memory'],['../documentation.html#autotoc_md20',1,'MPI one-sided communication and shared memory']]],
   ['open_20mpi_205_1',['Sanitizer builds and Open MPI 5+',['../sanitizers.html',1,'']]],
-  ['operations_2',['operations',['../group__mpi__types__ops.html',1,'MPI datatypes and operations'],['../documentation.html#autotoc_md17',1,'MPI datatypes and operations']]],
+  ['operations_2',['operations',['../group__mpi__types__ops.html',1,'MPI datatypes and operations'],['../documentation.html#autotoc_md18',1,'MPI datatypes and operations']]],
   ['operator_3',['Example 3: Custom type and operator',['../ex3.html',1,'']]],
   ['operator_20mpi_5fwin_4',['operator MPI_Win',['../classmpi_1_1window.html#a4ae679a8515860b89763176604703b3b',1,'mpi::window']]],
   ['operator_20mpi_5fwin_20_2a_5',['operator MPI_Win *',['../classmpi_1_1window.html#ad641683e542716c32c1b2751fb338dea',1,'mpi::window']]],
