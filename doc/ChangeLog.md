@@ -28,11 +28,20 @@ Find below an itemized list of changes in this release.
 * Add check_mpi_call function and wrap all MPI calls in it
 * Generalize monitor class
 * Add duplicate and free functions to communicator
+* Auto-detect sanitizer builds on Open MPI 5+ and append `--mca pml ob1 --mca btl self,vader --mca osc ^ucx` to 
+MPIEXEC_PREFLAGS to work around the UCX/sanitizer SEGV in MPI_Init
+
+### cmake
+* Bump the minimum required CMake version to 3.22
+* Update Clang warning suppressions to silence C++26 / c2y extension warnings
+* Rebuild MPIEXEC_PREFLAGS idempotently on reconfigure
+* Fix the Debian-package architecture variable name (CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
 
 ### doc
 * Move code in overview.md to example folder
 * Add example codes to doc folder and make sure they compile
 * Add FI support notice to README.md
+* Add doc/sanitizers.md documenting sanitizer builds and the Open MPI 5+ UCX workaround
 
 
 ## Version 1.3.0
