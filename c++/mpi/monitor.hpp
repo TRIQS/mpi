@@ -42,6 +42,7 @@ namespace mpi {
    * information to all other processes.
    *
    * It can be used to check
+   * - if an event has been reported on this process (monitor::event_on_this_rank),
    * - if an event has occurred on any process (monitor::event_on_any_rank) or
    * - if an event has occurred on all processes (monitor::event_on_all_ranks).
    *
@@ -106,6 +107,8 @@ namespace mpi {
      * that an event has occurred on all processes.
      *
      * On non-root processes, it sends a message to the root process that a local event has occurred.
+     *
+     * Calls after finalize_communications() are ignored.
      */
     void report_local_event() {
       // prevent sending multiple signals
@@ -121,6 +124,15 @@ namespace mpi {
         check_mpi_call(MPI_Isend(&local_event_, 1, MPI_INT, 0, comm_.rank(), comm_.get(), &req_isent_), "MPI_Isend");
       }
     }
+
+    /**
+     * @brief Check if a local event was reported on this process before finalization.
+     *
+     * @details Purely local, performs no communication. The result does not change after finalize_communications().
+     *
+     * @return True, if report_local_event() was called on this process before finalize_communications().
+     */
+    [[nodiscard]] bool event_on_this_rank() const noexcept { return local_event_; }
 
     /**
      * @brief Check if an event has occurred on any process.

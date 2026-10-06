@@ -164,6 +164,35 @@ TEST(MPI, MonitorAllEvents) {
   usleep(1000);
 }
 
+void test_event_on_this_rank(int rank_parity) {
+  mpi::communicator world;
+  mpi::monitor monitor{world};
+  bool reporting     = (world.rank() % 2 == rank_parity);
+  bool any_reporting = (rank_parity == 0 or world.size() > 1);
+  EXPECT_FALSE(monitor.event_on_this_rank());
+  if (reporting) {
+    monitor.report_local_event();
+    monitor.report_local_event();
+  }
+  EXPECT_EQ(monitor.event_on_this_rank(), reporting);
+  monitor.finalize_communications();
+  EXPECT_EQ(monitor.event_on_this_rank(), reporting);
+  EXPECT_EQ(monitor.event_on_any_rank(), any_reporting);
+}
+
+TEST(MPI, MonitorEventOnThisRankEvenRanks) { test_event_on_this_rank(0); }
+TEST(MPI, MonitorEventOnThisRankOddRanks) { test_event_on_this_rank(1); }
+
+TEST(MPI, MonitorReportAfterFinalize) {
+  // reporting an event after finalization is ignored
+  mpi::communicator world;
+  mpi::monitor monitor{world};
+  monitor.finalize_communications();
+  monitor.report_local_event();
+  EXPECT_FALSE(monitor.event_on_this_rank());
+  EXPECT_FALSE(monitor.event_on_any_rank());
+}
+
 TEST(MPI, MultipleMonitors) {
   // test multiple monitors
   usleep(1000);
